@@ -1,4 +1,4 @@
-# Materializing a workflow spec
+# Materializing an operation invocation
 
 ## Gate A — runtime capture
 
@@ -6,11 +6,11 @@ Run R1 immediately before graph construction. Preserve the runtime manifest
 hash and the complete `/object_info` snapshot locally. Confirm the intended
 model files and free storage without downloading anything implicitly.
 
-## Gate B — bind the spec
+## Gate B — resolve and bind the operation
 
 Copy `fixtures/materialization-plan.json` and set:
 
-- exact W1–W7 version;
+- exact operation id, version, and contract hash from `operations.lock.json`;
 - model/quantization files;
 - width and height;
 - valid H3 target frame count;
@@ -18,11 +18,15 @@ Copy `fixtures/materialization-plan.json` and set:
 - sampler, scheduler, steps, and flow shifts;
 - exact input media references.
 
-For W4 also bind `overlap_frames`, `extension_frames`, and every sampled
-window's `timeline_origin_frame`. For W5 bind the three exact decoded ranges and
-both guide indices; do not replace them with a workflow-intent custom node.
+Create the corresponding Runtime Control reference using
+`fixtures/operation-ref.json`; its three values must match the same lock entry.
 
-Only the selected workflow's required fields become graph nodes. Optional
+For `continue.native_av`, also bind `overlap_frames`, `extension_frames`, and
+every sampled window's `timeline_origin_frame`. For
+`connect.two_sided_guides`, bind the three exact decoded ranges and both guide
+indices; do not replace them with a workflow-intent custom node.
+
+Only the selected operation variant's required fields become graph nodes. Optional
 branches remain absent rather than muted or bypassed.
 
 ## Gate C — paired graph products
@@ -30,12 +34,15 @@ branches remain absent rather than muted or bypassed.
 Create and retain both:
 
 ```text
-<label>.ui.json   browser graph, layout, widgets, graph metadata
-<label>.api.json  server-executable node/input/link object
+<operation>.<variant>.ui.json            browser graph, layout, widgets, metadata
+<operation>.<variant>.api.template.json  bindable server graph template
 ```
 
 Export both from the same active graph through Workspace Control. Their hashes
 must be independent because the formats are not interchangeable.
+
+Generic validated pairs belong back in CAUCE. Project-specific compiled API
+graphs and bindings remain in project receipts or the selected artifact store.
 
 ## Gate D — live schema validation
 

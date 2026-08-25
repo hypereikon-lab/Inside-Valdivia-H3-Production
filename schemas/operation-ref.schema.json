@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hypereikon.online/schemas/inside-valdivia-operation-ref-1.json",
+  "type": "object",
+  "required": ["schema", "id", "version", "contract_hash"],
+  "properties": {
+    "schema": { "const": "inside-valdivia.operation-ref/1" },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$" },
+    "version": { "type": "integer", "minimum": 1 },
+    "contract_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  },
+  "additionalProperties": false
+}

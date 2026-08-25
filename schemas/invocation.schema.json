@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hypereikon.online/schemas/inside-valdivia-operation-invocation-1.json",
+  "title": "Project operation invocation",
+  "type": "object",
+  "required": [
+    "schema",
+    "id",
+    "operation",
+    "operation_version",
+    "operation_contract_hash",
+    "inputs",
+    "parameters",
+    "status"
+  ],
+  "properties": {
+    "schema": { "const": "inside-valdivia.operation-invocation/1" },
+    "id": { "type": "string", "minLength": 1 },
+    "operation": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$" },
+    "operation_version": { "type": "integer", "minimum": 1 },
+    "operation_contract_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "inputs": { "type": "object" },
+    "parameters": { "type": "object" },
+    "status": { "enum": ["planned", "materialized", "queued", "executes", "visually-accepted", "rejected", "blocked"] },
+    "outputs": { "type": "object" },
+    "run_receipts": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "string" }
+  },
+  "additionalProperties": false
+}

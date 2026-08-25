@@ -8,7 +8,7 @@ generation.
 Each comparison records:
 
 - source file hashes and order;
-- workflow spec and materialized graph hashes;
+- ordered operation ids/versions/contract hashes and materialized graph hashes;
 - model file and quantization;
 - target geometry and frame count;
 - prompt and seed;

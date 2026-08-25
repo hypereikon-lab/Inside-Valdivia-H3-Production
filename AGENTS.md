@@ -1,8 +1,10 @@
 # Inside Valdivia H3 production-data runbook
 
-This repository owns declarative H3 workflow specifications, project frame
-ranges, experiment plans, and run-receipt references. It does not own ComfyUI
-nodes, HTTP control, browser tabs, model files, or rendered media.
+This repository owns project operation invocations, frame ranges, experiment
+plans, and run-receipt references. Generic operation contracts belong to the
+version-locked CAUCE catalog. This repository does not own ComfyUI nodes, HTTP
+control, browser tabs, model files, reusable generic graph templates, or
+rendered media.
 
 ## Invariants
 
@@ -13,12 +15,12 @@ nodes, HTTP control, browser tabs, model files, or rendered media.
 - All frame ranges are half-open `[start, end)` at an explicit frame rate.
 - H3 production generation is 24 fps. Requested native frame counts follow
   `17k + 5`; prefer the documented trained range 124–362.
-- Workflow specs state real graph operations and ownership. They are not
-  importable UI/API graphs until materialized and validated against live
-  `/object_info`.
-- Workflow intent belongs in specs/graphs. Prefer orthogonal CAUCE operations
-  and official/vanilla composition over one custom node named after a complete
-  production workflow.
+- Every invocation references one semantic CAUCE operation id, version, and
+  contract hash from `operations.lock.json`.
+- A generic operation contract is not an importable UI/API graph until CAUCE
+  records a paired materialization validated against live `/object_info`.
+- Project data binds operations to concrete media and parameters; it must not
+  duplicate generic graph ownership or create a sequential workflow ontology.
 - A run receipt may say `executes`; only inspected media can say
   `visually-accepted` or `rejected`.
 - No credentials, model binaries, inputs, outputs, or browser state belong here.

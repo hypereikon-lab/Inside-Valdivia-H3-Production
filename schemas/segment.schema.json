@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hypereikon.online/schemas/production-segment-1.json",
-  "title": "Production segment",
+  "$id": "https://hypereikon.online/schemas/production-segment-2.json",
+  "title": "Editorial segment",
   "type": "object",
-  "required": ["schema", "id", "frame_rate", "frame_range", "workflow_spec", "inputs", "parameters", "status"],
+  "required": ["schema", "id", "frame_rate", "frame_range", "sources", "status"],
   "properties": {
-    "schema": { "const": "inside-valdivia.production-segment/1" },
+    "schema": { "const": "inside-valdivia.production-segment/2" },
     "id": { "type": "string", "minLength": 1 },
     "frame_rate": { "const": 24 },
     "frame_range": {
@@ -17,11 +17,29 @@
       "minItems": 2,
       "maxItems": 2
     },
-    "workflow_spec": { "pattern": "^W[1-7]$" },
-    "inputs": { "type": "object" },
-    "parameters": { "type": "object" },
-    "status": { "enum": ["planned", "materialized", "queued", "executes", "visually-accepted", "rejected", "blocked"] },
-    "run_receipts": { "type": "array", "items": { "type": "string" } },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["invocation", "output"],
+        "properties": {
+          "invocation": { "type": "string", "minLength": 1 },
+          "output": { "type": "string", "minLength": 1 },
+          "accepted_range": {
+            "type": "array",
+            "prefixItems": [
+              { "type": "integer", "minimum": 0 },
+              { "type": "integer", "minimum": 1 }
+            ],
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "status": { "enum": ["planned", "assembled", "visually-accepted", "rejected", "blocked"] },
     "notes": { "type": "string" }
   },
   "additionalProperties": false

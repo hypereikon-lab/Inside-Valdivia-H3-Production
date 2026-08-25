@@ -1,17 +1,18 @@
 # Production data model
 
-## Segment
+## Operation invocation
 
-A segment is the smallest project record:
+An invocation is one call to a locked operation over explicit data:
 
 ```text
 id
-frame_rate = 24
-frame_range = [start, end)
-workflow_spec = W1..W7
+operation
+operation_version
+operation_contract_hash
 inputs = arbitrary media references
 parameters = exact materialization values
 status
+outputs
 run_receipts[]
 ```
 
@@ -19,21 +20,47 @@ It does not describe what is depicted. Images and clips remain opaque media
 references. Any prompt is stored as the exact string sent to the graph, not as
 an inferred decomposition of the image.
 
+An input may reference a local media URI or a named output of another
+invocation. This produces an explicit data-dependency graph without imposing a
+catalog order.
+
+## Editorial segment
+
+A segment assigns one or more invocation outputs to a range in the final visual
+edit:
+
+```text
+id
+frame_rate = 24
+frame_range = [start, end)
+sources[] = { invocation, output, accepted_range? }
+status
+```
+
+Generation parameters do not live in the segment. The same invocation output
+may be inspected, branched, or reused before any editorial assignment exists.
+
 Frame ranges are authoritative. Seconds are derived display values:
 
 ```text
 seconds = frames / 24
 ```
 
-## Workflow specification
+## Operation dependency
 
-A workflow spec is reusable and project-independent. It defines one principal
-operation, its implementation class, typed inputs/outputs, mathematical/model
-constraints, ordered graph roles, variants, and evidence. It is not a UI graph
-and contains no widget positions, browser tab state, concrete model paths, or
-runtime-specific combo values.
+A generic operation contract is reusable and project-independent. It lives in
+CAUCE, not in this repository. `operations.lock.json` pins its source commit,
+catalog hash, operation version, and contract hash.
 
-The implementation class is an ownership statement:
+`tools/verify_cauce_lock.py` checks those values against an explicit local
+CAUCE checkout; ordinary project validation does not silently depend on a
+sibling directory.
+
+Project records reference the operation; they do not restate its graph. The
+same operation may be invoked repeatedly, nested in a larger composition, or
+connected to another operation through typed outputs.
+
+The CAUCE implementation class remains an ownership statement:
 
 ```text
 official-h3
@@ -42,16 +69,17 @@ official-h3
 official-h3-with-cauce-primitives
   official inference composed with narrow deterministic CAUCE operations
 
-cauce-preprocess-to-official-h3
-  CAUCE constructs decoded reference media before official H3 conditioning
-
 cauce-and-vanilla-deterministic
   deterministic media processing with no H3 inference
 ```
 
+The operation `reference.transform`, for example, produces decoded reference
+media. A later invocation of `generate.from_references` consumes that media;
+neither operation needs to know the project meaning of the frames.
+
 ## Materialization plan
 
-A plan binds one workflow spec to a runtime manifest, exact model files,
+A plan binds one locked operation to a runtime manifest, exact model files,
 resolution, frame count, prompt, seed, sampler, scheduler, steps, and input
 media. Its products are a paired UI graph and API graph with separate hashes.
 
@@ -60,7 +88,7 @@ media. Its products are a paired UI graph and API graph with separate hashes.
 ComfyUI Runtime Control records one immutable receipt per submitted prompt id:
 
 ```text
-workflow spec hash
+operation id / version / contract hash
 API graph hash
 runtime manifest hash
 history hash

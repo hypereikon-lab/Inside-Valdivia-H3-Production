@@ -2,8 +2,8 @@
   "schema": "inside-valdivia.h3-experiment-catalog/1",
   "experiments": [
     {
-      "id": "E1-keyframe-mode",
-      "workflow_spec": "W1",
+      "id": "keyframe-mode",
+      "operations": [{ "id": "generate.keyframed", "version": 1 }],
       "question": "How does each documented keyframe mode constrain geometry and motion for the same prompt and target?",
       "fixed": ["model", "quantization", "resolution", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps"],
       "variable": { "variant": ["text-only", "first-frame", "last-frame", "first-last"] },
@@ -11,8 +11,8 @@
       "status": "planned"
     },
     {
-      "id": "E2-reference-image-size",
-      "workflow_spec": "W2",
+      "id": "reference-image-size",
+      "operations": [{ "id": "generate.from_references", "version": 1 }],
       "question": "What quality and runtime difference does the official reference-image size mode produce?",
       "fixed": ["model", "resolution", "target_frames", "reference_image", "prompt", "seed", "sampler", "scheduler", "steps"],
       "variable": { "ref_image_size": ["match", "max"] },
@@ -20,8 +20,8 @@
       "status": "planned"
     },
     {
-      "id": "E3-reference-clip-duration",
-      "workflow_spec": "W2",
+      "id": "reference-clip-duration",
+      "operations": [{ "id": "generate.from_references", "version": 1 }],
       "question": "How much reference motion is retained as the supplied 24 fps clip length changes on valid H3 lengths?",
       "fixed": ["model", "resolution", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps", "reference motion source"],
       "variable": { "reference_clip_frames": [22, 39, 56, 73, 90, 107] },
@@ -29,8 +29,8 @@
       "status": "planned"
     },
     {
-      "id": "E4-guide-length",
-      "workflow_spec": "W3",
+      "id": "guide-length",
+      "operations": [{ "id": "generate.with_guides", "version": 1 }],
       "question": "How does official AddGuide clip length trade contextual motion against free generated range?",
       "fixed": ["model", "resolution", "target_frames", "prompt", "seed", "guide start index", "sampler", "scheduler", "steps"],
       "variable": { "guide_frames": [5, 22, 39, 56, 73, 90, 107] },
@@ -38,8 +38,8 @@
       "status": "planned"
     },
     {
-      "id": "E5-guide-placement",
-      "workflow_spec": "W3",
+      "id": "guide-placement",
+      "operations": [{ "id": "generate.with_guides", "version": 1 }],
       "question": "How does placement of the same official temporal guide affect the generated range around it?",
       "fixed": ["model", "resolution", "target_frames", "prompt", "seed", "guide clip", "sampler", "scheduler", "steps"],
       "variable": { "frame_idx": [0, 51, 102] },
@@ -47,8 +47,8 @@
       "status": "planned"
     },
     {
-      "id": "E6-native-continuation-baseline",
-      "workflow_spec": "W4",
+      "id": "native-continuation-prompt-relation",
+      "operations": [{ "id": "continue.native_av", "version": 1 }],
       "question": "Does the characterized 22-frame native latent tail preserve motion and appearance across one continuation?",
       "fixed": ["model", "resolution", "overlap_frames=22", "sampler", "scheduler", "steps", "continuation target length"],
       "variable": { "prompt_relation": ["same prompt", "controlled prompt continuation"] },
@@ -56,8 +56,8 @@
       "status": "planned"
     },
     {
-      "id": "E7-two-sided-guide-length",
-      "workflow_spec": "W5",
+      "id": "two-sided-guide-length",
+      "operations": [{ "id": "connect.two_sided_guides", "version": 1 }],
       "question": "Which valid two-sided guide length gives H3 enough outgoing and incoming motion context without overconstraining the generated range?",
       "fixed": ["left source", "right source", "model", "resolution", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps"],
       "variable": { "guide_frames": [5, 22, 39] },
@@ -65,8 +65,11 @@
       "status": "planned"
     },
     {
-      "id": "E8-motion-reference-map",
-      "workflow_spec": "W6",
+      "id": "motion-reference-map",
+      "operations": [
+        { "id": "reference.transform", "version": 1 },
+        { "id": "generate.from_references", "version": 1 }
+      ],
       "question": "Which inspectable decoded reference construction produces the strongest usable motion correspondence through official Ref2VA conditioning?",
       "fixed": ["source frames", "reference duration", "model", "resolution", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps"],
       "variable": { "map_family": ["affine", "perspective", "depth-camera", "external-displacement", "advection"] },

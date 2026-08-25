@@ -1,7 +1,15 @@
-from pathlib import Path
+import copy
 import unittest
 
-from tools.validate import ROOT, is_h3_frame_count, load_json, validate_repository, validate_workflow_spec
+from tools.validate import (
+    ROOT,
+    is_h3_frame_count,
+    load_json,
+    validate_operation_lock,
+    validate_repository,
+    validate_invocation,
+    validate_segment,
+)
 
 
 class RepositoryValidationTests(unittest.TestCase):
@@ -14,58 +22,65 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertTrue(is_h3_frame_count(362))
         self.assertFalse(is_h3_frame_count(123))
 
-    def test_workflow_ids_are_unique_and_complete(self):
-        ids = {
-            load_json(path)["id"]
-            for path in (ROOT / "workflow_specs").glob("*.json")
-        }
-        self.assertEqual(ids, {"W1", "W2", "W3", "W4", "W5", "W6", "W7"})
-
-    def test_implementation_classes_match_graph_owners(self):
-        specs = {
-            load_json(path)["id"]: load_json(path)
-            for path in (ROOT / "workflow_specs").glob("*.json")
-        }
+    def test_operation_lock_is_semantic_and_content_addressed(self):
+        lock_path = ROOT / "operations.lock.json"
+        errors, registry = validate_operation_lock(load_json(lock_path), lock_path)
+        self.assertEqual(errors, [])
         self.assertEqual(
-            {specs[key]["implementation_class"] for key in ("W1", "W2", "W3")},
-            {"official-h3"},
-        )
-        for key in ("W1", "W2", "W3"):
-            self.assertNotIn("cauce", {stage["owner"] for stage in specs[key]["graph_contract"]})
-        self.assertEqual(specs["W4"]["implementation_class"], "official-h3-with-cauce-primitives")
-        self.assertEqual(specs["W5"]["implementation_class"], "official-h3-with-cauce-primitives")
-        self.assertEqual(specs["W6"]["implementation_class"], "cauce-preprocess-to-official-h3")
-        self.assertEqual(specs["W7"]["implementation_class"], "cauce-and-vanilla-deterministic")
-
-    def test_validator_rejects_noncanonical_mechanism_language(self):
-        path = Path("synthetic.json")
-        value = load_json(ROOT / "workflow_specs" / "W1-keyframed-generation.json")
-        value["operation"] = "A confluence seam fix"
-        errors = validate_workflow_spec(value, path)
-        self.assertTrue(any("non-canonical mechanism phrase" in error for error in errors))
-
-    def test_native_continuation_is_composed_without_external_owner(self):
-        value = load_json(ROOT / "workflow_specs" / "W4-native-tail-continuation.json")
-        self.assertEqual(value["version"], 3)
-        self.assertNotIn("external-pack", {stage["owner"] for stage in value["graph_contract"]})
-        node_types = {stage.get("node_type") for stage in value["graph_contract"]}
-        self.assertTrue(
+            set(registry),
             {
-                "CauceH3PlanAVWindow",
-                "CauceH3AllocateAVWindow",
-                "CauceH3ExtractAVSpan",
-                "CauceH3AddAVSpanGuide",
-                "CauceH3AppendAVSpan",
-            }
-            <= node_types
+                "connect.two_sided_guides",
+                "continue.native_av",
+                "frames.assemble",
+                "generate.from_references",
+                "generate.keyframed",
+                "generate.with_guides",
+                "reference.transform",
+            },
+        )
+        self.assertTrue(all(not operation_id.startswith("W") for operation_id in registry))
+
+    def test_invocation_must_match_locked_version_and_hash(self):
+        lock_path = ROOT / "operations.lock.json"
+        _, registry = validate_operation_lock(load_json(lock_path), lock_path)
+        invocation_path = ROOT / "invocations" / "example.json"
+        invocation = load_json(invocation_path)
+        self.assertEqual(validate_invocation(invocation, invocation_path, registry), [])
+        wrong = copy.deepcopy(invocation)
+        wrong["operation_contract_hash"] = "0" * 64
+        self.assertIn(
+            f"{invocation_path}: operation contract hash does not match lock",
+            validate_invocation(wrong, invocation_path, registry),
         )
 
-    def test_two_sided_graph_uses_primitives_not_a_preset(self):
-        value = load_json(ROOT / "workflow_specs" / "W5-two-sided-guide-window.json")
-        node_types = [stage.get("node_type") for stage in value["graph_contract"]]
-        self.assertEqual(node_types.count("CauceAcceptDecodedRange"), 3)
-        self.assertNotIn("CaucePrepareH3TwoSidedGuideWindow", node_types)
-        self.assertNotIn("CauceAssembleH3TwoSidedGuideWindow", node_types)
+    def test_segment_references_invocation_output(self):
+        segment_path = ROOT / "segments" / "example.json"
+        segment = load_json(segment_path)
+        invocation = load_json(ROOT / "invocations" / "example.json")
+        self.assertEqual(validate_segment(segment, segment_path, {invocation["id"]}), [])
+
+    def test_experiments_reference_named_operations(self):
+        catalog = load_json(ROOT / "experiments" / "catalog.json")
+        for experiment in catalog["experiments"]:
+            self.assertTrue(experiment["operations"])
+            for operation in experiment["operations"]:
+                self.assertIn("id", operation)
+                self.assertIn("version", operation)
+        motion = next(
+            value for value in catalog["experiments"] if value["id"] == "motion-reference-map"
+        )
+        self.assertEqual(
+            [value["id"] for value in motion["operations"]],
+            ["reference.transform", "generate.from_references"],
+        )
+
+    def test_runtime_operation_reference_matches_lock(self):
+        reference = load_json(ROOT / "fixtures" / "operation-ref.json")
+        lock_path = ROOT / "operations.lock.json"
+        _, registry = validate_operation_lock(load_json(lock_path), lock_path)
+        locked = registry[reference["id"]]
+        self.assertEqual(reference["version"], locked["version"])
+        self.assertEqual(reference["contract_hash"], locked["contract_hash"])
 
 
 if __name__ == "__main__":

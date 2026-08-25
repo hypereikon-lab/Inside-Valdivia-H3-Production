@@ -1,0 +1,21 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "example-keyframed-generation-0001",
+  "operation": "generate.keyframed",
+  "operation_version": 1,
+  "operation_contract_hash": "6db7077c907d4ed3fbb66a1c244c130c402e6695907442315c339c7665e075a1",
+  "inputs": {
+    "first_frame": "input://frames/example-start.png",
+    "last_frame": "input://frames/example-end.png"
+  },
+  "parameters": {
+    "variant": "first-last",
+    "target_frames": 124,
+    "prompt": "replace with the exact production prompt",
+    "seed": 0
+  },
+  "status": "planned",
+  "outputs": {},
+  "run_receipts": [],
+  "notes": "Template only; duplicate with exact project media and bindings."
+}

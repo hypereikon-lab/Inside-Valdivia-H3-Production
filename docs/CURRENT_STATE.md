@@ -43,33 +43,40 @@ The laboratory had `ComfyUI-Cauce` commit
 `81cc8fc6b44b1983c55d587f82c2628a95542258` installed. All 19 CAUCE nodes and
 all six H3 AV primitive nodes were present in `/object_info`.
 
+The project operation lock points to CAUCE contract commit
+`8fde2f20b5a78848043aba4a9d5eb4bc2284e58e`. That commit contains the semantic
+operation catalog and validation but does not change the 19 registered ComfyUI
+nodes. The operation contracts therefore do not require a live-node update to
+be consumed as project data.
+
 `ComfyUI-Workspace-Control` is implemented and locally tested but is not
 installed in the laboratory. Its capability route therefore remains absent
 until a separately confirmed targeted installation and ComfyUI-process restart.
 
-## Workflow ownership and evidence
+## Operation ownership and evidence
 
-| ID | Implementation | Retained graph artifact | Strongest current evidence |
+| Operation | Implementation | Retained graph artifact | Strongest current evidence |
 | --- | --- | --- | --- |
-| W1 | official H3 / vanilla ComfyUI | none | declarative spec |
-| W2 | official H3 / vanilla ComfyUI | none | declarative spec |
-| W3 | official H3 / vanilla ComfyUI | none | declarative spec |
-| W4 | official H3 sampling + CAUCE native AV primitives | exact smoke graph not yet retained as a reusable template | synthetic live execution |
-| W5 | official H3 guides + CAUCE exact decoded ranges + vanilla assembly | none | declarative spec; CAUCE range primitive unit-validated |
-| W6 | CAUCE decoded-media maps + official H3 reference conditioning | none | deterministic map layer unit-validated |
-| W7 | CAUCE exact decoded ranges + vanilla assembly | none | deterministic range layer unit-validated |
+| `generate.keyframed` | official H3 / vanilla ComfyUI | none | locked contract |
+| `generate.from_references` | official H3 / vanilla ComfyUI | none | locked contract |
+| `generate.with_guides` | official H3 / vanilla ComfyUI | none | locked contract |
+| `continue.native_av` | official H3 sampling + CAUCE native AV primitives | exact smoke described as evidence; no reusable pair | synthetic live execution |
+| `connect.two_sided_guides` | official H3 guides + CAUCE ranges + vanilla assembly | none | locked contract |
+| `reference.transform` | CAUCE decoded-media maps | none | deterministic map layer unit-validated |
+| `frames.assemble` | CAUCE exact ranges + vanilla assembly | none | deterministic range layer unit-validated |
 
-W1–W3 add no custom model capability. They are canonical, reproducible uses of
-the official H3 nodes shipped with ComfyUI.
+The three `generate.*` operations add no custom model capability. They provide
+typed, reproducible contracts for official H3 behavior.
 
-W4 is the only current workflow whose central data operation depends on CAUCE:
-it preserves and extends packed H3 visual and structural-audio state on exact
-absolute clocks. W5–W7 use CAUCE only for deterministic transformations around
-official or vanilla nodes.
+`continue.native_av` is the current operation whose central data behavior
+depends on CAUCE: it preserves and extends packed H3 visual and
+structural-audio state on exact absolute clocks. The remaining CAUCE-backed
+operations provide deterministic transformations around official or vanilla
+nodes.
 
-## W4 execution evidence
+## `continue.native_av` execution evidence
 
-A minimal W4 API graph completed under prompt id
+A minimal API graph completed under prompt id
 `d6ca67c6-71af-4172-9ab7-cc18a0e6ad7e`. It used a synthetic 22-frame source AV
 latent, 5-frame overlap, 51-frame extension, a 56-frame sampled window at
 global origin 17, and one H3 sampling step.
@@ -106,13 +113,14 @@ possible to compose
   execution/visual evidence do not yet exist
 ```
 
-Current retained products include workflow specifications, deterministic CAUCE
-primitives, Runtime Control, and Workspace Control source code. The repository
-does not yet ship import-tested UI graphs or reusable API templates for W1–W7.
+Current retained products include a content-addressed CAUCE operation lock,
+project invocation schemas, deterministic CAUCE primitives, Runtime Control,
+and Workspace Control source code. CAUCE does not yet ship paired import-tested
+UI graphs and reusable API templates for these operations.
 
 The current system also does not claim masked temporal inpainting, arbitrary
 sampler modification, automatic high-level graph synthesis, or a visually
-accepted production workflow. New workflow compositions can be implemented
+accepted production operation. New graph compositions can be implemented
 from official nodes and the existing primitives, but each concrete graph must
 be materialized, schema-validated, executed, and visually evaluated before its
 behavior becomes a current capability claim.
