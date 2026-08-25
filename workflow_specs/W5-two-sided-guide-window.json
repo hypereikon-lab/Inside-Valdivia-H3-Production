@@ -1,19 +1,21 @@
 {
   "schema": "inside-valdivia.h3-workflow-spec/1",
   "id": "W5",
-  "version": 1,
-  "name": "H3 two-sided guide window",
-  "operation": "Generate a fresh target constrained by a source-tail guide and a source-head guide, accept only the generated range between them, and assemble it between the complete source clips.",
+  "version": 2,
+  "name": "H3 two-sided decoded guide composition",
+  "operation": "Select a source tail and source head, condition a fresh H3 target with two official guides, retain only the generated center, and concatenate explicit decoded ranges.",
   "input_contract": [
     { "name": "left_source_frames", "type": "IMAGE", "required": true, "cardinality": "one 24 fps frame batch" },
     { "name": "right_source_frames", "type": "IMAGE", "required": true, "cardinality": "one matching 24 fps frame batch" },
+    { "name": "left_source_frame_count", "type": "INT", "required": true },
     { "name": "prompt", "type": "STRING", "required": true },
+    { "name": "guide_frames", "type": "INT", "required": true },
+    { "name": "target_frames", "type": "INT", "required": true },
     { "name": "seed", "type": "INT", "required": true }
   ],
   "output_contract": [
-    { "name": "accepted_generated_range", "type": "IMAGE", "required": true, "cardinality": "target minus both guide ranges" },
-    { "name": "joined_frames", "type": "IMAGE", "required": true, "cardinality": "left source plus accepted generated range plus right source" },
-    { "name": "window_plan", "type": "CAUCE_H3_GUIDE_WINDOW", "required": true }
+    { "name": "accepted_generated_range", "type": "IMAGE", "required": true, "cardinality": "decoded target range [guide_frames, target_frames-guide_frames)" },
+    { "name": "joined_frames", "type": "IMAGE", "required": true, "cardinality": "left source plus accepted range plus right source" }
   ],
   "constraints": {
     "frame_rate": 24,
@@ -23,24 +25,28 @@
     "valid_guide_lengths": [5, 22, 39, 56, 73, 90, 107],
     "target_must_exceed_two_guides": true,
     "matching_source_geometry": true,
-    "fixed_soundtrack_conditioning": false
+    "fixed_soundtrack_conditioning": false,
+    "hidden_workflow_preset_node": false
   },
   "graph_contract": [
-    { "order": 1, "owner": "cauce", "node_type": "CaucePrepareH3TwoSidedGuideWindow", "role": "extract exact source tail/head guides and return a hashed window plan" },
-    { "order": 2, "owner": "official-comfy", "node_type": "MiniMaxH3ImageToVideo", "role": "create prompt conditioning and a fresh target of the planned length" },
-    { "order": 3, "owner": "official-comfy", "node_type": "MiniMaxH3AddGuide", "role": "place the left guide at frame zero", "repeatable": false },
-    { "order": 4, "owner": "official-comfy", "node_type": "MiniMaxH3AddGuide", "role": "place the right guide at the returned frame index", "repeatable": false },
-    { "order": 5, "owner": "official-comfy", "node_type": "MiniMaxH3SigmaShift", "role": "set coherent flow shifts" },
-    { "order": 6, "owner": "vanilla-comfy", "node_type": null, "role": "sample and decode the complete fresh target" },
-    { "order": 7, "owner": "cauce", "node_type": "CauceAssembleH3TwoSidedGuideWindow", "role": "discard both guide ranges, accept the planned generated range, and assemble exact decoded frames" }
+    { "order": 1, "owner": "cauce", "node_type": "CauceAcceptDecodedRange", "role": "select the exact left tail range [left_count-guide_frames, left_count)" },
+    { "order": 2, "owner": "cauce", "node_type": "CauceAcceptDecodedRange", "role": "select the exact right head range [0, guide_frames)" },
+    { "order": 3, "owner": "official-comfy", "node_type": "MiniMaxH3ImageToVideo", "role": "create prompt conditioning and a fresh target of target_frames" },
+    { "order": 4, "owner": "official-comfy", "node_type": "MiniMaxH3AddGuide", "role": "place the selected left tail at frame zero" },
+    { "order": 5, "owner": "official-comfy", "node_type": "MiniMaxH3AddGuide", "role": "place the selected right head at target_frames-guide_frames" },
+    { "order": 6, "owner": "official-comfy", "node_type": "MiniMaxH3SigmaShift", "role": "set explicit video and structural-audio flow shifts" },
+    { "order": 7, "owner": "vanilla-comfy", "node_type": null, "role": "sample and decode the complete fresh target" },
+    { "order": 8, "owner": "cauce", "node_type": "CauceAcceptDecodedRange", "role": "retain exactly [guide_frames, target_frames-guide_frames) from the decoded target" },
+    { "order": 9, "owner": "vanilla-comfy", "node_type": "ImageBatch", "role": "concatenate the complete left source and accepted generated range" },
+    { "order": 10, "owner": "vanilla-comfy", "node_type": "ImageBatch", "role": "append the complete right source" }
   ],
   "variants": [
-    { "id": "default", "guide_frames": 22, "target_frames": 124 },
+    { "id": "default", "guide_frames": 22, "target_frames": 124, "accepted_generated_frames": 80 },
     { "id": "guide-length-ablation", "change_one_variable": "guide_frames" },
     { "id": "target-length-ablation", "change_one_variable": "target_frames" }
   ],
   "evidence": {
-    "deterministic_layer": "CAUCE 2.1 unit-validated",
-    "model_layer": "renamed graph requires live schema validation, execution, and visual evaluation"
+    "deterministic_layer": "CAUCE 3.0 decoded-range selection unit-validated; remaining assembly uses official/vanilla nodes",
+    "model_layer": "requires live schema validation, execution, and visual evaluation"
   }
 }

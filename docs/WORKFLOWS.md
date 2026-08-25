@@ -49,27 +49,30 @@ present unless a separate documented mechanism supplies them.
 
 ## W4 — H3 native tail continuation
 
-This workflow is narrower than decoded-video continuation. The characterized
-external pack operates on H3's packed native AV latent:
+This workflow is narrower than decoded-video continuation. It composes CAUCE's
+low-level packed-AV operations around ordinary official sampling:
 
 ```text
 source native AV latent
-  -> extract 22-frame native tail guide
-  -> construct fresh continuation window
-  -> normal official H3 sampling
-  -> discard regenerated overlap
-  -> append only new native suffix
+  -> inspect + plan absolute AV window
+  -> allocate globally aligned target
+  -> extract synchronized native tail span
+  -> add span to official positive conditioning
+  -> normal official H3 sampling of the allocated target
+  -> extract only the generated suffix span
+  -> append the globally contiguous suffix
 ```
 
 The operation deserves the word `continuation` because it carries native H3
-state across the boundary. The initial canonical variant keeps the external
-pack's characterized 22-frame overlap; alternative overlaps are experiments,
-not defaults.
+state across the boundary without a VAE round trip. The canonical starting
+layout keeps the inspected reference geometry `22 overlap + 119 new = 141
+target`; alternative values are controlled experiments. No CAUCE node owns the
+complete workflow or its prompt/sampler policy.
 
 ## W5 — H3 two-sided guide window
 
-CAUCE prepares deterministic decoded ranges but leaves generation to official
-H3 nodes:
+CAUCE selects deterministic decoded ranges; official nodes generate and vanilla
+nodes concatenate:
 
 ```text
 tail(left source) -> AddGuide at 0
@@ -80,8 +83,9 @@ assemble complete left + accepted generated range + complete right
 ```
 
 With a 124-frame target and two 22-frame guides, 80 generated frames are
-accepted. The CAUCE plan and assembly are unit-validated; whether H3 produces a
-usable connection is a per-source visual result.
+accepted. No two-sided preset node or hidden plan object exists: the exact
+ranges and guide indices live in the workflow and run receipt. Whether H3
+produces a usable connection is a per-source visual result.
 
 ## W6 — motion-reference construction
 

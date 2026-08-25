@@ -18,6 +18,10 @@ Copy `fixtures/materialization-plan.json` and set:
 - sampler, scheduler, steps, and flow shifts;
 - exact input media references.
 
+For W4 also bind `overlap_frames`, `extension_frames`, and every sampled
+window's `timeline_origin_frame`. For W5 bind the three exact decoded ranges and
+both guide indices; do not replace them with a workflow-intent custom node.
+
 Only the selected workflow's required fields become graph nodes. Optional
 branches remain absent rather than muted or bypassed.
 

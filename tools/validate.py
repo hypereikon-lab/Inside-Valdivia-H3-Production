@@ -11,7 +11,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_WORKFLOWS = {f"W{value}" for value in range(1, 8)}
-OWNERS = {"official-comfy", "external-pack", "cauce", "vanilla-comfy"}
+OWNERS = {"official-comfy", "cauce", "vanilla-comfy"}
 EVIDENCE = {
     "planned",
     "schema-validated",

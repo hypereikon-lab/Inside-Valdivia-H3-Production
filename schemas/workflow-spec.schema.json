@@ -31,7 +31,7 @@
         "required": ["order", "owner", "role"],
         "properties": {
           "order": { "type": "integer", "minimum": 1 },
-          "owner": { "enum": ["official-comfy", "external-pack", "cauce", "vanilla-comfy"] },
+          "owner": { "enum": ["official-comfy", "cauce", "vanilla-comfy"] },
           "node_type": { "type": ["string", "null"] },
           "role": { "type": "string", "minLength": 1 },
           "repeatable": { "type": "boolean" },

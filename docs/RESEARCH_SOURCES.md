@@ -5,7 +5,7 @@ Primary implementations used to define the current contracts:
 - [MiniMax H3 official repository](https://github.com/MiniMax-AI/MiniMax-H3)
 - [Official ComfyUI MiniMax H3 nodes](https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_minimax_h3.py)
 - [Official AddGuide embedded documentation](https://github.com/Comfy-Org/embedded-docs/blob/main/comfyui_embedded_docs/docs/MiniMaxH3AddGuide/en.md)
-- [MiniMax H3 native continuation pack](https://github.com/ttulttul/ComfyUI-Minimax-H3-Continuation)
+- [Inspected MiniMax H3 continuation reference](https://github.com/ttulttul/ComfyUI-Minimax-H3-Continuation) — behavior oracle for CAUCE's independent low-level AV primitives, not a runtime dependency
 - [ComfyUI server routes](https://docs.comfy.org/development/comfyui-server/comms_routes)
 - [ComfyUI JavaScript extension overview](https://docs.comfy.org/custom-nodes/js/javascript_overview)
 - [ComfyUI frontend workflow service](https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/platform/workflow/core/services/workflowService.ts)

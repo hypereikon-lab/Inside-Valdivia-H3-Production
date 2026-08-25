@@ -28,8 +28,8 @@ this repository
 | W1 | H3 keyframed generation: text-only, first-frame, last-frame, or first+last |
 | W2 | H3 reference-conditioned generation with image/video references |
 | W3 | H3 temporally guided generation through one or more `MiniMaxH3AddGuide` nodes |
-| W4 | native H3 tail continuation using a characterized external node pack |
-| W5 | H3 two-sided guide window with deterministic CAUCE extraction/assembly |
+| W4 | native H3 AV span continuation composed from CAUCE primitives and official sampling |
+| W5 | two-sided decoded guides composed from exact ranges and official/vanilla nodes |
 | W6 | deterministic motion-reference construction followed by official H3 reference conditioning |
 | W7 | exact decoded frame-range selection and concatenation |
 

@@ -37,7 +37,7 @@
     { "id": "advection-reference", "map_node": "CauceIntegrateAdvection" }
   ],
   "evidence": {
-    "deterministic_layer": "CAUCE 2.1 unit-validated",
+    "deterministic_layer": "CAUCE 3.0 motion-map layer unit-validated",
     "model_layer": "reference effect requires controlled execution and visual evaluation; rejected direct latent-warp experiments are excluded"
   }
 }

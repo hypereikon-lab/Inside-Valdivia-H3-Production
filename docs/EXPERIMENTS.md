@@ -1,7 +1,7 @@
 # Native H3 experiment protocol
 
 The catalog contains only operations that enter H3 through current official
-conditioning or a characterized native-latent continuation pack. Procedural
+conditioning or CAUCE's inspected native-AV span guide path. Procedural
 motion is admitted only as decoded reference media that can be inspected before
 generation.
 

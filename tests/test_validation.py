@@ -28,6 +28,29 @@ class RepositoryValidationTests(unittest.TestCase):
         errors = validate_workflow_spec(value, path)
         self.assertTrue(any("legacy phrase" in error for error in errors))
 
+    def test_native_continuation_is_composed_without_external_owner(self):
+        value = load_json(ROOT / "workflow_specs" / "W4-native-tail-continuation.json")
+        self.assertEqual(value["version"], 2)
+        self.assertNotIn("external-pack", {stage["owner"] for stage in value["graph_contract"]})
+        node_types = {stage.get("node_type") for stage in value["graph_contract"]}
+        self.assertTrue(
+            {
+                "CauceH3PlanAVWindow",
+                "CauceH3AllocateAVWindow",
+                "CauceH3ExtractAVSpan",
+                "CauceH3AddAVSpanGuide",
+                "CauceH3AppendAVSpan",
+            }
+            <= node_types
+        )
+
+    def test_two_sided_graph_uses_primitives_not_a_preset(self):
+        value = load_json(ROOT / "workflow_specs" / "W5-two-sided-guide-window.json")
+        node_types = [stage.get("node_type") for stage in value["graph_contract"]]
+        self.assertEqual(node_types.count("CauceAcceptDecodedRange"), 3)
+        self.assertNotIn("CaucePrepareH3TwoSidedGuideWindow", node_types)
+        self.assertNotIn("CauceAssembleH3TwoSidedGuideWindow", node_types)
+
 
 if __name__ == "__main__":
     unittest.main()
