@@ -22,6 +22,6 @@ Metrics are diagnostic, not substitutes for the visual objective. Pixel change,
 optical-flow magnitude, or queue completion cannot by themselves establish
 motion correspondence, boundary quality, or identity preservation.
 
-Rejected direct latent warps and sampler injections remain in Git history of
-their original experimental repository. They are not carried into this catalog
-because the observed effect did not support the intended control mechanism.
+The catalog is limited to the conditioning and native-AV paths named above.
+Anything outside those paths requires a separate technical contract and new
+evidence before it enters the production catalog.

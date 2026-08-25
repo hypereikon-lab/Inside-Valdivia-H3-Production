@@ -1,8 +1,9 @@
 {
   "schema": "inside-valdivia.h3-workflow-spec/1",
   "id": "W4",
-  "version": 2,
+  "version": 3,
   "name": "H3 native AV span continuation",
+  "implementation_class": "official-h3-with-cauce-primitives",
   "operation": "Extend a cumulative H3 AV latent by planning a globally aligned target, conditioning it with an extracted native AV span, and appending only an explicit generated suffix.",
   "input_contract": [
     { "name": "source_native_av_latent", "type": "LATENT", "required": true, "cardinality": "one packed cumulative H3 AV latent" },

@@ -21,16 +21,32 @@ class RepositoryValidationTests(unittest.TestCase):
         }
         self.assertEqual(ids, {"W1", "W2", "W3", "W4", "W5", "W6", "W7"})
 
-    def test_validator_rejects_legacy_mechanism_language(self):
+    def test_implementation_classes_match_graph_owners(self):
+        specs = {
+            load_json(path)["id"]: load_json(path)
+            for path in (ROOT / "workflow_specs").glob("*.json")
+        }
+        self.assertEqual(
+            {specs[key]["implementation_class"] for key in ("W1", "W2", "W3")},
+            {"official-h3"},
+        )
+        for key in ("W1", "W2", "W3"):
+            self.assertNotIn("cauce", {stage["owner"] for stage in specs[key]["graph_contract"]})
+        self.assertEqual(specs["W4"]["implementation_class"], "official-h3-with-cauce-primitives")
+        self.assertEqual(specs["W5"]["implementation_class"], "official-h3-with-cauce-primitives")
+        self.assertEqual(specs["W6"]["implementation_class"], "cauce-preprocess-to-official-h3")
+        self.assertEqual(specs["W7"]["implementation_class"], "cauce-and-vanilla-deterministic")
+
+    def test_validator_rejects_noncanonical_mechanism_language(self):
         path = Path("synthetic.json")
         value = load_json(ROOT / "workflow_specs" / "W1-keyframed-generation.json")
         value["operation"] = "A confluence seam fix"
         errors = validate_workflow_spec(value, path)
-        self.assertTrue(any("legacy phrase" in error for error in errors))
+        self.assertTrue(any("non-canonical mechanism phrase" in error for error in errors))
 
     def test_native_continuation_is_composed_without_external_owner(self):
         value = load_json(ROOT / "workflow_specs" / "W4-native-tail-continuation.json")
-        self.assertEqual(value["version"], 2)
+        self.assertEqual(value["version"], 3)
         self.assertNotIn("external-pack", {stage["owner"] for stage in value["graph_contract"]})
         node_types = {stage.get("node_type") for stage in value["graph_contract"]}
         self.assertTrue(

@@ -1,8 +1,9 @@
 {
   "schema": "inside-valdivia.h3-workflow-spec/1",
   "id": "W6",
-  "version": 1,
+  "version": 2,
   "name": "Motion-reference construction",
+  "implementation_class": "cauce-preprocess-to-official-h3",
   "operation": "Construct an arbitrary decoded reference clip with deterministic coordinate maps, inspect it, then supply it through an official H3 reference or guide input.",
   "input_contract": [
     { "name": "source_frames", "type": "IMAGE", "required": true, "cardinality": "one image or frame batch" },
@@ -38,6 +39,6 @@
   ],
   "evidence": {
     "deterministic_layer": "CAUCE 3.0 motion-map layer unit-validated",
-    "model_layer": "reference effect requires controlled execution and visual evaluation; rejected direct latent-warp experiments are excluded"
+    "model_layer": "reference effect requires controlled execution and visual evaluation"
   }
 }

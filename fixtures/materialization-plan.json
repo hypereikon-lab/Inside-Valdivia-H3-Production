@@ -1,7 +1,7 @@
 {
   "schema": "inside-valdivia.materialization-plan/1",
   "workflow_spec": "W1",
-  "workflow_spec_version": 1,
+  "workflow_spec_version": 2,
   "runtime_manifest_hash": null,
   "bindings": {
     "model_variant": null,

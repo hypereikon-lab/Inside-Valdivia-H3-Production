@@ -4,7 +4,7 @@
   "title": "H3 workflow specification",
   "type": "object",
   "required": [
-    "schema", "id", "version", "name", "operation", "input_contract",
+    "schema", "id", "version", "name", "implementation_class", "operation", "input_contract",
     "output_contract", "constraints", "graph_contract", "evidence"
   ],
   "properties": {
@@ -12,6 +12,14 @@
     "id": { "pattern": "^W[1-7]$" },
     "version": { "type": "integer", "minimum": 1 },
     "name": { "type": "string", "minLength": 1 },
+    "implementation_class": {
+      "enum": [
+        "official-h3",
+        "official-h3-with-cauce-primitives",
+        "cauce-preprocess-to-official-h3",
+        "cauce-and-vanilla-deterministic"
+      ]
+    },
     "operation": { "type": "string", "minLength": 1 },
     "input_contract": {
       "type": "array",

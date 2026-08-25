@@ -1,8 +1,9 @@
 {
   "schema": "inside-valdivia.h3-workflow-spec/1",
   "id": "W5",
-  "version": 2,
+  "version": 3,
   "name": "H3 two-sided decoded guide composition",
+  "implementation_class": "official-h3-with-cauce-primitives",
   "operation": "Select a source tail and source head, condition a fresh H3 target with two official guides, retain only the generated center, and concatenate explicit decoded ranges.",
   "input_contract": [
     { "name": "left_source_frames", "type": "IMAGE", "required": true, "cardinality": "one 24 fps frame batch" },

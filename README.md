@@ -23,21 +23,21 @@ this repository
 
 ## Canonical workflows
 
-| ID | Operation |
-| --- | --- |
-| W1 | H3 keyframed generation: text-only, first-frame, last-frame, or first+last |
-| W2 | H3 reference-conditioned generation with image/video references |
-| W3 | H3 temporally guided generation through one or more `MiniMaxH3AddGuide` nodes |
-| W4 | native H3 AV span continuation composed from CAUCE primitives and official sampling |
-| W5 | two-sided decoded guides composed from exact ranges and official/vanilla nodes |
-| W6 | deterministic motion-reference construction followed by official H3 reference conditioning |
-| W7 | exact decoded frame-range selection and concatenation |
+| ID | Operation | Implementation class |
+| --- | --- | --- |
+| W1 | H3 keyframed generation: text-only, first-frame, last-frame, or first+last | official H3 / vanilla ComfyUI |
+| W2 | H3 reference-conditioned generation with image/video references | official H3 / vanilla ComfyUI |
+| W3 | H3 temporally guided generation through one or more `MiniMaxH3AddGuide` nodes | official H3 / vanilla ComfyUI |
+| W4 | native H3 AV span continuation | official H3 sampling + CAUCE AV primitives |
+| W5 | two-sided decoded guides and accepted center range | official H3 guides + CAUCE exact ranges + vanilla assembly |
+| W6 | deterministic motion-reference construction followed by H3 conditioning | CAUCE decoded-media preprocessing + official H3 |
+| W7 | exact decoded frame-range selection and concatenation | CAUCE exact ranges + vanilla ComfyUI; no H3 inference |
 
 The JSON files in `workflow_specs/` are declarative materialization contracts,
 not browser workflow exports. See [Canonical workflows](docs/WORKFLOWS.md),
 [data model](docs/DATA_MODEL.md), and [materialization](docs/MATERIALIZATION.md).
 
-Latest read-only environment record: [laboratory runtime audit, 2026-08-25](docs/LIVE_AUDIT_2026-08-25.md).
+Current implementation and evidence record: [current state](docs/CURRENT_STATE.md).
 
 ## Validate
 

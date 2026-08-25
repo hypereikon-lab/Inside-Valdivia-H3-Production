@@ -28,10 +28,26 @@ seconds = frames / 24
 ## Workflow specification
 
 A workflow spec is reusable and project-independent. It defines one principal
-operation, typed inputs/outputs, mathematical/model constraints, ordered graph
-roles, variants, and evidence. It is not a UI graph and contains no widget
-positions, browser tab state, concrete model paths, or runtime-specific combo
-values.
+operation, its implementation class, typed inputs/outputs, mathematical/model
+constraints, ordered graph roles, variants, and evidence. It is not a UI graph
+and contains no widget positions, browser tab state, concrete model paths, or
+runtime-specific combo values.
+
+The implementation class is an ownership statement:
+
+```text
+official-h3
+  only ComfyUI-shipped H3 and vanilla ComfyUI nodes
+
+official-h3-with-cauce-primitives
+  official inference composed with narrow deterministic CAUCE operations
+
+cauce-preprocess-to-official-h3
+  CAUCE constructs decoded reference media before official H3 conditioning
+
+cauce-and-vanilla-deterministic
+  deterministic media processing with no H3 inference
+```
 
 ## Materialization plan
 

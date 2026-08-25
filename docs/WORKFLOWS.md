@@ -5,6 +5,22 @@ inventing a semantic media ontology or duplicating official nodes. A workflow
 spec states intent, inputs, outputs, constraints, and ownership. A concrete UI
 graph and API graph are later materializations against one live runtime.
 
+## Implementation ownership
+
+| ID | What is genuinely custom | Current artifact state |
+| --- | --- | --- |
+| W1 | nothing; it is an official H3/vanilla ComfyUI graph | declarative spec only |
+| W2 | nothing; it is an official H3/vanilla ComfyUI graph | declarative spec only |
+| W3 | nothing; it chains official `MiniMaxH3AddGuide` nodes | declarative spec only |
+| W4 | absolute AV window/span/append math and persistence from CAUCE | spec plus one synthetic API execution; reusable graph files not yet retained |
+| W5 | exact decoded range selection from CAUCE | declarative spec only |
+| W6 | deterministic decoded-media coordinate maps from CAUCE | declarative spec only |
+| W7 | exact decoded range selection from CAUCE | declarative spec only |
+
+“Declarative spec only” means the operation is precisely described but no
+importable UI graph or executable API template is currently shipped. It is an
+implementable composition, not an already materialized capability.
+
 ## W1 — H3 keyframed generation
 
 One official `MiniMaxH3ImageToVideo` graph covers four modes:
@@ -20,6 +36,9 @@ The first frame is placed at frame 0 and the last at the actual snapped final
 frame. They are individual anchors, not motion streams. This is the smallest
 canonical graph for producing one interval from frames and a prompt.
 
+This workflow uses ComfyUI-shipped official H3 nodes and ordinary vanilla
+loaders, sampler, decoder, and output nodes. CAUCE is not involved.
+
 ## W2 — H3 reference-conditioned generation
 
 `MiniMaxH3ReferenceToVideo` accepts ordered reference images and 24 fps
@@ -27,6 +46,10 @@ reference clips. Prompt tags refer to them as `<Picture i>` and `<Video k>`.
 The official `match` image-size mode limits reference pixel area to the target;
 `max` uses a larger reference path and may cost substantially more sampling
 time because the reference tokens remain present through the sampling steps.
+
+This workflow also uses only ComfyUI-shipped official H3 and vanilla nodes.
+Its value here is reproducible parameterization and evidence, not custom model
+functionality.
 
 The project deliberately leaves audio-reference inputs disconnected. H3 still
 uses its packed structural-audio stream internally, but the fixed production
@@ -46,6 +69,9 @@ Start with a fresh target and base prompt conditioning. Chain one official
 This is the general operation for arbitrary frame or clip anchors inside one
 generation. It does not imply inpainting: no preserved source and mask are
 present unless a separate documented mechanism supplies them.
+
+No CAUCE node is required. The operation is an explicit chain of official H3
+guide nodes.
 
 ## W4 — H3 native tail continuation
 
@@ -100,9 +126,8 @@ source frames
   -> official Ref2VA or AddGuide input
 ```
 
-This retains the useful part of procedural motion work while respecting H3's
-architecture. It does not directly warp H3 latents or alter sampler internals.
-Rejected latent-forcing experiments are not part of the canonical system.
+This path constructs decoded reference media before official H3 conditioning.
+It does not directly warp H3 latents or alter sampler internals.
 
 ## W7 — exact decoded frame assembly
 
@@ -112,3 +137,22 @@ target is accepted or several accepted clips form an editorial interval.
 
 The fixed soundtrack is muxed downstream against these exact frame ranges. It
 remains the editorial clock, not a model input.
+
+## Present boundary and extensibility
+
+The current system can compose new graphs from official nodes and the listed
+CAUCE primitives. That makes additional workflows implementable without adding
+a new custom node whenever the needed behavior is graph composition.
+
+The repositories do not currently contain:
+
+- import-tested UI graphs for W1–W7;
+- reusable executable API templates for W1–W7;
+- a high-level graph synthesizer that turns an arbitrary intent into a graph;
+- a masked temporal-inpainting primitive;
+- production-resolution visual acceptance for W1–W7 under the current system.
+
+Runtime Control can bind and validate an existing API template. Workspace
+Control can manage and export browser graphs once installed. Neither invents
+model operations; model capability remains bounded by official H3 conditioning
+and sampling plus the explicit deterministic transformations in CAUCE.

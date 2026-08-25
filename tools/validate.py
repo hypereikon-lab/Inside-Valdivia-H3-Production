@@ -12,6 +12,12 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_WORKFLOWS = {f"W{value}" for value in range(1, 8)}
 OWNERS = {"official-comfy", "cauce", "vanilla-comfy"}
+IMPLEMENTATION_CLASSES = {
+    "official-h3",
+    "official-h3-with-cauce-primitives",
+    "cauce-preprocess-to-official-h3",
+    "cauce-and-vanilla-deterministic",
+}
 EVIDENCE = {
     "planned",
     "schema-validated",
@@ -47,6 +53,7 @@ def validate_workflow_spec(value: Any, path: Path) -> list[str]:
         "id",
         "version",
         "name",
+        "implementation_class",
         "operation",
         "input_contract",
         "output_contract",
@@ -63,6 +70,8 @@ def validate_workflow_spec(value: Any, path: Path) -> list[str]:
         errors.append(f"{path}: invalid workflow id {value.get('id')!r}")
     if not isinstance(value.get("version"), int) or value.get("version", 0) < 1:
         errors.append(f"{path}: version must be a positive integer")
+    if value.get("implementation_class") not in IMPLEMENTATION_CLASSES:
+        errors.append(f"{path}: invalid implementation_class")
     for contract_name in ("input_contract", "output_contract"):
         contract = value.get(contract_name)
         if not isinstance(contract, list) or (contract_name == "output_contract" and not contract):
@@ -84,6 +93,7 @@ def validate_workflow_spec(value: Any, path: Path) -> list[str]:
         errors.append(f"{path}: graph_contract must be non-empty")
     else:
         orders = []
+        stage_owners: set[str] = set()
         for stage in stages:
             if not isinstance(stage, dict):
                 errors.append(f"{path}: graph stage must be an object")
@@ -91,10 +101,28 @@ def validate_workflow_spec(value: Any, path: Path) -> list[str]:
             orders.append(stage.get("order"))
             if stage.get("owner") not in OWNERS:
                 errors.append(f"{path}: invalid graph owner {stage.get('owner')!r}")
+            else:
+                stage_owners.add(stage["owner"])
             if not isinstance(stage.get("role"), str) or not stage["role"].strip():
                 errors.append(f"{path}: every graph stage requires a role")
         if orders != list(range(1, len(stages) + 1)):
             errors.append(f"{path}: graph stage order must be contiguous from one")
+
+        implementation_class = value.get("implementation_class")
+        if implementation_class == "official-h3" and "cauce" in stage_owners:
+            errors.append(f"{path}: official-h3 workflow cannot claim CAUCE stages")
+        if implementation_class in {
+            "official-h3-with-cauce-primitives",
+            "cauce-preprocess-to-official-h3",
+        } and not {"official-comfy", "cauce"} <= stage_owners:
+            errors.append(
+                f"{path}: {implementation_class} requires official-comfy and cauce stages"
+            )
+        if implementation_class == "cauce-and-vanilla-deterministic":
+            if "cauce" not in stage_owners:
+                errors.append(f"{path}: deterministic CAUCE workflow requires a cauce stage")
+            if "official-comfy" in stage_owners:
+                errors.append(f"{path}: deterministic CAUCE workflow cannot contain H3 inference")
 
     constraints = value.get("constraints", {})
     if constraints.get("frame_count_rule") == "17k+5":
@@ -115,7 +143,7 @@ def validate_workflow_spec(value: Any, path: Path) -> list[str]:
     normalized = json.dumps(value, ensure_ascii=False).lower()
     for phrase in BANNED_SPEC_LANGUAGE:
         if phrase in normalized:
-            errors.append(f"{path}: rejected legacy phrase {phrase!r}")
+            errors.append(f"{path}: non-canonical mechanism phrase {phrase!r}")
     return errors
 
 

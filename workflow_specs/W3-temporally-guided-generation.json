@@ -1,8 +1,9 @@
 {
   "schema": "inside-valdivia.h3-workflow-spec/1",
   "id": "W3",
-  "version": 1,
+  "version": 2,
   "name": "H3 temporally guided generation",
+  "implementation_class": "official-h3",
   "operation": "Generate one native H3 target with one or more guide frames or guide clips placed at explicit frame indices.",
   "input_contract": [
     { "name": "prompt", "type": "STRING", "required": true },

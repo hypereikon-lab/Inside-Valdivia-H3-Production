@@ -1,8 +1,9 @@
 {
   "schema": "inside-valdivia.h3-workflow-spec/1",
   "id": "W7",
-  "version": 1,
+  "version": 2,
   "name": "Exact decoded frame assembly",
+  "implementation_class": "cauce-and-vanilla-deterministic",
   "operation": "Select half-open decoded frame ranges and concatenate them in an explicit order without generation.",
   "input_contract": [
     { "name": "source_frame_batches", "type": "IMAGE", "required": true, "cardinality": "one or more matching frame batches" },
