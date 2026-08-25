@@ -45,12 +45,30 @@ The laboratory had `ComfyUI-Cauce` commit
 `81cc8fc6b44b1983c55d587f82c2628a95542258` installed. All 19 CAUCE nodes and
 all six H3 AV primitive nodes were present in `/object_info`.
 
-The project operation lock points to CAUCE contract commit
-`e3793868daf89400b3d853699a5b93415c8e2629`. That commit contains the semantic
-operation catalog plus one validated, non-executable topology dossier for each
-of the seven operations. It does not change the 19 registered ComfyUI nodes.
-The contract/topology update therefore does not require a live-node update to
-be consumed as project data.
+The project operation lock points to CAUCE 3.2.0 commit
+`9654504592b2528b28cc3643e187d51318850409`. It retains the same seven semantic
+operation contracts and checked, non-executable topology dossiers while
+expanding the source registry from 19 to 24 nodes. The five additional
+primitives are:
+
+```text
+CauceH3ResolveTargetShape
+CauceH3PrepareGuideClip
+CauceH3PrepareReferenceClip
+CauceH3InspectConditioning
+CauceH3SplitAVLatent
+```
+
+All five are locally unit-validated. The first four expose official H3 temporal
+input rules and active conditioning metadata without replacing official
+encoding or sampling; the fifth splits an origin-zero cumulative packed AV
+state into a valid prefix and reversible contiguous suffix span.
+
+The lock records the intended project source, not the currently imported
+laboratory process. The laboratory remains last verified at the older 19-node
+commit above. A targeted CAUCE update and one ComfyUI process restart are still
+required before the five new nodes may be claimed in `/object_info` or used on
+the RTX 5090.
 
 `ComfyUI-Workspace-Control` commit
 `60402644df18344b1a37216a86870e5c1c0c9d2d` is implemented and locally tested.
@@ -131,10 +149,13 @@ possible to compose
 ```
 
 Current retained products include a content-addressed CAUCE operation lock,
-project invocation schemas, deterministic CAUCE primitives, seven offline
-topology dossiers, the paired-export materialization bridge in Runtime Control,
-and Workspace Control source code. CAUCE does not yet ship paired import-tested
-UI graphs and reusable API templates for these operations.
+project invocation schemas, deterministic CAUCE primitives, visible H3 temporal
+preflight and conditioning inspection, reversible native-state branching,
+seven offline topology dossiers, the paired-export materialization bridge in
+Runtime Control, and Workspace Control source code. The five CAUCE 3.2.0 nodes
+are source- and unit-validated only until the live update. CAUCE does not yet
+ship paired import-tested UI graphs and reusable API templates for these
+operations.
 
 The current system also does not claim masked temporal inpainting, arbitrary
 sampler modification, automatic high-level graph synthesis, or a visually
