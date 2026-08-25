@@ -33,6 +33,18 @@ Official node schemas are present for:
 
 The three external native-continuation nodes are absent.
 
+The required local H3 model families are already visible through `/models`:
+
+```text
+diffusion_models/minimax_h3_fl2va_pruned_fp8_scaled.safetensors
+diffusion_models/minimax_h3_ref2va_pruned_fp8_scaled.safetensors
+text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors
+vae/minimax_h3_video_vae_fp16.safetensors
+vae/minimax_h3_audio_vae_fp32.safetensors
+```
+
+No additional model download is part of the planned custom-node deployment.
+
 ## Installed CAUCE state
 
 Manager reports `hypereikon-lab/ComfyUI-Cauce` enabled at commit
@@ -69,3 +81,8 @@ Workspace Control live availability            pending deployment
 native continuation live availability          pending deployment
 W1-W7 concrete graph execution                 not claimed by this audit
 ```
+
+Manager reports three saved workflows and none references a `Cauce*` node.
+Replacing the old CAUCE registry therefore has no detected saved-workflow
+dependency. The currently open unsaved browser workflow remains user-owned and
+must not be closed automatically.
