@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hypereikon.online/schemas/comfy-run-receipt-1.json",
+  "type": "object",
+  "required": ["schema", "created_at", "prompt_id", "evidence_status", "api_graph_hash", "runtime_manifest_hash", "artifacts", "receipt_hash"],
+  "properties": {
+    "schema": { "const": "comfy.run-receipt/1" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "prompt_id": { "type": "string", "minLength": 1 },
+    "evidence_status": { "enum": ["schema-validated", "executes", "visually-accepted", "rejected", "blocked"] },
+    "workflow_spec_hash": { "type": ["string", "null"] },
+    "api_graph_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "runtime_manifest_hash": { "type": ["string", "null"] },
+    "history_hash": { "type": ["string", "null"] },
+    "artifacts": { "type": "array", "items": { "type": "object" } },
+    "receipt_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  },
+  "additionalProperties": false
+}

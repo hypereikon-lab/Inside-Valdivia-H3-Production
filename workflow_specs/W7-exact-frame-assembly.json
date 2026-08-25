@@ -1,0 +1,35 @@
+{
+  "schema": "inside-valdivia.h3-workflow-spec/1",
+  "id": "W7",
+  "version": 1,
+  "name": "Exact decoded frame assembly",
+  "operation": "Select half-open decoded frame ranges and concatenate them in an explicit order without generation.",
+  "input_contract": [
+    { "name": "source_frame_batches", "type": "IMAGE", "required": true, "cardinality": "one or more matching frame batches" },
+    { "name": "accepted_ranges", "type": "FRAME_RANGE", "required": true, "cardinality": "one half-open range per selected batch" }
+  ],
+  "output_contract": [
+    { "name": "assembled_frames", "type": "IMAGE", "required": true, "cardinality": "sum of all accepted range lengths" },
+    { "name": "assembly_report", "type": "JSON", "required": true }
+  ],
+  "constraints": {
+    "half_open_ranges": true,
+    "matching_geometry": true,
+    "generation": false,
+    "resampling": false,
+    "fixed_soundtrack_conditioning": false
+  },
+  "graph_contract": [
+    { "order": 1, "owner": "cauce", "node_type": "CauceAcceptDecodedRange", "role": "select each exact half-open decoded range", "repeatable": true },
+    { "order": 2, "owner": "vanilla-comfy", "node_type": null, "role": "concatenate selected IMAGE batches in declared order" },
+    { "order": 3, "owner": "vanilla-comfy", "node_type": null, "role": "encode or save the final visual edit" }
+  ],
+  "variants": [
+    { "id": "single-range", "range_count": 1 },
+    { "id": "ordered-concatenation", "range_count": "two or more" }
+  ],
+  "evidence": {
+    "deterministic_layer": "CAUCE exact range selection unit-validated",
+    "model_layer": "not applicable"
+  }
+}

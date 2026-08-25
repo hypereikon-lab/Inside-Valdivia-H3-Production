@@ -1,0 +1,43 @@
+{
+  "schema": "inside-valdivia.h3-workflow-spec/1",
+  "id": "W6",
+  "version": 1,
+  "name": "Motion-reference construction",
+  "operation": "Construct an arbitrary decoded reference clip with deterministic coordinate maps, inspect it, then supply it through an official H3 reference or guide input.",
+  "input_contract": [
+    { "name": "source_frames", "type": "IMAGE", "required": true, "cardinality": "one image or frame batch" },
+    { "name": "motion_map_parameters", "type": "JSON", "required": true },
+    { "name": "optional_spatial_mask", "type": "MASK", "required": false },
+    { "name": "prompt", "type": "STRING", "required": true }
+  ],
+  "output_contract": [
+    { "name": "reference_clip", "type": "IMAGE", "required": true, "cardinality": "one inspectable 24 fps frame batch" },
+    { "name": "generated_frames", "type": "IMAGE", "required": false, "cardinality": "target frame count after an H3 branch is selected" }
+  ],
+  "constraints": {
+    "frame_rate": 24,
+    "single_final_resampling": true,
+    "reference_must_be_inspected_before_h3": true,
+    "direct_h3_latent_warp": false,
+    "fixed_soundtrack_conditioning": false
+  },
+  "graph_contract": [
+    { "order": 1, "owner": "cauce", "node_type": null, "role": "build one or more deterministic CAUCE_MAP values", "repeatable": true },
+    { "order": 2, "owner": "cauce", "node_type": "CauceComposeMotionMaps", "role": "compose coordinate pullbacks before sampling", "optional": true },
+    { "order": 3, "owner": "cauce", "node_type": "CauceWarpImage", "role": "sample source media once to produce an inspectable reference clip" },
+    { "order": 4, "owner": "official-comfy", "node_type": "MiniMaxH3ReferenceToVideo", "role": "use the clip as an ordinary H3 video reference", "optional": true },
+    { "order": 5, "owner": "official-comfy", "node_type": "MiniMaxH3AddGuide", "role": "alternatively use the clip as an exact temporal guide", "optional": true },
+    { "order": 6, "owner": "vanilla-comfy", "node_type": null, "role": "sample and decode only after selecting exactly one H3 conditioning branch", "optional": true }
+  ],
+  "variants": [
+    { "id": "affine-reference", "map_node": "CauceAffineMotionMap" },
+    { "id": "perspective-reference", "map_node": "CaucePerspectiveMotionMap" },
+    { "id": "depth-camera-reference", "map_node": "CauceDepthCameraMotionMap" },
+    { "id": "external-displacement-reference", "map_node": "CauceDisplacementMotionMap" },
+    { "id": "advection-reference", "map_node": "CauceIntegrateAdvection" }
+  ],
+  "evidence": {
+    "deterministic_layer": "CAUCE 2.1 unit-validated",
+    "model_layer": "reference effect requires controlled execution and visual evaluation; rejected direct latent-warp experiments are excluded"
+  }
+}

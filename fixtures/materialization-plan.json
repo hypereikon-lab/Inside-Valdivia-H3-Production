@@ -1,0 +1,29 @@
+{
+  "schema": "inside-valdivia.materialization-plan/1",
+  "workflow_spec": "W1",
+  "workflow_spec_version": 1,
+  "runtime_manifest_hash": null,
+  "bindings": {
+    "model_variant": null,
+    "model_files": {},
+    "resolution": [768, 1344],
+    "target_frames": 124,
+    "prompt": null,
+    "seed": null,
+    "sampler": null,
+    "scheduler": null,
+    "steps": null,
+    "inputs": {}
+  },
+  "outputs": {
+    "ui_graph": null,
+    "api_graph": null,
+    "ui_graph_hash": null,
+    "api_graph_hash": null
+  },
+  "validation": {
+    "schema_status": "pending",
+    "missing_node_types": [],
+    "notes": []
+  }
+}

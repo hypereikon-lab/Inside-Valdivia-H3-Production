@@ -1,0 +1,20 @@
+{
+  "schema": "inside-valdivia.production-segment/1",
+  "id": "example-segment-0001",
+  "frame_rate": 24,
+  "frame_range": [0, 124],
+  "workflow_spec": "W1",
+  "inputs": {
+    "first_frame": "input://frames/example-start.png",
+    "last_frame": "input://frames/example-end.png"
+  },
+  "parameters": {
+    "variant": "first-last",
+    "target_frames": 124,
+    "prompt": "replace with the exact production prompt",
+    "seed": 0
+  },
+  "status": "planned",
+  "run_receipts": [],
+  "notes": "Template only; duplicate with a project frame range and exact media references."
+}

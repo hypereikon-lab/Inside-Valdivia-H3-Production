@@ -1,0 +1,40 @@
+{
+  "schema": "inside-valdivia.h3-workflow-spec/1",
+  "id": "W3",
+  "version": 1,
+  "name": "H3 temporally guided generation",
+  "operation": "Generate one native H3 target with one or more guide frames or guide clips placed at explicit frame indices.",
+  "input_contract": [
+    { "name": "prompt", "type": "STRING", "required": true },
+    { "name": "guides", "type": "IMAGE", "required": true, "cardinality": "one or more frame batches with explicit frame_idx" },
+    { "name": "seed", "type": "INT", "required": true }
+  ],
+  "output_contract": [
+    { "name": "generated_frames", "type": "IMAGE", "required": true, "cardinality": "target frame count" },
+    { "name": "native_av_latent", "type": "LATENT", "required": false, "cardinality": "one packed H3 AV latent" }
+  ],
+  "constraints": {
+    "frame_rate": 24,
+    "frame_count_rule": "17k+5",
+    "preferred_frame_count_range": [124, 362],
+    "valid_multi_frame_guide_lengths": [5, 22, 39, 56, 73, 90, 107],
+    "guide_fit_rule": "resolved_frame_idx + guide_frames <= target_frames",
+    "guide_audio_inputs": false,
+    "fixed_soundtrack_conditioning": false
+  },
+  "graph_contract": [
+    { "order": 1, "owner": "official-comfy", "node_type": "MiniMaxH3ImageToVideo", "role": "create base prompt conditioning and a fresh packed AV latent" },
+    { "order": 2, "owner": "official-comfy", "node_type": "MiniMaxH3AddGuide", "role": "append a guide image or guide clip at an exact pixel-frame index", "repeatable": true },
+    { "order": 3, "owner": "official-comfy", "node_type": "MiniMaxH3SigmaShift", "role": "set coherent flow shifts" },
+    { "order": 4, "owner": "vanilla-comfy", "node_type": null, "role": "sample and decode with explicit parameters" }
+  ],
+  "variants": [
+    { "id": "single-anchor", "guide_count": 1 },
+    { "id": "multi-anchor", "guide_count": "two or more" },
+    { "id": "guide-clip", "guide_length_rule": "17k+5" }
+  ],
+  "evidence": {
+    "deterministic_layer": "guide crop and bounds are documented upstream",
+    "model_layer": "requires per-run execution and visual evaluation"
+  }
+}

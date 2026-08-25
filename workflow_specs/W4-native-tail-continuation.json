@@ -1,0 +1,37 @@
+{
+  "schema": "inside-valdivia.h3-workflow-spec/1",
+  "id": "W4",
+  "version": 1,
+  "name": "H3 native tail continuation",
+  "operation": "Extend an H3 native AV latent using its final native latent range as a guide, then append only the new suffix.",
+  "input_contract": [
+    { "name": "source_native_av_latent", "type": "LATENT", "required": true, "cardinality": "one packed H3 AV latent" },
+    { "name": "positive_conditioning", "type": "CONDITIONING", "required": true },
+    { "name": "seed", "type": "INT", "required": true }
+  ],
+  "output_contract": [
+    { "name": "continued_native_av_latent", "type": "LATENT", "required": true, "cardinality": "source plus accepted suffix" },
+    { "name": "continued_frames", "type": "IMAGE", "required": false, "cardinality": "decoded source plus suffix" }
+  ],
+  "constraints": {
+    "frame_rate": 24,
+    "frame_count_rule": "17k+5",
+    "characterized_overlap_frames": 22,
+    "fixed_soundtrack_conditioning": false,
+    "external_pack": "ttulttul/ComfyUI-Minimax-H3-Continuation"
+  },
+  "graph_contract": [
+    { "order": 1, "owner": "external-pack", "node_type": "MiniMaxH3LatentTailGuide", "role": "extract the characterized native latent tail guide" },
+    { "order": 2, "owner": "external-pack", "node_type": "MiniMaxH3GuidedContinuationWindow", "role": "construct a fresh continuation target and inject the native tail guide through H3 conditioning" },
+    { "order": 3, "owner": "official-comfy", "node_type": "MiniMaxH3SigmaShift", "role": "set coherent flow shifts" },
+    { "order": 4, "owner": "vanilla-comfy", "node_type": null, "role": "sample the continuation window with explicit parameters" },
+    { "order": 5, "owner": "external-pack", "node_type": "MiniMaxH3AppendContinuation", "role": "discard regenerated overlap and append only the new native suffix" }
+  ],
+  "variants": [
+    { "id": "characterized-22-frame-overlap", "overlap_frames": 22 }
+  ],
+  "evidence": {
+    "deterministic_layer": "external pack tests and documented characterized workflow",
+    "model_layer": "requires live schema validation, execution, and visual evaluation"
+  }
+}
