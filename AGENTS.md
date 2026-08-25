@@ -19,6 +19,9 @@ rendered media.
   contract hash from `operations.lock.json`.
 - A generic operation contract is not an importable UI/API graph until CAUCE
   records a paired materialization validated against live `/object_info`.
+- A CAUCE offline topology dossier is a graph design, not workflow JSON. Build
+  the active graph from it, export the paired UI/API forms with Workspace
+  Control, and use Runtime Control for guarded materialization.
 - Project data binds operations to concrete media and parameters; it must not
   duplicate generic graph ownership or create a sequential workflow ontology.
 - A run receipt may say `executes`; only inspected media can say

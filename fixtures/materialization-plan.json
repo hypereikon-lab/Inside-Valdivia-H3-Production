@@ -5,6 +5,12 @@
   "operation_contract_hash": "293c342e54d66ac4b8f5147636e9aa0617635abba5d2d4acc2919999104208b1",
   "variant": "first-last",
   "runtime_manifest_hash": null,
+  "sources": {
+    "workspace_export": null,
+    "parameterization": null,
+    "runtime_manifest": null,
+    "operation_ref": "fixtures/operation-ref.json"
+  },
   "bindings": {
     "model_variant": null,
     "model_files": {},
@@ -19,9 +25,12 @@
   },
   "outputs": {
     "ui_graph": null,
-    "api_graph": null,
+    "api_template": null,
+    "bindings": null,
+    "materialization_manifest": null,
     "ui_graph_hash": null,
-    "api_graph_hash": null
+    "api_template_hash": null,
+    "bindings_hash": null
   },
   "validation": {
     "schema_status": "pending",

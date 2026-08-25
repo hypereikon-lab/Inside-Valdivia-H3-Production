@@ -89,6 +89,18 @@ class RepositoryValidationTests(unittest.TestCase):
         plan_path = ROOT / "fixtures" / "materialization-plan.json"
         plan = load_json(plan_path)
         self.assertEqual(validate_materialization_plan(plan, plan_path, registry), [])
+        self.assertEqual(
+            set(plan["outputs"]),
+            {
+                "ui_graph",
+                "api_template",
+                "bindings",
+                "materialization_manifest",
+                "ui_graph_hash",
+                "api_template_hash",
+                "bindings_hash",
+            },
+        )
         plan.pop("variant")
         self.assertIn(
             f"{plan_path}: variant must be a non-empty string",

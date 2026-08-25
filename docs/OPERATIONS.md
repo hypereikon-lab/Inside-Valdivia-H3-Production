@@ -90,5 +90,6 @@ output, never by assuming implicit progression.
 
 Only `continue.native_av` has current-system live execution evidence, and that
 evidence is a synthetic one-step structural smoke without visual evaluation.
-All other operations remain locked contracts until paired graphs are
-materialized and evaluated.
+All seven operations now have internally checked offline topology dossiers,
+but none has a retained UI/API pair. All other operations remain locked
+contracts until paired graphs are materialized and evaluated.

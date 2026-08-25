@@ -46,9 +46,10 @@ The laboratory had `ComfyUI-Cauce` commit
 all six H3 AV primitive nodes were present in `/object_info`.
 
 The project operation lock points to CAUCE contract commit
-`5a7aab534e1cfec307d1ee7662029d2c0471e43f`. That commit contains the semantic
-operation catalog and validation but does not change the 19 registered ComfyUI
-nodes. The operation contracts therefore do not require a live-node update to
+`e3793868daf89400b3d853699a5b93415c8e2629`. That commit contains the semantic
+operation catalog plus one validated, non-executable topology dossier for each
+of the seven operations. It does not change the 19 registered ComfyUI nodes.
+The contract/topology update therefore does not require a live-node update to
 be consumed as project data.
 
 `ComfyUI-Workspace-Control` is implemented and locally tested. Before the
@@ -59,17 +60,25 @@ submitted again. No ComfyUI restart was requested afterwards. When the origin
 returns, inspect Manager's installed-node inventory and the capability route
 before deciding whether any installation or restart action remains necessary.
 
+`ComfyUI-Runtime-Control` commit
+`e5abab0a140a08dd6d8e8f6ad092daa3168aba11` implements the deterministic
+bridge from one Workspace Control paired export to a guarded, variant-scoped
+UI/API draft. It verifies source hashes, literal expected values, exact API
+round trip, and—when a full probe manifest is supplied—the captured
+`/object_info`. This is locally tested but has not yet been exercised against
+the unavailable lab.
+
 ## Operation ownership and evidence
 
 | Operation | Implementation | Retained graph artifact | Strongest current evidence |
 | --- | --- | --- | --- |
-| `generate.keyframed` | official H3 / vanilla ComfyUI | none | locked contract |
-| `generate.from_references` | official H3 / vanilla ComfyUI | none | locked contract |
-| `generate.with_guides` | official H3 / vanilla ComfyUI | none | locked contract |
-| `continue.native_av` | official H3 sampling + CAUCE native AV primitives | exact smoke described as evidence; no reusable pair | synthetic live execution |
-| `connect.two_sided_guides` | official H3 guides + CAUCE ranges + vanilla assembly | none | locked contract |
-| `reference.transform` | CAUCE decoded-media maps | none | deterministic map layer unit-validated |
-| `frames.assemble` | CAUCE exact ranges + vanilla assembly | none | deterministic range layer unit-validated |
+| `generate.keyframed` | official H3 / vanilla ComfyUI | offline topology; no graph pair | locked contract |
+| `generate.from_references` | official H3 / vanilla ComfyUI | offline topology; no graph pair | locked contract |
+| `generate.with_guides` | official H3 / vanilla ComfyUI | offline topology; no graph pair | locked contract |
+| `continue.native_av` | official H3 sampling + CAUCE native AV primitives | offline topology + exact smoke evidence; no reusable pair | synthetic live execution |
+| `connect.two_sided_guides` | official H3 guides + CAUCE ranges + vanilla assembly | offline topology; no graph pair | locked contract |
+| `reference.transform` | CAUCE decoded-media maps | offline topology; no graph pair | deterministic map layer unit-validated |
+| `frames.assemble` | CAUCE exact ranges + vanilla assembly | offline topology; no graph pair | deterministic range layer unit-validated |
 
 The three `generate.*` operations add no custom model capability. They provide
 typed, reproducible contracts for official H3 behavior.
@@ -120,7 +129,8 @@ possible to compose
 ```
 
 Current retained products include a content-addressed CAUCE operation lock,
-project invocation schemas, deterministic CAUCE primitives, Runtime Control,
+project invocation schemas, deterministic CAUCE primitives, seven offline
+topology dossiers, the paired-export materialization bridge in Runtime Control,
 and Workspace Control source code. CAUCE does not yet ship paired import-tested
 UI graphs and reusable API templates for these operations.
 

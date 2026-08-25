@@ -211,8 +211,32 @@ def validate_materialization_plan(
         errors.append(f"{path}: variant must be a non-empty string")
     if not isinstance(value.get("bindings"), dict):
         errors.append(f"{path}: bindings must be an object")
-    if not isinstance(value.get("outputs"), dict):
+    sources = value.get("sources")
+    if not isinstance(sources, dict) or set(sources) != {
+        "workspace_export",
+        "parameterization",
+        "runtime_manifest",
+        "operation_ref",
+    }:
+        errors.append(f"{path}: sources must name the four materialization inputs")
+    outputs = value.get("outputs")
+    if not isinstance(outputs, dict):
         errors.append(f"{path}: outputs must be an object")
+    elif set(outputs) != {
+        "ui_graph",
+        "api_template",
+        "bindings",
+        "materialization_manifest",
+        "ui_graph_hash",
+        "api_template_hash",
+        "bindings_hash",
+    }:
+        errors.append(f"{path}: outputs must name the complete materialized draft")
+    manifest_hash = value.get("runtime_manifest_hash")
+    if manifest_hash is not None and (
+        not isinstance(manifest_hash, str) or not SHA256.fullmatch(manifest_hash)
+    ):
+        errors.append(f"{path}: runtime_manifest_hash must be null or lowercase SHA-256")
     return errors
 
 
