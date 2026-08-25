@@ -52,13 +52,15 @@ of the seven operations. It does not change the 19 registered ComfyUI nodes.
 The contract/topology update therefore does not require a live-node update to
 be consumed as project data.
 
-`ComfyUI-Workspace-Control` is implemented and locally tested. Before the
-current outage its capability route returned 404. One exact Manager Git-URL
-installation request was subsequently submitted; the request timed out while
-the ComfyUI origin stopped responding, so its outcome is unknown and it was not
-submitted again. No ComfyUI restart was requested afterwards. When the origin
-returns, inspect Manager's installed-node inventory and the capability route
-before deciding whether any installation or restart action remains necessary.
+`ComfyUI-Workspace-Control` commit
+`60402644df18344b1a37216a86870e5c1c0c9d2d` is implemented and locally tested.
+Before the current outage its capability route returned 404. One exact Manager
+Git-URL installation request was subsequently submitted; the request timed out
+while the ComfyUI origin stopped responding, so its outcome is unknown and it
+was not submitted again. No ComfyUI restart was requested afterwards. When the
+origin returns, inspect Manager's installed-node inventory and the capability
+route before deciding whether any installation or restart action remains
+necessary.
 
 `ComfyUI-Runtime-Control` commit
 `e5abab0a140a08dd6d8e8f6ad092daa3168aba11` implements the deterministic
