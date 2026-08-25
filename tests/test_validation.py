@@ -5,6 +5,7 @@ from tools.validate import (
     ROOT,
     is_h3_frame_count,
     load_json,
+    validate_materialization_plan,
     validate_operation_lock,
     validate_repository,
     validate_invocation,
@@ -81,6 +82,18 @@ class RepositoryValidationTests(unittest.TestCase):
         locked = registry[reference["id"]]
         self.assertEqual(reference["version"], locked["version"])
         self.assertEqual(reference["contract_hash"], locked["contract_hash"])
+
+    def test_materialization_plan_selects_one_variant(self):
+        lock_path = ROOT / "operations.lock.json"
+        _, registry = validate_operation_lock(load_json(lock_path), lock_path)
+        plan_path = ROOT / "fixtures" / "materialization-plan.json"
+        plan = load_json(plan_path)
+        self.assertEqual(validate_materialization_plan(plan, plan_path, registry), [])
+        plan.pop("variant")
+        self.assertIn(
+            f"{plan_path}: variant must be a non-empty string",
+            validate_materialization_plan(plan, plan_path, registry),
+        )
 
 
 if __name__ == "__main__":

@@ -11,6 +11,7 @@ model files and free storage without downloading anything implicitly.
 Copy `fixtures/materialization-plan.json` and set:
 
 - exact operation id, version, and contract hash from `operations.lock.json`;
+- exact operation variant matching the graph topology being materialized;
 - model/quantization files;
 - width and height;
 - valid H3 target frame count;

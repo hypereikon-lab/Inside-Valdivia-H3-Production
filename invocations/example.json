@@ -3,7 +3,7 @@
   "id": "example-keyframed-generation-0001",
   "operation": "generate.keyframed",
   "operation_version": 1,
-  "operation_contract_hash": "6db7077c907d4ed3fbb66a1c244c130c402e6695907442315c339c7665e075a1",
+  "operation_contract_hash": "293c342e54d66ac4b8f5147636e9aa0617635abba5d2d4acc2919999104208b1",
   "inputs": {
     "first_frame": "input://frames/example-start.png",
     "last_frame": "input://frames/example-end.png"

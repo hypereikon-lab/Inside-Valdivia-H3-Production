@@ -207,6 +207,8 @@ def validate_materialization_plan(
     if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.materialization-plan/1":
         return [f"{path}: invalid materialization plan"]
     errors = _validate_operation_reference(value, path, registry, require_hash=True)
+    if not isinstance(value.get("variant"), str) or not value["variant"]:
+        errors.append(f"{path}: variant must be a non-empty string")
     if not isinstance(value.get("bindings"), dict):
         errors.append(f"{path}: bindings must be an object")
     if not isinstance(value.get("outputs"), dict):

@@ -6,10 +6,12 @@ implementation chronology as product documentation.
 
 ## Reachability
 
-At the latest user report on 2026-08-25, the laboratory tunnel was temporarily
-unavailable and expected to return later the same day. That blocks live schema
-queries, queue submission, GPU execution, Manager operations, and visual
-inspection. It does not imply that the installed ComfyUI or CAUCE state changed.
+At the latest user report on 2026-08-25, the laboratory hostname returned HTTP
+504 and is treated as unavailable. A gateway timeout alone does not distinguish
+a stopped Cloudflare connector from a connector whose `localhost:8188` origin
+is not responding. This blocks live schema queries, queue submission, GPU
+execution, Manager operations, and visual inspection. It does not establish
+that the installed ComfyUI, CAUCE, model, driver, or GPU state changed.
 
 The last verified laboratory runtime was:
 
@@ -44,14 +46,18 @@ The laboratory had `ComfyUI-Cauce` commit
 all six H3 AV primitive nodes were present in `/object_info`.
 
 The project operation lock points to CAUCE contract commit
-`8fde2f20b5a78848043aba4a9d5eb4bc2284e58e`. That commit contains the semantic
+`5a7aab534e1cfec307d1ee7662029d2c0471e43f`. That commit contains the semantic
 operation catalog and validation but does not change the 19 registered ComfyUI
 nodes. The operation contracts therefore do not require a live-node update to
 be consumed as project data.
 
-`ComfyUI-Workspace-Control` is implemented and locally tested but is not
-installed in the laboratory. Its capability route therefore remains absent
-until a separately confirmed targeted installation and ComfyUI-process restart.
+`ComfyUI-Workspace-Control` is implemented and locally tested. Before the
+current outage its capability route returned 404. One exact Manager Git-URL
+installation request was subsequently submitted; the request timed out while
+the ComfyUI origin stopped responding, so its outcome is unknown and it was not
+submitted again. No ComfyUI restart was requested afterwards. When the origin
+returns, inspect Manager's installed-node inventory and the capability route
+before deciding whether any installation or restart action remains necessary.
 
 ## Operation ownership and evidence
 
