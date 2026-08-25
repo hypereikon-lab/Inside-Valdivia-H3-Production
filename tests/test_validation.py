@@ -62,11 +62,14 @@ class RepositoryValidationTests(unittest.TestCase):
 
     def test_experiments_reference_named_operations(self):
         catalog = load_json(ROOT / "experiments" / "catalog.json")
+        lock_path = ROOT / "operations.lock.json"
+        _, registry = validate_operation_lock(load_json(lock_path), lock_path)
         for experiment in catalog["experiments"]:
             self.assertTrue(experiment["operations"])
             for operation in experiment["operations"]:
                 self.assertIn("id", operation)
                 self.assertIn("version", operation)
+                self.assertEqual(operation["version"], registry[operation["id"]]["version"])
         motion = next(
             value for value in catalog["experiments"] if value["id"] == "motion-reference-map"
         )
@@ -74,6 +77,18 @@ class RepositoryValidationTests(unittest.TestCase):
             [value["id"] for value in motion["operations"]],
             ["reference.transform", "generate.from_references"],
         )
+
+    def test_reference_duration_baseline_stays_on_documented_h3_lengths(self):
+        catalog = load_json(ROOT / "experiments" / "catalog.json")
+        experiment = next(
+            value
+            for value in catalog["experiments"]
+            if value["id"] == "reference-clip-duration"
+        )
+        frame_counts = experiment["variable"]["reference_clip_frames"]
+        self.assertTrue(frame_counts)
+        self.assertTrue(all(is_h3_frame_count(value) for value in frame_counts))
+        self.assertTrue(all(2 * 24 <= value <= 15 * 24 for value in frame_counts))
 
     def test_runtime_operation_reference_matches_lock(self):
         reference = load_json(ROOT / "fixtures" / "operation-ref.json")

@@ -23,6 +23,10 @@ not custom inference behavior.
 Official Ref2VA generation from ordered reference images or 24 fps clips. The
 fixed production soundtrack remains outside conditioning.
 
+The current ComfyUI node accepts a five-frame technical minimum, but production
+baselines use legal `17k+5` clips inside the model's documented 2–15 second
+reference-video range. The first such legal length is 56 frames.
+
 ### `generate.with_guides`
 
 Official H3 generation with one or more decoded guides placed at exact target

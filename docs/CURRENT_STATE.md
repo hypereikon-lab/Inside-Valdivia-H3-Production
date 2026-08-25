@@ -45,8 +45,8 @@ The laboratory had `ComfyUI-Cauce` commit
 `81cc8fc6b44b1983c55d587f82c2628a95542258` installed. All 19 CAUCE nodes and
 all six H3 AV primitive nodes were present in `/object_info`.
 
-The project operation lock points to CAUCE 3.2.0 commit
-`9654504592b2528b28cc3643e187d51318850409`. It retains the same seven semantic
+The project operation lock points to CAUCE 3.3.0 commit
+`b33725e1edd9a62beeca2bbabb1e27b75b7cdb0e`. It retains the same seven semantic
 operation contracts and checked, non-executable topology dossiers while
 expanding the source registry from 19 to 24 nodes. The five additional
 primitives are:
@@ -63,6 +63,11 @@ All five are locally unit-validated. The first four expose official H3 temporal
 input rules and active conditioning metadata without replacing official
 encoding or sampling; the fifth splits an origin-zero cumulative packed AV
 state into a valid prefix and reversible contiguous suffix span.
+
+`generate.from_references` contract version 2 distinguishes the five-frame
+minimum accepted by the current ComfyUI implementation from the model's
+documented 2–15 second reference-video range. Production baselines therefore
+start at the first compliant `17k+5` length, 56 frames.
 
 The lock records the intended project source, not the currently imported
 laboratory process. The laboratory remains last verified at the older 19-node
@@ -87,6 +92,17 @@ UI/API draft. It verifies source hashes, literal expected values, exact API
 round trip, and—when a full probe manifest is supplied—the captured
 `/object_info`. This is locally tested but has not yet been exercised against
 the unavailable lab.
+
+## Retired surfaces
+
+`ComfyUI-Cauce-SamplerLab` is a rejected Euler latent-transport experiment. Its
+visual result showed ghosting/delay and it is not a CAUCE capability or roadmap
+item. `ComfyUI-Hypereikon-H3-Production` is also deprecated: its combined
+runtime, timeline, plate, soundtrack-conditioning, and experimental inpainting
+surface is outside the current architecture. Neither package should be
+installed or updated. When the runtime returns, inventory both exact package
+names and remove an installed copy through a targeted operation before the
+canonical workflow session.
 
 ## Operation ownership and evidence
 
@@ -152,7 +168,7 @@ Current retained products include a content-addressed CAUCE operation lock,
 project invocation schemas, deterministic CAUCE primitives, visible H3 temporal
 preflight and conditioning inspection, reversible native-state branching,
 seven offline topology dossiers, the paired-export materialization bridge in
-Runtime Control, and Workspace Control source code. The five CAUCE 3.2.0 nodes
+Runtime Control, and Workspace Control source code. The five CAUCE 3.3.0 nodes
 are source- and unit-validated only until the live update. CAUCE does not yet
 ship paired import-tested UI graphs and reusable API templates for these
 operations.

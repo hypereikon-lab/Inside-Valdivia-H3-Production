@@ -45,6 +45,7 @@ yet been promoted. See [operation usage](docs/OPERATIONS.md),
 [data model](docs/DATA_MODEL.md), and [materialization](docs/MATERIALIZATION.md).
 
 Current implementation and evidence record: [current state](docs/CURRENT_STATE.md).
+Execution order and promotion gates: [production roadmap](docs/ROADMAP.md).
 
 ## Validate
 

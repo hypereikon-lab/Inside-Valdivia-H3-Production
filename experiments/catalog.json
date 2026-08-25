@@ -12,7 +12,7 @@
     },
     {
       "id": "reference-image-size",
-      "operations": [{ "id": "generate.from_references", "version": 1 }],
+      "operations": [{ "id": "generate.from_references", "version": 2 }],
       "question": "What quality and runtime difference does the official reference-image size mode produce?",
       "fixed": ["model", "resolution", "target_frames", "reference_image", "prompt", "seed", "sampler", "scheduler", "steps"],
       "variable": { "ref_image_size": ["match", "max"] },
@@ -21,10 +21,10 @@
     },
     {
       "id": "reference-clip-duration",
-      "operations": [{ "id": "generate.from_references", "version": 1 }],
-      "question": "How much reference motion is retained as the supplied 24 fps clip length changes on valid H3 lengths?",
+      "operations": [{ "id": "generate.from_references", "version": 2 }],
+      "question": "How much reference motion is retained as a documented-range 24 fps clip changes across valid H3 lengths?",
       "fixed": ["model", "resolution", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps", "reference motion source"],
-      "variable": { "reference_clip_frames": [22, 39, 56, 73, 90, 107] },
+      "variable": { "reference_clip_frames": [56, 73, 90, 107, 124] },
       "measure": ["motion correspondence", "appearance drift", "temporal artifacts"],
       "status": "planned"
     },
@@ -68,7 +68,7 @@
       "id": "motion-reference-map",
       "operations": [
         { "id": "reference.transform", "version": 1 },
-        { "id": "generate.from_references", "version": 1 }
+        { "id": "generate.from_references", "version": 2 }
       ],
       "question": "Which inspectable decoded reference construction produces the strongest usable motion correspondence through official Ref2VA conditioning?",
       "fixed": ["source frames", "reference duration", "model", "resolution", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps"],
