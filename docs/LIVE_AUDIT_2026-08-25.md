@@ -86,3 +86,40 @@ Manager reports three saved workflows and none references a `Cauce*` node.
 Replacing the old CAUCE registry therefore has no detected saved-workflow
 dependency. The currently open unsaved browser workflow remains user-owned and
 must not be closed automatically.
+
+## Targeted CAUCE 3.0 deployment and W4 smoke
+
+Later on 2026-08-25, after explicit user confirmation, Manager updated only
+`ComfyUI-Cauce` and restarted only the ComfyUI Python process. No ComfyUI core,
+Manager, model, CUDA, PyTorch, driver, or physical-tower update was included.
+
+Post-restart state:
+
+```text
+installed CAUCE commit       81cc8fc6b44b1983c55d587f82c2628a95542258
+registered CAUCE node types  19
+H3 AV primitive node types    6/6 present
+GPU queue                     empty after validation
+```
+
+A minimal W4 API graph executed successfully under prompt id
+`d6ca67c6-71af-4172-9ab7-cc18a0e6ad7e`. The test used a synthetic 22-frame
+cumulative AV latent, a 5-frame overlap, a 51-frame extension, a fresh
+56-frame target at global origin 17, one ordinary official H3 sampling step,
+and the CAUCE span-guide/suffix/append path. It saved only a small packed latent
+below `output/cauce/smoke/`; no decoded video was produced.
+
+The saved result was loaded and independently inspected under prompt id
+`aa5bf2cc-ea0d-4f8f-80a4-0fe3b64317bc`:
+
+```text
+frames                   73
+video tokens             22
+structural-audio tokens  122
+video shape              [1, 24, 22, 12, 20]
+audio shape              [1, 32, 2, 122]
+```
+
+This evidence earns `executes` for the native AV continuation mechanics and
+live schema. It is not a visual-quality result: the source was synthetic, the
+resolution was 320x192, and the sampled run used one step only.

@@ -45,6 +45,6 @@
   ],
   "evidence": {
     "deterministic_layer": "CAUCE 3.0 AV layout/span/append operations unit-validated with synthetic packed tensors",
-    "model_layer": "requires live schema validation, execution, and visual evaluation"
+    "model_layer": "live schema and a synthetic one-step continuation smoke execute on CAUCE 3.0; production-resolution visual evaluation remains pending"
   }
 }
