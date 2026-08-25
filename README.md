@@ -37,6 +37,8 @@ The JSON files in `workflow_specs/` are declarative materialization contracts,
 not browser workflow exports. See [Canonical workflows](docs/WORKFLOWS.md),
 [data model](docs/DATA_MODEL.md), and [materialization](docs/MATERIALIZATION.md).
 
+Latest read-only environment record: [laboratory runtime audit, 2026-08-25](docs/LIVE_AUDIT_2026-08-25.md).
+
 ## Validate
 
 ```bash
