@@ -1,18 +1,27 @@
-# Technical sources
+# Primary technical sources
 
-Primary implementations used to define the current contracts:
+Implementation contracts were checked against primary code and merged upstream
+changes, not inferred from workflow screenshots:
 
 - [MiniMax H3 official repository](https://github.com/MiniMax-AI/MiniMax-H3)
-- [Official ComfyUI MiniMax H3 nodes](https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_minimax_h3.py)
-- [Official AddGuide embedded documentation](https://github.com/Comfy-Org/embedded-docs/blob/main/comfyui_embedded_docs/docs/MiniMaxH3AddGuide/en.md)
-- [Inspected MiniMax H3 continuation reference](https://github.com/ttulttul/ComfyUI-Minimax-H3-Continuation) — behavior oracle for CAUCE's independent low-level AV primitives, not a runtime dependency
+- [Official ComfyUI H3 nodes](https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_minimax_h3.py)
+- [ComfyUI PR #15439: MiniMax H3 AddGuide](https://github.com/Comfy-Org/ComfyUI/pull/15439)
+- [ComfyUI PR #15375: continuous per-token denoise masks](https://github.com/Comfy-Org/ComfyUI/pull/15375)
+- [AddGuide embedded documentation](https://github.com/Comfy-Org/embedded-docs/blob/main/comfyui_embedded_docs/docs/MiniMaxH3AddGuide/en.md)
 - [ComfyUI server routes](https://docs.comfy.org/development/comfyui-server/comms_routes)
-- [ComfyUI JavaScript extension overview](https://docs.comfy.org/custom-nodes/js/javascript_overview)
 - [ComfyUI frontend workflow service](https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/platform/workflow/core/services/workflowService.ts)
 
-Current specs derive H3 facts from implementation behavior: 24 fps, packed
-visual/structural-audio latent streams, `17k+5` frame counts, optional
-first/last keyframes, ordered reference blocks, arbitrary-frame AddGuide chains,
-and coherent video/audio flow shifts. Community claims are not promoted into a
-canonical workflow until their mechanism is inspectable and a live experiment
-produces relevant evidence.
+Inspected community implementations are design references, never runtime
+dependencies or behavioral proof:
+
+- [MiniMax H3 Continuation](https://github.com/ttulttul/ComfyUI-Minimax-H3-Continuation)
+- [MMH3Tools](https://github.com/ckinpdx/ComfyUI-MMH3Tools)
+- [H3 Continuum](https://github.com/ukr8b3g-cmyk/ComfyUI-H3-Continuum)
+
+The checked official surface establishes optional first/last images, ordered
+Ref2VA references, arbitrary-frame AddGuide composition, packed visual and
+structural-audio streams, and independent continuous noise masks consumed by
+the H3 sampler. CAUCE preserves those semantics while adding exact timebase,
+placement, mask-construction, replacement, persistence, and rollback
+primitives. Community techniques become production capabilities only after
+their mechanism is reproduced transparently and live evidence is retained.

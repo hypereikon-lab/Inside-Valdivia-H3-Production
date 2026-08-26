@@ -1,100 +1,89 @@
-# Using CAUCE operations in Inside Valdivia
+# Operation surface
 
-This project consumes a version-locked semantic operation catalog from CAUCE.
-Operations are reusable data functions, not sequential production stages.
+An operation is a typed graph-level data function over opaque media or packed
+native H3 state. It is not a monolithic custom node and its name does not imply
+production order.
 
-```text
-project media + parameters
-  -> one locked operation invocation
-      -> frames and/or native H3 state
-          -> optional later operation invocation
-```
-
-## Generation operations
+## Official generation
 
 ### `generate.keyframed`
 
-Official H3/vanilla generation from a prompt and optional first and last anchor
-frames. CAUCE contributes the typed contract and reproducible materialization,
-not custom inference behavior.
+FL2VA with prompt and zero, one, or two endpoint images. Variants are
+`text-only`, `first-frame`, `last-frame`, and `first-last`. Official
+`MiniMaxH3ImageToVideo` owns the conditioning.
 
 ### `generate.from_references`
 
-Official Ref2VA generation from ordered reference images or 24 fps clips. The
-fixed production soundtrack remains outside conditioning.
-
-The current ComfyUI node accepts a five-frame technical minimum, but production
-baselines use legal `17k+5` clips inside the model's documented 2–15 second
-reference-video range. The first such legal length is 56 frames.
+Ref2VA with ordered image references and optional 24 fps reference clips.
+Variants isolate `ref_image_size=match|max`, video reference, and video
+reference plus a temporal guide. Production reference clips use legal `17k+5`
+lengths inside the documented 2–15 second range.
 
 ### `generate.with_guides`
 
-Official H3 generation with one or more decoded guides placed at exact target
-frame indices. This is guide conditioning, not masked temporal inpainting.
+Official AddGuide chains place images or clips at exact target-frame indices.
+Variants cover one anchor, multiple anchors, one guide clip, and first/last
+endpoints plus an interior guide. A guide is conditioning, not a denoise mask.
 
-## State operation
+## Native AV state
 
 ### `continue.native_av`
 
-Extends a cumulative packed H3 AV latent while preserving exact visual and
-structural-audio clocks. It composes CAUCE window/span/append primitives around
-ordinary official sampling.
+Extends cumulative synchronized H3 video/structural-audio state. The
+`keyframe-overlap` variant transports the overlap through official H3
+keyframes. `masked-overlap` supplies retained native tokens plus independent
+per-token denoise masks. `masked-overlap-future-guide` adds a decoded future
+guide without conflating guide placement and mask semantics.
 
-Every accepted generation intended for later native continuation must retain
-its packed AV latent. A decoded video alone cannot provide the same state.
+### `complete.native_av`
 
-## Connection operation
+Samples an unknown temporal interval while preserving explicit native context.
+The same low-level placement/mask/replace grammar expresses:
 
-### `connect.two_sided_guides`
+- `two-sided-infill`: an unknown interior in one target state;
+- `local-replacement`: regenerate an interval of an existing state;
+- `backward-prefix`: generate before known right context;
+- `two-source-connection`: place exact left/right states around a gap.
 
-Selects decoded context from both sources, places both through official H3
-guides, generates a fresh target, retains the explicit center, and assembles
-the complete sources around it. The graph is currently contract-only and its
-visual usefulness remains unassessed.
+Video and structural-audio masks are independent continuous values in `[0,1]`.
+`1` asks the official sampler to generate and `0` preserves supplied native
+tokens. Fades are evaluated at each stream's real token centers, not by copying
+one approximate mask between 24 fps and 40 Hz clocks.
 
-## Deterministic media operations
+### `rollback.native_av`
+
+Splits cumulative state at an exact synchronized boundary into a branchable
+prefix and reversible suffix. A branch creates a new production plan from a
+checkpoint; it never rewrites the accepted history in place.
+
+Packed native AV state must be retained for continuation, completion, rollback,
+or branching. Decoding to MP4 and re-encoding does not reconstruct identical
+native state.
+
+## Deterministic decoded media
 
 ### `reference.transform`
 
-Constructs decoded, inspectable reference frames from CAUCE coordinate maps.
-Its output can feed `generate.from_references` or `generate.with_guides` in a
-separate invocation.
+Applies inspectable decoded coordinate maps, including an affine baseline, to
+produce reference media. It does not alter sampler internals or claim that H3
+will follow a map until an empirical generation is evaluated.
 
 ### `frames.assemble`
 
 Selects exact half-open decoded ranges and concatenates them without inference
 or resampling.
 
-## Composition examples
+## Composition
 
 ```text
-reference.transform
-  -> generate.from_references
-  -> continue.native_av
-  -> frames.assemble
+generate.keyframed -> continue.native_av -> continue.native_av
+
+reference.transform -> generate.from_references
+
+native state + explicit interval -> complete.native_av -> rollback.native_av
+
+accepted decoded ranges -> frames.assemble
 ```
 
-```text
-generate.keyframed
-  -> continue.native_av
-  -> continue.native_av
-```
-
-```text
-decoded sources
-  -> connect.two_sided_guides
-  -> frames.assemble
-```
-
-The project stores each invocation separately. Composition is expressed by one
-invocation referencing another invocation's exact artifact or native-state
-output, never by assuming implicit progression.
-
-## Current project evidence
-
-Only `continue.native_av` has current-system live execution evidence, and that
-evidence is a synthetic one-step structural smoke without visual evaluation.
-All seven operations now have internally checked offline topology coverage,
-with fourteen dossiers in total and thirteen selected project plans,
-but none has a retained UI/API pair. All other operations remain locked
-contracts until paired graphs are materialized and evaluated.
+Edges are explicit artifact/native-state references. The catalog never assumes
+that one operation automatically follows another.

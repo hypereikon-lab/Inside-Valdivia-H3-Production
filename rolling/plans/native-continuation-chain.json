@@ -1,0 +1,87 @@
+{
+  "schema": "inside-valdivia.rolling-plan/1",
+  "id": "native-continuation-chain",
+  "status": "offline-ready",
+  "frame_rate": 24,
+  "source_locks": {
+    "cauce_commit": "180acd890e455a3985448b828cd8fa650d467e25",
+    "runtime_repository": "https://github.com/hypereikon-lab/ComfyUI-Runtime-Control",
+    "runtime_commit": "a39583a4d2c335eea8ddbb8c8280402c64a160a2"
+  },
+  "execution": {
+    "runtime_schema": "comfy.run-series/1",
+    "requires_materialized_graphs": true,
+    "auto_wire_outputs": false,
+    "binding_mode": "explicit-prebound"
+  },
+  "checkpoint_policy": {
+    "frequency": "after-each-step",
+    "immutability": "content-addressed",
+    "receipt_required": true
+  },
+  "branch_policy": {
+    "mode": "new-plan-from-checkpoint",
+    "mutate_existing_plan": false,
+    "rollback_operation": "rollback.native_av",
+    "rollback_operation_version": 1,
+    "rollback_operation_contract_hash": "e440ecd49654c0f21227593a69af5a009d879c73389bfe6b8c859d64d1d61a1c"
+  },
+  "steps": [
+    {
+      "id": "seed",
+      "position": 1,
+      "operation": "generate.keyframed",
+      "operation_version": 1,
+      "operation_contract_hash": "293c342e54d66ac4b8f5147636e9aa0617635abba5d2d4acc2919999104208b1",
+      "variant": "first-frame",
+      "topology_key": "generate.keyframed@first-frame",
+      "materialization_plan": "materialization/plans/01-keyframed-first-frame.json",
+      "depends_on": null,
+      "input_bindings": {
+        "first_frame": null
+      },
+      "output_native_state": "native-av:branch-a:seed",
+      "status": "offline-ready"
+    },
+    {
+      "id": "extend-01",
+      "position": 2,
+      "operation": "continue.native_av",
+      "operation_version": 2,
+      "operation_contract_hash": "2776bb1db0e844648bcb2b4d98a1ef84b36a2488449ef7bdc77d7e44ceb6a8b5",
+      "variant": "keyframe-overlap",
+      "topology_key": "continue.native_av@keyframe-overlap",
+      "materialization_plan": "materialization/plans/07-native-continuation.json",
+      "depends_on": "seed",
+      "input_bindings": {
+        "source_native_av_latent": {
+          "from_step": "seed",
+          "output_native_state": "native-av:branch-a:seed"
+        },
+        "source_timeline_origin": 0
+      },
+      "output_native_state": "native-av:branch-a:extend-01",
+      "status": "offline-ready"
+    },
+    {
+      "id": "extend-02",
+      "position": 3,
+      "operation": "continue.native_av",
+      "operation_version": 2,
+      "operation_contract_hash": "2776bb1db0e844648bcb2b4d98a1ef84b36a2488449ef7bdc77d7e44ceb6a8b5",
+      "variant": "masked-overlap",
+      "topology_key": "continue.native_av@masked-overlap",
+      "materialization_plan": "materialization/plans/14-continuation-masked-overlap.json",
+      "depends_on": "extend-01",
+      "input_bindings": {
+        "source_native_av_latent": {
+          "from_step": "extend-01",
+          "output_native_state": "native-av:branch-a:extend-01"
+        },
+        "source_timeline_origin": 0
+      },
+      "output_native_state": "native-av:branch-a:extend-02",
+      "status": "offline-ready"
+    }
+  ]
+}

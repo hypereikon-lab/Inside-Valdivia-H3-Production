@@ -1,156 +1,102 @@
-# Materializing an operation invocation
+# Materialization and execution
 
-## Offline package available before the lab session
+`materialization/catalog.json` is the complete 22-variant offline queue. Every
+entry selects one exact CAUCE `operation@variant` topology and one checked plan
+in `materialization/plans/`.
 
-`materialization/catalog.json` is the authoritative thirteen-item queue. Each
-entry points to one project plan in `materialization/plans/` and to one exact
-CAUCE dossier key written as `operation@variant`. The plans already fix every
-invariant that can be known without the runtime:
+## What the offline plans establish
 
 ```text
-operation version and contract hash
-static topology variant
-model family and known laboratory filenames
-canonical geometry and temporal baseline
-input cardinality
-operation-specific range arithmetic
-promotion state = offline-ready
+CAUCE commit, operation version, contract hash
+exact variant and topology key
+known laboratory model filenames
+canonical geometry and 24 fps frame arithmetic
+input cardinality and temporal placement
+native-state/mask/rollback invariants
+status = offline-ready
 ```
 
-Values whose authority is the active graph or `/object_info` remain `null`:
-sampler, scheduler, steps, shifts, seed, actual media ids, workspace export,
-API pointers, runtime manifest, and output hashes. Filling those from memory
-would make the plan look more complete while making it less reproducible.
+They intentionally do not invent graph node ids, API pointers, sampler,
+scheduler, steps, shifts, seed, media ids, or runtime schema evidence. Null
+live-owned fields are unresolved work, not defaults.
 
-`python3 tools/validate.py` checks the queue is contiguous, every file is
-cataloged exactly once, every plan matches the operation lock, variant aliases
-have not drifted, and the canonical H3 temporal/range rules still hold.
-`python3 tools/verify_cauce_lock.py ../ComfyUI-Cauce` additionally checks the
-locked CAUCE commit, operation contracts, and planned topology variants.
+The queue covers:
 
-## Gate A — runtime capture
+- 4 FL2VA endpoint combinations;
+- 4 Ref2VA image/video/guide combinations;
+- 4 AddGuide image/clip/endpoint combinations;
+- 3 native continuation transports;
+- 4 native completion/replacement layouts;
+- 1 rollback, 1 deterministic assembly, and 1 affine reference transform.
 
-Run R1 immediately before graph construction and persist the full manifest:
+## Live materialization gates
+
+### 1. Capture one runtime truth
 
 ```bash
 comfy-runtime --url https://comfy.hypereikon.online \
   probe --output runtime-manifest.json
 ```
 
-Preserve the runtime manifest hash and the embedded `_captured_object_info`
-snapshot locally. Confirm the intended model files and free storage without
-downloading anything implicitly. A compact public manifest is insufficient for
-materialization because it does not contain the captured node schemas.
+Preserve the full manifest with `_captured_object_info`. Confirm exact node
+types, model files, revisions, and storage before constructing graphs.
 
-## Gate B — resolve and bind the operation
+### 2. Build one active graph
 
-Open the next entry in `materialization/catalog.json` and complete its existing
-plan. `fixtures/materialization-plan.json` remains a minimal format example.
-Set or confirm:
+Use the selected CAUCE topology dossier only as a construction checklist.
+Connect official H3, vanilla ComfyUI, and narrow CAUCE nodes explicitly. Keep
+optional topology branches absent; do not mute or bypass them inside one graph.
 
-- exact operation id, version, and contract hash from `operations.lock.json`;
-- exact operation variant matching the graph topology being materialized;
-- model/quantization files;
-- width and height;
-- valid H3 target frame count;
-- prompt and seed;
-- sampler, scheduler, steps, and flow shifts;
-- exact input media references.
+Bind exact values and media. Native operations additionally require absolute
+timeline origins, H3-valid frame boundaries, independent video/audio masks,
+and explicit retained-state inputs.
 
-Create the corresponding Runtime Control reference using
-`fixtures/operation-ref.json`; its three values must match the same lock entry.
-Use a distinct operation-reference value for each selected operation; the
-fixture is not a universal reference.
+### 3. Export a paired graph
 
-For `continue.native_av`, also bind `overlap_frames`, `extension_frames`, and
-every sampled window's `timeline_origin_frame`. For
-`connect.two_sided_guides`, bind the three exact decoded ranges and both guide
-indices; do not replace them with a workflow-intent custom node.
-
-Only the selected operation variant's required fields become graph nodes. Optional
-branches remain absent rather than muted or bypassed.
-
-Use the matching CAUCE topology dossier as a construction checklist. It is not
-workflow JSON and must not be imported or promoted directly.
-
-## Gate C — paired graph products
-
-Create and retain both:
-
-```text
-<operation>.<variant>.ui.json            browser graph, layout, widgets, metadata
-<operation>.<variant>.api.template.json  bindable server graph template
-```
-
-Export both from the same active graph through Workspace Control. The export
-schema is `comfy.workspace-export/1` and contains both graph values plus their
-independent hashes. The formats are not interchangeable.
-
-Create `parameterization.json` by naming only literal API inputs that genuinely
-vary between invocations. Each pointer includes the value captured in the
-export as an expected-value guard:
-
-```json
-{
-  "schema": "comfy.api-parameterization/1",
-  "parameters": [
-    {
-      "name": "first_frame_filename",
-      "pointers": ["/1/inputs/image"],
-      "expected": "captured-first.png"
-    }
-  ]
-}
-```
-
-Do not parameterize graph links. If a branch changes topology, create a distinct
-operation variant.
-
-Materialize with Runtime Control:
-
-```bash
-comfy-runtime materialize-export workspace-export.json parameterization.json \
-  --operation-ref fixtures/operation-ref.json \
-  --variant first-last \
-  --runtime-manifest runtime-manifest.json \
-  --output-dir drafts
-```
-
-The command produces four guarded files without overwriting existing files:
+Retain both products from the same active browser graph:
 
 ```text
 <operation>.<variant>.ui.json
 <operation>.<variant>.api.template.json
-<operation>.<variant>.bindings.json
-<operation>.<variant>.materialization.json
 ```
 
-It requires the template plus captured bindings to reconstruct the exact API
-graph hash. `schema-validated-draft` still carries the promotion gate
-`requires-live-review`.
+The UI graph preserves layout/widgets; the API graph is executable structure.
+Their hashes are independent and the formats are not interchangeable.
 
-Generic validated pairs belong back in CAUCE. Project-specific compiled API
-graphs and bindings remain in project receipts or the selected artifact store.
+Parameterization names only literal API values that vary and guards each with
+its captured expected value. Links are never replaced with parameters.
 
-## Gate D — live schema validation
+```bash
+comfy-runtime materialize-export workspace-export.json parameterization.json \
+  --operation-ref operation-ref.json \
+  --variant exact-variant \
+  --runtime-manifest runtime-manifest.json \
+  --output-dir drafts
+```
 
-The materialization command validates the reconstructed API graph against the
-same captured `/object_info`. Before submission, compile the template with the
-intended production bindings and validate against the current live runtime as a
-fresh check. A valid graph has:
+The result is still `requires-live-review` until reconstructed graph validation,
+submission, receipt, and visual assessment are complete.
 
-- every referenced node type present;
-- every required input present;
-- links to existing source nodes and valid output slots;
-- current combo values;
-- no stale custom-node name from a previous version.
+### 4. Execute and record evidence
 
-## Gate E — execution and evidence
-
-Submit once, wait on its exact `prompt_id`, and resolve only its history
-artifacts. The automatic receipt starts at `executes`. Watch the requested
-range at normal speed and frame-by-frame before changing it to
+Validate the concrete graph against fresh `/object_info`, submit once, persist
+the returned prompt id, and resolve artifacts only from that prompt's history.
+`executes` is technical evidence. Only inspected media may be marked
 `visually-accepted` or `rejected`.
 
-Controlled comparisons change one declared experimental variable. Everything
-listed under `fixed` remains byte-for-byte or value-for-value identical.
+## Rolling production
+
+`rolling/plans/native-continuation-chain.json` defines strict native-state
+dependencies and checkpoints. It is a project plan, not `comfy.run-series/1`
+input. After selected steps have concrete paired graphs:
+
+1. resolve every input binding, including the preceding native-state file;
+2. compile a distinct concrete API graph and operation reference per step;
+3. create a neutral `comfy.run-series/1` plan whose dependencies match the
+   project plan;
+4. run it with persisted state, receipts, and optional artifact downloads.
+
+Runtime Control validates every graph before the first mutation and resumes an
+already-submitted prompt by exact id after interruption. It does not infer or
+auto-wire outputs. Any branch starts as a new rolling plan from one immutable
+checkpoint, optionally using `rollback.native_av` to select its prefix.

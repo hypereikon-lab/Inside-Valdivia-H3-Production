@@ -1,0 +1,47 @@
+{
+  "schema": "inside-valdivia.materialization-plan/1",
+  "operation": "complete.native_av",
+  "operation_version": 1,
+  "operation_contract_hash": "bef22c04534126804a4d884ae69f8229a97eb3bc562c8403ffdca508a0043ca4",
+  "variant": "backward-prefix",
+  "topology_key": "complete.native_av@backward-prefix",
+  "priority": 17,
+  "status": "offline-ready",
+  "runtime_manifest_hash": null,
+  "sources": { "workspace_export": null, "parameterization": null, "runtime_manifest": null, "operation_ref": null },
+  "bindings": {
+    "model_variant": "FL2VA",
+    "model_files": {
+      "diffusion_model": "diffusion_models/minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+      "text_encoder": "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "video_vae": "vae/minimax_h3_video_vae_fp16.safetensors"
+    },
+    "resolution": [768, 1344],
+    "target_frames": 124,
+    "timeline_origin_frame": 0,
+    "known_right_frames": 73,
+    "known_right_target_frame": 51,
+    "unknown_start_frame": 0,
+    "unknown_frame_count": 51,
+    "mask": {
+      "inside_strength_video": 1.0,
+      "outside_strength_video": 0.0,
+      "inside_strength_audio": 1.0,
+      "outside_strength_audio": 0.0,
+      "fade_in_frames": 0,
+      "fade_out_frames": 0,
+      "curve": "smoothstep",
+      "combine": "replace"
+    },
+    "prompt": null,
+    "seed": null,
+    "sampler": null,
+    "scheduler": null,
+    "steps": null,
+    "video_shift": null,
+    "audio_shift": null,
+    "inputs": { "known_right_native_av_latent": null }
+  },
+  "outputs": { "ui_graph": null, "api_template": null, "bindings": null, "materialization_manifest": null, "ui_graph_hash": null, "api_template_hash": null, "bindings_hash": null },
+  "validation": { "schema_status": "pending", "missing_node_types": [], "notes": ["The 73-frame right span placed at frame 51 preserves both visual-token length and absolute 40 Hz phase; other prefix lengths must be checked, not rounded."] }
+}

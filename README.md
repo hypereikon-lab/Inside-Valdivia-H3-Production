@@ -1,53 +1,71 @@
 # Inside Valdivia · H3 production data
 
-Versioned, data-only definitions for invoking and evaluating CAUCE operations
-for this project. The repository contains no second interface and no implicit
-sequencing engine. It records exact frame ranges, media references, operation
-bindings, parameters, and evidence.
+Data-only production definitions for operating MiniMax H3 through ComfyUI.
+This repository owns project bindings, materialization plans, rolling chains,
+experiments, media indexes, editorial ranges, and evidence. It does not contain
+a second interface, model code, model binaries, or an implicit creative
+ontology.
 
-Operation invocations are independent from editorial segments: a reference
-transform or native-state continuation can exist and branch before any result
-is assigned to the final 24 fps edit.
+Media remains opaque: images, clips, prompts, and packed native AV state are
+identified and placed without inferring objects, actions, or scene meaning. The
+fixed soundtrack is an external 24 fps editorial clock, not generative input.
 
-## Separation
+## Responsibility boundary
 
 ```text
+official ComfyUI H3 nodes
+  model conditioning, sampling, decoding
+
 ComfyUI-Cauce
-  generic operation contracts and deterministic custom nodes
+  28 deterministic low-level nodes
+  8 typed operation contracts
+  22 checked topology dossiers
 
 ComfyUI-Runtime-Control
-  neutral HTTP probe / validation / jobs / artifacts / receipts
+  HTTP/runtime validation, prompt execution, receipts, durable serial resume
 
 ComfyUI-Workspace-Control
-  browser-local workflow inventory and guarded tab operations
+  paired UI/API export and guarded browser-workspace operations
 
 this repository
-  locked operation versions, project invocations, experiments, receipt references
+  exact CAUCE lock, 22 offline materialization plans, project data,
+  experiments, rolling dependency/checkpoint plans
 ```
 
-## Locked operation surface
+## Locked operations
 
 ```text
 generate.keyframed
 generate.from_references
 generate.with_guides
 continue.native_av
-connect.two_sided_guides
+complete.native_av
+rollback.native_av
 reference.transform
 frames.assemble
 ```
 
-These names are independent functions, not stages. Their generic contracts are
-content-addressed in CAUCE and pinned by `operations.lock.json`. This repository
-stores concrete invocations only. CAUCE contains fourteen checked,
-non-executable topology dossiers. Thirteen are selected by this project's
-materialization queue; no reusable UI/API graph pair has yet been promoted. See
-[operation usage](docs/OPERATIONS.md),
-[data model](docs/DATA_MODEL.md), and [materialization](docs/MATERIALIZATION.md).
+Operations are independent typed functions, not workflow stages. Their 22
+variants are cataloged in
+[`materialization/catalog.json`](materialization/catalog.json). A topology
+dossier is a checked design, not executable workflow JSON. Each variant becomes
+executable only after one live ComfyUI graph is exported in paired UI/API form,
+validated against the same `/object_info` capture, and bound to concrete data.
 
-Current implementation and evidence record: [current state](docs/CURRENT_STATE.md).
-The concrete offline queue is [materialization/catalog.json](materialization/catalog.json);
-execution order and promotion gates are in [production roadmap](docs/ROADMAP.md).
+The rolling plan in [`rolling/catalog.json`](rolling/catalog.json) records a
+strict serial native-state chain, immutable checkpoints, and branch rules. It
+does not auto-wire artifacts: concrete API graphs must already contain every
+input binding before Runtime Control can execute and resume them safely.
+
+## Documentation
+
+- [Current state](docs/CURRENT_STATE.md)
+- [Operations](docs/OPERATIONS.md)
+- [Materialization](docs/MATERIALIZATION.md)
+- [Data model](docs/DATA_MODEL.md)
+- [Experiments](docs/EXPERIMENTS.md)
+- [Roadmap](docs/ROADMAP.md)
+- [Primary technical sources](docs/RESEARCH_SOURCES.md)
 
 ## Validate
 
@@ -55,4 +73,5 @@ execution order and promotion gates are in [production roadmap](docs/ROADMAP.md)
 python3 tools/validate.py
 python3 -m unittest discover -s tests -v
 python3 tools/verify_cauce_lock.py ../ComfyUI-Cauce
+git diff --check
 ```

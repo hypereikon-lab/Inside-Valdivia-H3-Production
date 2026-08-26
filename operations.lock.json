@@ -2,16 +2,17 @@
   "schema": "inside-valdivia.cauce-operation-lock/1",
   "source": {
     "repository": "https://github.com/hypereikon-lab/ComfyUI-Cauce",
-    "commit": "fafd1db452297f18ed34fa00e01cf73062d47577",
-    "catalog_hash": "0568f70a436a95ae823c50e4c391d0eeed4a3d1676088a264ccc682fa01c1874"
+    "commit": "180acd890e455a3985448b828cd8fa650d467e25",
+    "catalog_hash": "64a2eb9488b0e7ce938d06592c9c141949dbde4986efae1952cedb353e48b830"
   },
   "operations": [
-    { "id": "connect.two_sided_guides", "version": 1, "contract_hash": "94fd065fdb448a6d1dd23ac98440b1a3100d70eb88d3db98ad7086f56f1de534" },
-    { "id": "continue.native_av", "version": 1, "contract_hash": "6cb5eae61f6ae6b5ecca51103c0eb0ffe9f1b4474b4b25b28da7be050382d95c" },
+    { "id": "complete.native_av", "version": 1, "contract_hash": "bef22c04534126804a4d884ae69f8229a97eb3bc562c8403ffdca508a0043ca4" },
+    { "id": "continue.native_av", "version": 2, "contract_hash": "2776bb1db0e844648bcb2b4d98a1ef84b36a2488449ef7bdc77d7e44ceb6a8b5" },
     { "id": "frames.assemble", "version": 2, "contract_hash": "bf6da173fa4785bee22643d838c56cafdaf095a2b33fb43f71ff201308c0f19b" },
-    { "id": "generate.from_references", "version": 2, "contract_hash": "2981aea77eaaf6e83d0b0dace34c63ccd2816c13c27a622a8ab87c04fd4411ab" },
+    { "id": "generate.from_references", "version": 3, "contract_hash": "479a9e932bc54b533b6f4db693433aeb20f626f4571459705921309cf590e771" },
     { "id": "generate.keyframed", "version": 1, "contract_hash": "293c342e54d66ac4b8f5147636e9aa0617635abba5d2d4acc2919999104208b1" },
-    { "id": "generate.with_guides", "version": 1, "contract_hash": "dcc117fc281eddddc5568de0f7f55940c671b5bf6fedfb892514473eb77ead27" },
-    { "id": "reference.transform", "version": 1, "contract_hash": "b8ab53d531135436b4d96a092a7466fd7ccf2bf9b8dcb19d119e96b1045a7126" }
+    { "id": "generate.with_guides", "version": 2, "contract_hash": "6aa98ac3795988f9797de0d5043505609fc7e86959b0da0832951ac3e535e3dc" },
+    { "id": "reference.transform", "version": 1, "contract_hash": "b8ab53d531135436b4d96a092a7466fd7ccf2bf9b8dcb19d119e96b1045a7126" },
+    { "id": "rollback.native_av", "version": 1, "contract_hash": "e440ecd49654c0f21227593a69af5a009d879c73389bfe6b8c859d64d1d61a1c" }
   ]
 }

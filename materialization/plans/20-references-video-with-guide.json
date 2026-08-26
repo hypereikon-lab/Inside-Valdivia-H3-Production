@@ -3,9 +3,9 @@
   "operation": "generate.from_references",
   "operation_version": 3,
   "operation_contract_hash": "479a9e932bc54b533b6f4db693433aeb20f626f4571459705921309cf590e771",
-  "variant": "video-reference",
-  "topology_key": "generate.from_references@video-reference",
-  "priority": 4,
+  "variant": "video-reference-with-guide",
+  "topology_key": "generate.from_references@video-reference-with-guide",
+  "priority": 20,
   "status": "offline-ready",
   "runtime_manifest_hash": null,
   "sources": { "workspace_export": null, "parameterization": null, "runtime_manifest": null, "operation_ref": null },
@@ -22,6 +22,7 @@
     "reference_image_size": "match",
     "reference_fps": 24,
     "reference_frames": 56,
+    "temporal_guide_frame": 102,
     "prompt": null,
     "seed": null,
     "sampler": null,
@@ -29,8 +30,8 @@
     "steps": null,
     "video_shift": null,
     "audio_shift": null,
-    "inputs": { "reference_images": [null], "reference_clips": [null] }
+    "inputs": { "reference_images": [null], "reference_clips": [null], "temporal_guide": null }
   },
   "outputs": { "ui_graph": null, "api_template": null, "bindings": null, "materialization_manifest": null, "ui_graph_hash": null, "api_template_hash": null, "bindings_hash": null },
-  "validation": { "schema_status": "pending", "missing_node_types": [], "notes": ["Baseline clip is the first legal 17k+5 length at or above two seconds: 56 frames."] }
+  "validation": { "schema_status": "pending", "missing_node_types": [], "notes": ["Reference conditioning and AddGuide must remain on the same active positive-conditioning edge."] }
 }

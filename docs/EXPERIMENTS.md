@@ -1,27 +1,24 @@
-# Native H3 experiment protocol
+# Controlled H3 experiments
 
-The catalog contains only operations that enter H3 through current official
-conditioning or CAUCE's inspected native-AV span guide path. Procedural
-motion is admitted only as decoded reference media that can be inspected before
-generation.
+`experiments/catalog.json` contains ten planned, one-variable comparisons:
+endpoint mode, reference-image sizing, reference duration, guide length, guide
+placement, continuation prompt relation, native mask boundary, overlap
+transport, future guide, and decoded motion-reference mapping.
 
-Each comparison records:
+Every run records source hashes/order, operation and materialized graph hashes,
+model files, geometry, frame count, exact prompt/seed, sampler/scheduler/steps,
+video/audio shifts, runtime manifest, prompt id, artifacts, the sole changed
+variable, and a visual verdict.
 
-- source file hashes and order;
-- ordered operation ids/versions/contract hashes and materialized graph hashes;
-- model file and quantization;
-- target geometry and frame count;
-- prompt and seed;
-- sampler, scheduler, steps, video/audio flow shifts;
-- the single changed variable;
-- runtime manifest and prompt id;
-- exact artifact paths;
-- requested visual measures and evidence status.
+Native masks are tested as the official H3 sampler consumes them: continuous
+per-token video and structural-audio strengths. Comparisons isolate curve,
+fade, boundary, or transport; they do not mix several changes and call the
+result causal.
 
-Metrics are diagnostic, not substitutes for the visual objective. Pixel change,
-optical-flow magnitude, or queue completion cannot by themselves establish
-motion correspondence, boundary quality, or identity preservation.
+Metrics such as pixel difference, optical-flow magnitude, or queue completion
+are diagnostic only. They cannot establish useful motion correspondence,
+identity preservation, temporal boundary quality, or visual acceptance.
 
-The catalog is limited to the conditioning and native-AV paths named above.
-Anything outside those paths requires a separate technical contract and new
-evidence before it enters the production catalog.
+The scope excludes generative audio, soundtrack encoding, training, LoRA,
+acceleration, streaming, and arbitrary sampler patches. The fixed soundtrack
+is used only when assigning accepted outputs to the edit.

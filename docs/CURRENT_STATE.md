@@ -1,186 +1,106 @@
-# Current implementation state
+# Current state
 
-This document is the authority for present capability claims. It records the
-last verified laboratory state and the current repository state without using
-implementation chronology as product documentation.
+This is the authority for present capability claims.
 
-## Reachability
-
-At the latest user report on 2026-08-25, the laboratory hostname returned HTTP
-504 and is treated as unavailable. A gateway timeout alone does not distinguish
-a stopped Cloudflare connector from a connector whose `localhost:8188` origin
-is not responding. This blocks live schema queries, queue submission, GPU
-execution, Manager operations, and visual inspection. It does not establish
-that the installed ComfyUI, CAUCE, model, driver, or GPU state changed.
-
-The last verified laboratory runtime was:
+## Source state
 
 ```text
-ComfyUI                 0.33.0
-required frontend       1.49.6
-Python                  3.12.10 embedded, Windows
-PyTorch                 2.13.0+cu130
-GPU                     NVIDIA GeForce RTX 5090
-GPU memory              34,190,458,880 bytes reported by runtime
-RAM                     67,768,381,440 bytes reported by runtime
-registered node types   913
-frontend extensions     53
+CAUCE
+  commit   180acd890e455a3985448b828cd8fa650d467e25
+  version  4.0.0
+  nodes    28
+  operations / topology dossiers  8 / 22
+  local tests  45 passing
+
+Runtime Control
+  commit   a39583a4d2c335eea8ddbb8c8280402c64a160a2
+  version  0.3.0
+  local tests  18 passing
+
+Production data
+  exact CAUCE commit/catalog/contract lock
+  22 offline materialization plans
+  10 controlled experiment definitions
+  1 offline rolling-chain plan
 ```
 
-Free disk space was not measured through the runtime audit.
+The local source repositories are complete and content-addressed. The current
+laboratory process has not yet been re-probed against these commits, so the
+numbers above describe source state, not a claim that CAUCE 4.0 is presently
+loaded by the remote ComfyUI process.
 
-## Installed model and node state
+## What is implemented
 
-The last verified H3 model files were:
+CAUCE provides deterministic primitives for:
 
-```text
-diffusion_models/minimax_h3_fl2va_pruned_fp8_scaled.safetensors
-diffusion_models/minimax_h3_ref2va_pruned_fp8_scaled.safetensors
-text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors
-vae/minimax_h3_video_vae_fp16.safetensors
-vae/minimax_h3_audio_vae_fp32.safetensors
-```
+- exact half-open decoded-frame ranges;
+- H3 24 fps visual-token and 40 Hz structural-audio layout arithmetic;
+- packed AV window allocation, span extraction and absolute placement;
+- independent continuous video/audio denoise masks with linear, smoothstep,
+  and smootherstep ramps;
+- exact native AV interval replacement;
+- native span guides, synchronized append, split/rollback, save, and load;
+- H3 target/reference/guide preflight and conditioning inspection;
+- decoded coordinate maps and image warps for inspectable reference media.
 
-The laboratory had `ComfyUI-Cauce` commit
-`81cc8fc6b44b1983c55d587f82c2628a95542258` installed. All 19 CAUCE nodes and
-all six H3 AV primitive nodes were present in `/object_info`.
+Official ComfyUI owns H3 first/last frames, Ref2VA references, arbitrary-frame
+AddGuide conditioning, model loading, prompting, sampling, and decoding. CAUCE
+composes those official mechanisms; it does not replace the model or sampler.
 
-The project operation lock points to CAUCE 3.3.0 commit
-`fafd1db452297f18ed34fa00e01cf73062d47577`. It retains the same seven semantic
-operation contracts and now contains fourteen checked, non-executable topology
-dossiers. These cover all four FL2VA endpoint-input combinations, both Ref2VA
-image-sizing modes, Ref2VA video reference, single/multiple image anchors, a
-prepared guide clip, continuation, two-sided connection, assembly, and one
-reference transform. The source registry remains 24 nodes. The
-five additional
-primitives are:
+Runtime Control implements guarded materialization plus `comfy.run-series/1`:
+all concrete graphs are validated against one fresh `/object_info`, each prompt
+id is persisted atomically immediately after submission, exact submitted jobs
+are resumed rather than duplicated, and every completed step receives an
+immutable receipt. It intentionally neither interprets H3 nor binds one step's
+outputs into the next graph.
 
-```text
-CauceH3ResolveTargetShape
-CauceH3PrepareGuideClip
-CauceH3PrepareReferenceClip
-CauceH3InspectConditioning
-CauceH3SplitAVLatent
-```
+## Operation evidence
 
-All five are locally unit-validated. The first four expose official H3 temporal
-input rules and active conditioning metadata without replacing official
-encoding or sampling; the fifth splits an origin-zero cumulative packed AV
-state into a valid prefix and reversible contiguous suffix span.
+| Operation | Current implementation evidence | Live/visual evidence |
+| --- | --- | --- |
+| `generate.keyframed` | official H3 contract + checked variants | not materialized at current lock |
+| `generate.from_references` | official H3 contract + checked variants | not materialized at current lock |
+| `generate.with_guides` | official H3/AddGuide contract + checked variants | not materialized at current lock |
+| `continue.native_av` | CAUCE layout/span/mask paths unit-validated | older keyframe mechanism executed synthetically; current variants uncharacterized |
+| `complete.native_av` | placement/mask/replacement layer unit-validated | not yet sampled live |
+| `rollback.native_av` | synchronized split/branch layer unit-validated | not yet exercised in production |
+| `reference.transform` | deterministic decoded-map layer unit-validated | H3 correspondence remains experimental |
+| `frames.assemble` | deterministic range layer unit-validated | no inference claim |
 
-`generate.from_references` contract version 2 distinguishes the five-frame
-minimum accepted by the current ComfyUI implementation from the model's
-documented 2–15 second reference-video range. Production baselines therefore
-start at the first compliant `17k+5` length, 56 frames.
+`implemented`, `materialized`, `executes`, and `visually accepted` are separate
+states. No current-lock topology yet has a retained paired UI/API graph. The
+repository therefore makes no claim that any of the 22 variants is presently
+production-ready or visually accepted.
 
-The lock records the intended project source, not the currently imported
-laboratory process. The laboratory remains last verified at the older 19-node
-commit above. A targeted CAUCE update and one ComfyUI process restart are still
-required before the five new nodes may be claimed in `/object_info` or used on
-the RTX 5090.
+## Offline-ready assets
 
-`ComfyUI-Workspace-Control` commit
-`60402644df18344b1a37216a86870e5c1c0c9d2d` is implemented and locally tested.
-Before the current outage its capability route returned 404. One exact Manager
-Git-URL installation request was subsequently submitted; the request timed out
-while the ComfyUI origin stopped responding, so its outcome is unknown and it
-was not submitted again. No ComfyUI restart was requested afterwards. When the
-origin returns, inspect Manager's installed-node inventory and the capability
-route before deciding whether any installation or restart action remains
-necessary.
+The 22 materialization plans cover the entire CAUCE topology catalog. Their
+static operation hashes, variants, model filenames, geometry, frame arithmetic,
+input cardinality, mask semantics, and output slots are checked. Live-owned
+values remain null: actual media ids, sampler, scheduler, steps, flow shifts,
+seed, graph node ids, `/object_info` manifest, and paired graph hashes.
 
-`ComfyUI-Runtime-Control` commit
-`e5abab0a140a08dd6d8e8f6ad092daa3168aba11` implements the deterministic
-bridge from one Workspace Control paired export to a guarded, variant-scoped
-UI/API draft. It verifies source hashes, literal expected values, exact API
-round trip, and—when a full probe manifest is supplied—the captured
-`/object_info`. This is locally tested but has not yet been exercised against
-the unavailable lab.
+The rolling chain is also offline-ready. It specifies strict dependencies,
+native-state identities, exact source commits, per-step checkpoints, and a
+new-plan-from-checkpoint branch policy. It is not an executable Runtime Control
+series until its selected materialization plans have concrete prebound API
+graphs and operation-reference files.
 
-## Retired surfaces
+## Next live gate
 
-`ComfyUI-Cauce-SamplerLab` is a rejected Euler latent-transport experiment. Its
-visual result showed ghosting/delay and it is not a CAUCE capability or roadmap
-item. `ComfyUI-Hypereikon-H3-Production` is also deprecated: its combined
-runtime, timeline, plate, soundtrack-conditioning, and experimental inpainting
-surface is outside the current architecture. Neither package should be
-installed or updated. When the runtime returns, inventory both exact package
-names and remove an installed copy through a targeted operation before the
-canonical workflow session.
+When the tunnel is available:
 
-## Operation ownership and evidence
+1. capture `/features`, `/system_stats`, `/object_info`, queue state, Manager
+   inventory, installed revisions, model filenames, and free storage;
+2. update only CAUCE to the locked commit if required, restart only ComfyUI, and
+   verify all 28 node types;
+3. materialize one graph at a time from the checked plans, beginning with a
+   small operational core;
+4. run exact prompt-id technical smokes, retain receipts and native state, then
+   perform visual acceptance separately;
+5. compile the accepted, explicitly prebound graphs into a Runtime Control
+   serial plan and test interruption/resume before long unattended production.
 
-| Operation | Implementation | Retained graph artifact | Strongest current evidence |
-| --- | --- | --- | --- |
-| `generate.keyframed` | official H3 / vanilla ComfyUI | offline topology; no graph pair | locked contract |
-| `generate.from_references` | official H3 / vanilla ComfyUI | offline topology; no graph pair | locked contract |
-| `generate.with_guides` | official H3 / vanilla ComfyUI | offline topology; no graph pair | locked contract |
-| `continue.native_av` | official H3 sampling + CAUCE native AV primitives | offline topology + exact smoke evidence; no reusable pair | synthetic live execution |
-| `connect.two_sided_guides` | official H3 guides + CAUCE ranges + vanilla assembly | offline topology; no graph pair | locked contract |
-| `reference.transform` | CAUCE decoded-media maps | offline topology; no graph pair | deterministic map layer unit-validated |
-| `frames.assemble` | CAUCE exact ranges + vanilla assembly | offline topology; no graph pair | deterministic range layer unit-validated |
-
-The three `generate.*` operations add no custom model capability. They provide
-typed, reproducible contracts for official H3 behavior.
-
-`continue.native_av` is the current operation whose central data behavior
-depends on CAUCE: it preserves and extends packed H3 visual and
-structural-audio state on exact absolute clocks. The remaining CAUCE-backed
-operations provide deterministic transformations around official or vanilla
-nodes.
-
-## `continue.native_av` execution evidence
-
-A minimal API graph completed under prompt id
-`d6ca67c6-71af-4172-9ab7-cc18a0e6ad7e`. It used a synthetic 22-frame source AV
-latent, 5-frame overlap, 51-frame extension, a 56-frame sampled window at
-global origin 17, and one H3 sampling step.
-
-The saved packed latent was loaded and inspected under prompt id
-`aa5bf2cc-ea0d-4f8f-80a4-0fe3b64317bc`:
-
-```text
-frames                   73
-video tokens             22
-structural-audio tokens  122
-video shape              [1, 24, 22, 12, 20]
-audio shape              [1, 32, 2, 122]
-```
-
-This proves that the live native-AV mechanics execute and remain synchronized.
-It does not prove production-resolution continuation quality because the source
-was synthetic, resolution was 320x192, the run used one step, and no decoded
-video was visually evaluated.
-
-## Implemented, materialized, and possible
-
-Use these distinctions:
-
-```text
-implemented
-  code or official nodes exist and have the stated local/live evidence
-
-materialized
-  a retained UI graph or API template exists for one concrete composition
-
-possible to compose
-  available nodes can express the graph, but the graph artifact and its
-  execution/visual evidence do not yet exist
-```
-
-Current retained products include a content-addressed CAUCE operation lock,
-project invocation schemas, deterministic CAUCE primitives, visible H3 temporal
-preflight and conditioning inspection, reversible native-state branching,
-fourteen offline topology dossiers, thirteen project materialization plans, an empty
-content-addressed media catalog ready for real assets, the paired-export bridge in
-Runtime Control, and Workspace Control source code. The five CAUCE 3.3.0 nodes
-are source- and unit-validated only until the live update. CAUCE does not yet
-ship paired import-tested UI graphs and reusable API templates for these
-operations.
-
-The current system also does not claim masked temporal inpainting, arbitrary
-sampler modification, automatic high-level graph synthesis, or a visually
-accepted production operation. New graph compositions can be implemented
-from official nodes and the existing primitives, but each concrete graph must
-be materialized, schema-validated, executed, and visually evaluated before its
-behavior becomes a current capability claim.
+An HTTP 504 establishes only that the Cloudflare path could not reach a healthy
+origin at that moment. It does not diagnose the tower, tunnel service, or
+ComfyUI process, and it does not invalidate offline source work.

@@ -33,6 +33,20 @@ def is_h3_frame_count(value: Any) -> bool:
     return isinstance(value, int) and value >= 5 and (value - 5) % 17 == 0
 
 
+def is_h3_visual_boundary(value: Any) -> bool:
+    """Return whether a local pixel-frame boundary maps to whole H3 tokens."""
+
+    if not isinstance(value, int) or value < 0:
+        return False
+    covered = 0
+    index = 0
+    pattern = (1, 4, 4, 4, 4)
+    while covered < value:
+        covered += pattern[index % len(pattern)]
+        index += 1
+    return covered == value
+
+
 def validate_operation_lock(value: Any, path: Path) -> tuple[list[str], dict[str, dict[str, Any]]]:
     errors: list[str] = []
     if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.cauce-operation-lock/1":
@@ -277,6 +291,11 @@ def _validate_canonical_bindings(value: dict[str, Any], path: Path) -> list[str]
             "image-reference-match": {"reference_images"},
             "image-reference-max": {"reference_images"},
             "video-reference": {"reference_images", "reference_clips"},
+            "video-reference-with-guide": {
+                "reference_images",
+                "reference_clips",
+                "temporal_guide",
+            },
         }.get(variant)
         if expected is not None and set(inputs) != expected:
             errors.append(f"{path}: {variant} requires exactly {sorted(expected)}")
@@ -284,7 +303,7 @@ def _validate_canonical_bindings(value: dict[str, Any], path: Path) -> list[str]
             errors.append(f"{path}: image-reference-match must guard ref_image_size=match")
         if variant == "image-reference-max" and bindings.get("reference_image_size") != "max":
             errors.append(f"{path}: image-reference-max must guard ref_image_size=max")
-        if variant == "video-reference":
+        if variant in {"video-reference", "video-reference-with-guide"}:
             reference_frames = bindings.get("reference_frames")
             if not is_h3_frame_count(reference_frames) or not 48 <= reference_frames <= 360:
                 errors.append(f"{path}: video-reference baseline must be a 2-15s H3 length")
@@ -298,6 +317,16 @@ def _validate_canonical_bindings(value: dict[str, Any], path: Path) -> list[str]
                 errors.append(f"{path}: guide-clip requires exactly one guide clip record")
             if not is_h3_frame_count(guide_frames):
                 errors.append(f"{path}: guide clip baseline must be on the H3 frame grid")
+        elif variant == "first-last-interior":
+            guides = inputs.get("guides")
+            if (
+                set(inputs) != {"first_frame", "last_frame", "guides"}
+                or not isinstance(guides, list)
+                or not guides
+            ):
+                errors.append(
+                    f"{path}: first-last-interior requires endpoint frames and guides"
+                )
         else:
             guides = inputs.get("guides")
             expected_count = {"single-anchor": 1, "multi-anchor": 2}.get(variant)
@@ -307,7 +336,7 @@ def _validate_canonical_bindings(value: dict[str, Any], path: Path) -> list[str]
                 or len(guides) != expected_count
             ):
                 errors.append(f"{path}: {variant} requires exactly {expected_count} guide records")
-    elif operation == "continue.native_av" and variant == "characterized-layout":
+    elif operation == "continue.native_av":
         overlap = bindings.get("overlap_frames")
         extension = bindings.get("extension_frames")
         window = bindings.get("window_frames")
@@ -322,23 +351,128 @@ def _validate_canonical_bindings(value: dict[str, Any], path: Path) -> list[str]
             or overlap + extension != window
         ):
             errors.append(f"{path}: continuation window must equal overlap plus extension")
-    elif operation == "connect.two_sided_guides" and variant == "default":
+        expected_transport = {
+            "keyframe-overlap": "minimax_keyframes",
+            "masked-overlap": "noise_mask",
+            "masked-overlap-future-guide": "noise_mask",
+        }.get(variant)
+        if expected_transport and bindings.get("overlap_transport") != expected_transport:
+            errors.append(f"{path}: continuation overlap transport does not match variant")
+        if variant.startswith("masked-overlap"):
+            errors.extend(_validate_mask_bindings(bindings.get("mask"), path))
+        expected_inputs = {
+            "keyframe-overlap": {"source_native_av_latent", "source_timeline_origin"},
+            "masked-overlap": {"source_native_av_latent", "source_timeline_origin"},
+            "masked-overlap-future-guide": {
+                "source_native_av_latent",
+                "source_timeline_origin",
+                "future_guide",
+            },
+        }.get(variant)
+        if expected_inputs is not None and set(inputs) != expected_inputs:
+            errors.append(f"{path}: continuation inputs do not match {variant}")
+    elif operation == "complete.native_av":
         target = bindings.get("target_frames")
-        guide = bindings.get("guide_frames")
-        expected_right = target - guide if isinstance(target, int) and isinstance(guide, int) else None
-        expected_range = [guide, expected_right]
-        if not is_h3_frame_count(target) or not is_h3_frame_count(guide):
-            errors.append(f"{path}: target and guide lengths must be on the H3 frame grid")
-        if bindings.get("left_guide_frame") != 0 or bindings.get("right_guide_frame") != expected_right:
-            errors.append(f"{path}: two-sided guide indices do not match the target")
-        if bindings.get("accepted_center_range") != expected_range:
-            errors.append(f"{path}: accepted center must exclude both guide ranges")
+        start = bindings.get("unknown_start_frame")
+        count = bindings.get("unknown_frame_count")
+        if not is_h3_frame_count(target):
+            errors.append(f"{path}: completion target must satisfy 17k+5")
+        if (
+            not isinstance(start, int)
+            or not isinstance(count, int)
+            or count < 1
+            or not isinstance(target, int)
+            or start < 0
+            or start + count > target
+            or not is_h3_visual_boundary(start)
+            or not is_h3_visual_boundary(start + count)
+        ):
+            errors.append(f"{path}: completion interval must end on visual-token boundaries")
+        errors.extend(_validate_mask_bindings(bindings.get("mask"), path))
+        expected_inputs = {
+            "two-sided-infill": {"target_native_av_latent"},
+            "local-replacement": {"base_native_av_latent"},
+            "backward-prefix": {"known_right_native_av_latent"},
+            "two-source-connection": {
+                "left_native_av_latent",
+                "right_native_av_latent",
+            },
+        }.get(variant)
+        if expected_inputs is not None and set(inputs) != expected_inputs:
+            errors.append(f"{path}: completion inputs do not match {variant}")
+        if variant == "backward-prefix" and (
+            bindings.get("known_right_target_frame") != start + count
+            or bindings.get("known_right_frames") != target - (start + count)
+        ):
+            errors.append(f"{path}: backward-prefix ranges do not cover the target")
+        if variant == "two-source-connection":
+            left = bindings.get("left_span")
+            right = bindings.get("right_span")
+            if (
+                not isinstance(left, dict)
+                or not isinstance(right, dict)
+                or left.get("target_frame") != 0
+                or left.get("frame_count") != start
+                or right.get("target_frame") != start + count
+                or right.get("frame_count") != target - (start + count)
+            ):
+                errors.append(f"{path}: two-source spans do not exactly flank the interval")
+    elif operation == "rollback.native_av":
+        source_frames = bindings.get("source_frame_count")
+        cut = bindings.get("cut_frame")
+        if (
+            not is_h3_frame_count(source_frames)
+            or not is_h3_frame_count(cut)
+            or not isinstance(source_frames, int)
+            or not isinstance(cut, int)
+            or cut >= source_frames
+            or (source_frames - cut) % 17
+        ):
+            errors.append(f"{path}: rollback cut must leave a synchronized non-empty suffix")
+        if set(inputs) != {"source_native_av_latent"}:
+            errors.append(f"{path}: rollback requires exactly one native AV source")
     elif operation == "frames.assemble" and variant == "ordered-concatenation":
         sources = inputs.get("sources")
         if bindings.get("frame_rate") != 24:
             errors.append(f"{path}: frame assembly must use 24 fps")
         if not isinstance(sources, list) or len(sources) < 2:
             errors.append(f"{path}: ordered concatenation requires at least two source ranges")
+    return errors
+
+
+def _validate_mask_bindings(value: Any, path: Path) -> list[str]:
+    if not isinstance(value, dict):
+        return [f"{path}: masked native operation requires a mask object"]
+    required = {
+        "inside_strength_video",
+        "outside_strength_video",
+        "inside_strength_audio",
+        "outside_strength_audio",
+        "fade_in_frames",
+        "fade_out_frames",
+        "curve",
+        "combine",
+    }
+    allowed = required | {"start_frame", "frame_count"}
+    errors: list[str] = []
+    if not required <= set(value) or not set(value) <= allowed:
+        errors.append(f"{path}: mask fields are incomplete or unexpected")
+        return errors
+    for name in (
+        "inside_strength_video",
+        "outside_strength_video",
+        "inside_strength_audio",
+        "outside_strength_audio",
+    ):
+        strength = value[name]
+        if not isinstance(strength, (int, float)) or not 0 <= strength <= 1:
+            errors.append(f"{path}: {name} must lie in [0,1]")
+    if value["curve"] not in {"linear", "smoothstep", "smootherstep"}:
+        errors.append(f"{path}: invalid mask curve")
+    if value["combine"] not in {"replace", "maximum", "minimum", "multiply"}:
+        errors.append(f"{path}: invalid mask combine mode")
+    if any(not isinstance(value[name], int) or value[name] < 0 for name in ("fade_in_frames", "fade_out_frames")):
+        errors.append(f"{path}: mask fades must be non-negative integers")
     return errors
 
 
@@ -503,6 +637,176 @@ def validate_runtime_operation_ref(
     return _validate_operation_reference(normalized, path, registry, require_hash=True)
 
 
+def _safe_project_path(value: Any, path: Path, root: Path, prefix: tuple[str, ...]) -> tuple[Path | None, list[str]]:
+    relative = PurePosixPath(str(value))
+    if relative.is_absolute() or ".." in relative.parts or relative.parts[: len(prefix)] != prefix:
+        return None, [f"{path}: unsafe project path {value!r}"]
+    return root / Path(*relative.parts), []
+
+
+def validate_rolling_plan(
+    value: Any,
+    path: Path,
+    registry: dict[str, dict[str, Any]],
+    root: Path,
+    cauce_commit: str,
+) -> list[str]:
+    if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.rolling-plan/1":
+        return [f"{path}: invalid rolling plan"]
+    errors: list[str] = []
+    if value.get("status") != "offline-ready" or value.get("frame_rate") != 24:
+        errors.append(f"{path}: rolling plans must be offline-ready at 24 fps")
+    locks = value.get("source_locks")
+    if not isinstance(locks, dict) or set(locks) != {
+        "cauce_commit", "runtime_repository", "runtime_commit"
+    }:
+        errors.append(f"{path}: rolling plan needs exact CAUCE and Runtime source locks")
+    else:
+        if locks.get("cauce_commit") != cauce_commit:
+            errors.append(f"{path}: rolling CAUCE commit does not match operation lock")
+        if not isinstance(locks.get("runtime_commit"), str) or not GIT_SHA.fullmatch(
+            locks["runtime_commit"]
+        ):
+            errors.append(f"{path}: rolling Runtime commit must be a full Git SHA")
+        if not isinstance(locks.get("runtime_repository"), str) or not locks["runtime_repository"]:
+            errors.append(f"{path}: rolling Runtime repository is required")
+    if value.get("execution") != {
+        "runtime_schema": "comfy.run-series/1",
+        "requires_materialized_graphs": True,
+        "auto_wire_outputs": False,
+        "binding_mode": "explicit-prebound",
+    }:
+        errors.append(f"{path}: rolling execution boundary is not explicit")
+    if value.get("checkpoint_policy") != {
+        "frequency": "after-each-step",
+        "immutability": "content-addressed",
+        "receipt_required": True,
+    }:
+        errors.append(f"{path}: every rolling step needs an immutable checkpoint")
+    branch = value.get("branch_policy")
+    if not isinstance(branch, dict) or branch.get("mode") != "new-plan-from-checkpoint" or branch.get("mutate_existing_plan") is not False:
+        errors.append(f"{path}: branches must start as new plans from checkpoints")
+    elif {
+        "operation": branch.get("rollback_operation"),
+        "operation_version": branch.get("rollback_operation_version"),
+        "operation_contract_hash": branch.get("rollback_operation_contract_hash"),
+    } != {
+        "operation": "rollback.native_av",
+        "operation_version": registry.get("rollback.native_av", {}).get("version"),
+        "operation_contract_hash": registry.get("rollback.native_av", {}).get("contract_hash"),
+    }:
+        errors.append(f"{path}: branch rollback operation does not match lock")
+
+    steps = value.get("steps")
+    if not isinstance(steps, list) or not steps:
+        return errors + [f"{path}: rolling plan requires steps"]
+    ids: set[str] = set()
+    states: set[str] = set()
+    previous_id: str | None = None
+    previous_state: str | None = None
+    for position, step in enumerate(steps, start=1):
+        materialization: Any = None
+        if not isinstance(step, dict):
+            errors.append(f"{path}: rolling step must be an object")
+            continue
+        step_id = step.get("id")
+        if not isinstance(step_id, str) or not step_id or step_id in ids:
+            errors.append(f"{path}: invalid or duplicate rolling step id {step_id!r}")
+        ids.add(step_id)
+        if step.get("position") != position or step.get("depends_on") != previous_id:
+            errors.append(f"{path}: rolling steps must form one exact serial chain")
+        errors.extend(_validate_operation_reference(step, path, registry, require_hash=True))
+        expected_key = f"{step.get('operation')}@{step.get('variant')}"
+        if step.get("topology_key") != expected_key or step.get("status") != "offline-ready":
+            errors.append(f"{path}: rolling step topology or status is invalid")
+        plan_path, path_errors = _safe_project_path(
+            step.get("materialization_plan"), path, root, ("materialization", "plans")
+        )
+        errors.extend(path_errors)
+        if plan_path is not None:
+            try:
+                materialization = load_json(plan_path)
+            except (OSError, json.JSONDecodeError) as exc:
+                errors.append(f"{plan_path}: invalid JSON: {exc}")
+            else:
+                for field in (
+                    "operation", "operation_version", "operation_contract_hash",
+                    "variant", "topology_key",
+                ):
+                    if step.get(field) != materialization.get(field):
+                        errors.append(f"{path}: rolling step {step_id!r} disagrees with its materialization plan")
+                        break
+        state = step.get("output_native_state")
+        if not isinstance(state, str) or not state or state in states:
+            errors.append(f"{path}: invalid or duplicate rolling native state {state!r}")
+        states.add(state)
+        bindings = step.get("input_bindings")
+        if not isinstance(bindings, dict):
+            errors.append(f"{path}: rolling input_bindings must be an object")
+        else:
+            planned_inputs = (
+                materialization.get("bindings", {}).get("inputs")
+                if isinstance(materialization, dict)
+                else None
+            )
+            if isinstance(planned_inputs, dict) and set(bindings) != set(planned_inputs):
+                errors.append(
+                    f"{path}: step {step_id!r} input bindings disagree with its materialization plan"
+                )
+            if previous_id is not None:
+                links = [item for item in bindings.values() if isinstance(item, dict)]
+                if not any(
+                    item.get("from_step") == previous_id
+                    and item.get("output_native_state") == previous_state
+                    for item in links
+                ):
+                    errors.append(f"{path}: step {step_id!r} must explicitly bind the preceding native state")
+        previous_id = step_id if isinstance(step_id, str) else None
+        previous_state = state if isinstance(state, str) else None
+    return errors
+
+
+def validate_rolling_catalog(
+    value: Any,
+    path: Path,
+    registry: dict[str, dict[str, Any]],
+    root: Path,
+    cauce_commit: str,
+) -> list[str]:
+    if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.rolling-catalog/1":
+        return [f"{path}: invalid rolling catalog"]
+    entries = value.get("plans")
+    if not isinstance(entries, list) or not entries:
+        return [f"{path}: rolling catalog needs plans"]
+    errors: list[str] = []
+    ids: set[str] = set()
+    paths: set[Path] = set()
+    for entry in entries:
+        if not isinstance(entry, dict) or set(entry) != {"id", "plan", "status"}:
+            errors.append(f"{path}: malformed rolling catalog entry {entry!r}")
+            continue
+        if entry["id"] in ids or entry["status"] != "offline-ready":
+            errors.append(f"{path}: duplicate id or invalid rolling status {entry['id']!r}")
+        ids.add(entry["id"])
+        plan_path, path_errors = _safe_project_path(entry["plan"], path, root, ("rolling", "plans"))
+        errors.extend(path_errors)
+        if plan_path is None:
+            continue
+        try:
+            plan = load_json(plan_path)
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(f"{plan_path}: invalid JSON: {exc}")
+            continue
+        paths.add(plan_path.resolve())
+        errors.extend(validate_rolling_plan(plan, plan_path, registry, root, cauce_commit))
+        if plan.get("id") != entry["id"] or plan.get("status") != entry["status"]:
+            errors.append(f"{plan_path}: rolling plan does not match catalog entry")
+    expected_paths = {item.resolve() for item in (root / "rolling" / "plans").glob("*.json")}
+    if paths != expected_paths:
+        errors.append(f"{path}: rolling catalog and plan directory differ")
+    return errors
+
+
 def validate_repository(root: Path = ROOT) -> list[str]:
     errors: list[str] = []
     for schema_path in sorted((root / "schemas").glob("*.json")):
@@ -537,6 +841,16 @@ def validate_repository(root: Path = ROOT) -> list[str]:
             load_json(materialization_path), materialization_path, registry, root
         )
     )
+    rolling_path = root / "rolling" / "catalog.json"
+    errors.extend(
+        validate_rolling_catalog(
+            load_json(rolling_path),
+            rolling_path,
+            registry,
+            root,
+            lock.get("source", {}).get("commit"),
+        )
+    )
     media_path = root / "media" / "catalog.json"
     errors.extend(validate_media_catalog(load_json(media_path), media_path))
     for path in sorted((root / "fixtures").glob("*.json")):
@@ -560,7 +874,7 @@ def main() -> int:
         return 1
     print(
         "validated: operation lock, project invocations, materialization plans, "
-        "media, experiments, fixtures, and schemas"
+        "rolling plans, media, experiments, fixtures, and schemas"
     )
     return 0
 

@@ -4,6 +4,7 @@ import unittest
 from tools.validate import (
     ROOT,
     is_h3_frame_count,
+    is_h3_visual_boundary,
     load_json,
     validate_materialization_catalog,
     validate_materialization_plan,
@@ -11,6 +12,8 @@ from tools.validate import (
     validate_operation_lock,
     validate_repository,
     validate_invocation,
+    validate_rolling_catalog,
+    validate_rolling_plan,
     validate_segment,
 )
 
@@ -24,6 +27,9 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertTrue(is_h3_frame_count(124))
         self.assertTrue(is_h3_frame_count(362))
         self.assertFalse(is_h3_frame_count(123))
+        self.assertTrue(is_h3_visual_boundary(39))
+        self.assertTrue(is_h3_visual_boundary(90))
+        self.assertFalse(is_h3_visual_boundary(40))
 
     def test_operation_lock_is_semantic_and_content_addressed(self):
         lock_path = ROOT / "operations.lock.json"
@@ -32,13 +38,14 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertEqual(
             set(registry),
             {
-                "connect.two_sided_guides",
+                "complete.native_av",
                 "continue.native_av",
                 "frames.assemble",
                 "generate.from_references",
                 "generate.keyframed",
                 "generate.with_guides",
                 "reference.transform",
+                "rollback.native_av",
             },
         )
         self.assertTrue(all(not operation_id.startswith("W") for operation_id in registry))
@@ -141,13 +148,22 @@ class RepositoryValidationTests(unittest.TestCase):
                 "generate.from_references@video-reference",
                 "generate.with_guides@single-anchor",
                 "generate.with_guides@multi-anchor",
-                "continue.native_av@characterized-layout",
-                "connect.two_sided_guides@default",
+                "continue.native_av@keyframe-overlap",
+                "complete.native_av@two-sided-infill",
                 "frames.assemble@ordered-concatenation",
                 "generate.keyframed@last-frame",
                 "generate.keyframed@text-only",
                 "generate.from_references@image-reference-max",
                 "generate.with_guides@guide-clip",
+                "continue.native_av@masked-overlap",
+                "continue.native_av@masked-overlap-future-guide",
+                "complete.native_av@local-replacement",
+                "complete.native_av@backward-prefix",
+                "complete.native_av@two-source-connection",
+                "rollback.native_av@branch-suffix",
+                "generate.from_references@video-reference-with-guide",
+                "generate.with_guides@first-last-interior",
+                "reference.transform@affine",
             ],
         )
         for entry in catalog["plans"]:
@@ -171,6 +187,72 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertTrue(is_h3_frame_count(continuation["overlap_frames"]))
         self.assertEqual(continuation["extension_frames"] % 17, 0)
         self.assertTrue(is_h3_frame_count(continuation["window_frames"]))
+
+    def test_native_completion_plans_have_exact_token_aligned_ranges(self):
+        plans = [
+            "08-complete-two-sided-infill.json",
+            "16-complete-local-replacement.json",
+            "17-complete-backward-prefix.json",
+            "18-complete-two-source-connection.json",
+        ]
+        for name in plans:
+            bindings = load_json(ROOT / "materialization" / "plans" / name)["bindings"]
+            start = bindings["unknown_start_frame"]
+            end = start + bindings["unknown_frame_count"]
+            self.assertTrue(is_h3_frame_count(bindings["target_frames"]))
+            self.assertTrue(is_h3_visual_boundary(start))
+            self.assertTrue(is_h3_visual_boundary(end))
+            mask = bindings["mask"]
+            self.assertIn(mask["curve"], {"linear", "smoothstep", "smootherstep"})
+            for key in (
+                "inside_strength_video",
+                "outside_strength_video",
+                "inside_strength_audio",
+                "outside_strength_audio",
+            ):
+                self.assertGreaterEqual(mask[key], 0)
+                self.assertLessEqual(mask[key], 1)
+
+    def test_backward_prefix_preserves_visual_and_audio_phase(self):
+        bindings = load_json(
+            ROOT / "materialization" / "plans" / "17-complete-backward-prefix.json"
+        )["bindings"]
+        boundary = bindings["unknown_start_frame"] + bindings["unknown_frame_count"]
+        self.assertEqual(bindings["known_right_target_frame"], boundary)
+        self.assertEqual(
+            bindings["known_right_frames"], bindings["target_frames"] - boundary
+        )
+        self.assertEqual(boundary * 40 % 24, 0)
+
+    def test_rolling_plan_is_strict_content_addressed_and_non_autowiring(self):
+        lock_path = ROOT / "operations.lock.json"
+        lock = load_json(lock_path)
+        _, registry = validate_operation_lock(lock, lock_path)
+        catalog_path = ROOT / "rolling" / "catalog.json"
+        catalog = load_json(catalog_path)
+        self.assertEqual(
+            validate_rolling_catalog(
+                catalog, catalog_path, registry, ROOT, lock["source"]["commit"]
+            ),
+            [],
+        )
+        plan_path = ROOT / "rolling" / "plans" / "native-continuation-chain.json"
+        plan = load_json(plan_path)
+        self.assertFalse(plan["execution"]["auto_wire_outputs"])
+        self.assertEqual(plan["checkpoint_policy"]["frequency"], "after-each-step")
+        self.assertEqual(plan["branch_policy"]["mode"], "new-plan-from-checkpoint")
+        self.assertEqual(
+            [step["depends_on"] for step in plan["steps"]],
+            [None, "seed", "extend-01"],
+        )
+        broken = copy.deepcopy(plan)
+        broken["steps"][2]["depends_on"] = "seed"
+        self.assertIn(
+            f"{plan_path}: rolling steps must form one exact serial chain",
+            validate_rolling_plan(
+                broken, plan_path, registry, ROOT, lock["source"]["commit"]
+            ),
+        )
 
     def test_media_catalog_is_empty_until_real_assets_are_hashed(self):
         catalog_path = ROOT / "media" / "catalog.json"

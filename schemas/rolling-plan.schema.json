@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hypereikon.online/schemas/inside-valdivia-rolling-plan-1.json",
+  "title": "Offline rolling native-AV production plan",
+  "type": "object",
+  "required": [
+    "schema", "id", "status", "frame_rate", "source_locks", "execution",
+    "checkpoint_policy", "branch_policy", "steps"
+  ],
+  "properties": {
+    "schema": { "const": "inside-valdivia.rolling-plan/1" },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_-]*$" },
+    "status": { "const": "offline-ready" },
+    "frame_rate": { "const": 24 },
+    "source_locks": {
+      "type": "object",
+      "required": ["cauce_commit", "runtime_repository", "runtime_commit"],
+      "properties": {
+        "cauce_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "runtime_repository": { "type": "string", "minLength": 1 },
+        "runtime_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" }
+      },
+      "additionalProperties": false
+    },
+    "execution": {
+      "type": "object",
+      "required": [
+        "runtime_schema", "requires_materialized_graphs", "auto_wire_outputs",
+        "binding_mode"
+      ],
+      "properties": {
+        "runtime_schema": { "const": "comfy.run-series/1" },
+        "requires_materialized_graphs": { "const": true },
+        "auto_wire_outputs": { "const": false },
+        "binding_mode": { "const": "explicit-prebound" }
+      },
+      "additionalProperties": false
+    },
+    "checkpoint_policy": {
+      "type": "object",
+      "required": ["frequency", "immutability", "receipt_required"],
+      "properties": {
+        "frequency": { "const": "after-each-step" },
+        "immutability": { "const": "content-addressed" },
+        "receipt_required": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "branch_policy": {
+      "type": "object",
+      "required": [
+        "mode", "mutate_existing_plan", "rollback_operation",
+        "rollback_operation_version", "rollback_operation_contract_hash"
+      ],
+      "properties": {
+        "mode": { "const": "new-plan-from-checkpoint" },
+        "mutate_existing_plan": { "const": false },
+        "rollback_operation": { "const": "rollback.native_av" },
+        "rollback_operation_version": { "type": "integer", "minimum": 1 },
+        "rollback_operation_contract_hash": {
+          "type": "string", "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id", "position", "operation", "operation_version",
+          "operation_contract_hash", "variant", "topology_key",
+          "materialization_plan", "depends_on", "input_bindings",
+          "output_native_state", "status"
+        ],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_-]*$" },
+          "position": { "type": "integer", "minimum": 1 },
+          "operation": { "type": "string" },
+          "operation_version": { "type": "integer", "minimum": 1 },
+          "operation_contract_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "variant": { "type": "string", "minLength": 1 },
+          "topology_key": { "type": "string", "minLength": 3 },
+          "materialization_plan": { "type": "string", "minLength": 1 },
+          "depends_on": { "type": ["string", "null"] },
+          "input_bindings": { "type": "object" },
+          "output_native_state": { "type": "string", "minLength": 1 },
+          "status": { "const": "offline-ready" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

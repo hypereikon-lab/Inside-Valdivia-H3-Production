@@ -12,7 +12,7 @@
     },
     {
       "id": "reference-image-size",
-      "operations": [{ "id": "generate.from_references", "version": 2 }],
+      "operations": [{ "id": "generate.from_references", "version": 3 }],
       "question": "What quality and runtime difference does the official reference-image size mode produce?",
       "fixed": ["model", "resolution", "target_frames", "reference_image", "prompt", "seed", "sampler", "scheduler", "steps"],
       "variable": { "ref_image_size": ["match", "max"] },
@@ -21,7 +21,7 @@
     },
     {
       "id": "reference-clip-duration",
-      "operations": [{ "id": "generate.from_references", "version": 2 }],
+      "operations": [{ "id": "generate.from_references", "version": 3 }],
       "question": "How much reference motion is retained as a documented-range 24 fps clip changes across valid H3 lengths?",
       "fixed": ["model", "resolution", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps", "reference motion source"],
       "variable": { "reference_clip_frames": [56, 73, 90, 107, 124] },
@@ -30,7 +30,7 @@
     },
     {
       "id": "guide-length",
-      "operations": [{ "id": "generate.with_guides", "version": 1 }],
+      "operations": [{ "id": "generate.with_guides", "version": 2 }],
       "question": "How does official AddGuide clip length trade contextual motion against free generated range?",
       "fixed": ["model", "resolution", "target_frames", "prompt", "seed", "guide start index", "sampler", "scheduler", "steps"],
       "variable": { "guide_frames": [5, 22, 39, 56, 73, 90, 107] },
@@ -39,7 +39,7 @@
     },
     {
       "id": "guide-placement",
-      "operations": [{ "id": "generate.with_guides", "version": 1 }],
+      "operations": [{ "id": "generate.with_guides", "version": 2 }],
       "question": "How does placement of the same official temporal guide affect the generated range around it?",
       "fixed": ["model", "resolution", "target_frames", "prompt", "seed", "guide clip", "sampler", "scheduler", "steps"],
       "variable": { "frame_idx": [0, 51, 102] },
@@ -48,7 +48,7 @@
     },
     {
       "id": "native-continuation-prompt-relation",
-      "operations": [{ "id": "continue.native_av", "version": 1 }],
+      "operations": [{ "id": "continue.native_av", "version": 2 }],
       "question": "Does the characterized 22-frame native latent tail preserve motion and appearance across one continuation?",
       "fixed": ["model", "resolution", "overlap_frames=22", "sampler", "scheduler", "steps", "continuation target length"],
       "variable": { "prompt_relation": ["same prompt", "controlled prompt continuation"] },
@@ -56,19 +56,37 @@
       "status": "planned"
     },
     {
-      "id": "two-sided-guide-length",
-      "operations": [{ "id": "connect.two_sided_guides", "version": 1 }],
-      "question": "Which valid two-sided guide length gives H3 enough outgoing and incoming motion context without overconstraining the generated range?",
-      "fixed": ["left source", "right source", "model", "resolution", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps"],
-      "variable": { "guide_frames": [5, 22, 39] },
-      "measure": ["left boundary motion", "right boundary motion", "accepted-range coherence", "duplicate or frozen frames"],
+      "id": "native-mask-boundary",
+      "operations": [{ "id": "complete.native_av", "version": 1 }],
+      "question": "How does an official continuous H3 per-token AV mask change preservation and transition quality around the same native completion interval?",
+      "fixed": ["native target", "unknown interval", "model", "resolution", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps", "mask strengths"],
+      "variable": { "mask_boundary": ["hard", "17-frame smoothstep", "17-frame smootherstep"] },
+      "measure": ["known-token preservation", "left boundary motion", "right boundary motion", "ghosting", "structural-audio shape validity"],
+      "status": "planned"
+    },
+    {
+      "id": "native-overlap-transport",
+      "operations": [{ "id": "continue.native_av", "version": 2 }],
+      "question": "For the same source and suffix request, how does native keyframe overlap compare with official per-token masked overlap?",
+      "fixed": ["source native state", "overlap_frames", "extension_frames", "model", "resolution", "prompt", "seed", "sampler", "scheduler", "steps"],
+      "variable": { "overlap_transport": ["minimax_keyframes", "noise_mask"] },
+      "measure": ["boundary motion continuity", "known-tail preservation", "identity drift", "runtime_seconds"],
+      "status": "planned"
+    },
+    {
+      "id": "native-future-guide",
+      "operations": [{ "id": "continue.native_av", "version": 2 }],
+      "question": "Does one official future guide improve arrival fidelity without degrading native overlap continuity?",
+      "fixed": ["source native state", "overlap mask", "model", "resolution", "prompt", "seed", "sampler", "scheduler", "steps"],
+      "variable": { "future_guide": ["absent", "present at frame 119"] },
+      "measure": ["arrival fidelity", "overlap continuity", "motion coherence", "guide reconstruction artifact"],
       "status": "planned"
     },
     {
       "id": "motion-reference-map",
       "operations": [
         { "id": "reference.transform", "version": 1 },
-        { "id": "generate.from_references", "version": 2 }
+        { "id": "generate.from_references", "version": 3 }
       ],
       "question": "Which inspectable decoded reference construction produces the strongest usable motion correspondence through official Ref2VA conditioning?",
       "fixed": ["source frames", "reference duration", "model", "resolution", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps"],

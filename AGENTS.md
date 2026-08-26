@@ -23,7 +23,13 @@ rendered media.
   the active graph from it, export the paired UI/API forms with Workspace
   Control, and use Runtime Control for guarded materialization.
 - Project data binds operations to concrete media and parameters; it must not
-  duplicate generic graph ownership or create a sequential workflow ontology.
+  duplicate generic graph ownership or create a creative workflow ontology.
+- Rolling plans may encode only explicit serial data dependencies. Every later
+  step binds the immediately preceding native state, every step checkpoints,
+  and a branch starts as a new plan rather than mutating accepted history.
+- Runtime Control executes only concrete prebound graphs. Never imply that it
+  infers H3 semantics or automatically wires one prompt's artifacts into the
+  next graph.
 - A run receipt may say `executes`; only inspected media can say
   `visually-accepted` or `rejected`.
 - No credentials, model binaries, inputs, outputs, or browser state belong here.

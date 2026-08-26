@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hypereikon.online/schemas/inside-valdivia-rolling-catalog-1.json",
+  "title": "Rolling production plan catalog",
+  "type": "object",
+  "required": ["schema", "plans"],
+  "properties": {
+    "schema": { "const": "inside-valdivia.rolling-catalog/1" },
+    "plans": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "plan", "status"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_-]*$" },
+          "plan": { "type": "string", "minLength": 1 },
+          "status": { "const": "offline-ready" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,8 +1,8 @@
 {
   "schema": "inside-valdivia.materialization-plan/1",
   "operation": "generate.with_guides",
-  "operation_version": 1,
-  "operation_contract_hash": "dcc117fc281eddddc5568de0f7f55940c671b5bf6fedfb892514473eb77ead27",
+  "operation_version": 2,
+  "operation_contract_hash": "6aa98ac3795988f9797de0d5043505609fc7e86959b0da0832951ac3e535e3dc",
   "variant": "guide-clip",
   "topology_key": "generate.with_guides@guide-clip",
   "priority": 13,

@@ -1,148 +1,94 @@
 # Production roadmap
 
-This roadmap turns the existing low-level system into reproducible H3
-operations. It does not add a sequential creative ontology: every retained
-workflow remains an independent, parameterizable operation over opaque media.
+The offline implementation surface is complete for the present scope. The
+remaining gates convert checked contracts into live, reproducible and visually
+assessed workflows.
 
 ## Completion rule
 
-An operation becomes production-ready only after one exact variant has:
-
 ```text
-paired UI/API export
-  -> guarded parameterization
-  -> validation against the same live /object_info capture
-  -> successful exact prompt_id execution
-  -> immutable receipt and artifact references
+checked operation@variant plan
+  -> paired UI/API export from one live graph
+  -> guarded literal parameterization
+  -> validation against the same /object_info capture
+  -> exact prompt-id execution and immutable receipt
+  -> retained native state when applicable
   -> explicit visual verdict
 ```
 
-Queue completion proves `executes`; it never proves visual acceptance.
+`executes` never implies `visually-accepted`.
 
-## Phase 0 — reconcile the laboratory runtime
+## 0. Reconcile the laboratory
 
-1. Probe routes, `/features`, `/system_stats`, `/object_info`, Manager state,
-   queue state, and free disk space.
-2. Inventory exact installed custom-node packages and Git revisions.
-3. Confirm or install Workspace Control through one targeted action.
-4. Update only CAUCE to the project-locked commit.
-5. Remove installed copies of the retired SamplerLab and legacy Hypereikon H3
-   production packages if present.
-6. Restart only the ComfyUI process once all targeted changes are complete.
-7. Verify all 24 CAUCE nodes, the Workspace Control capability route, an idle
-   queue, and unchanged H3 model filenames.
+Probe runtime, queue, node inventory, Manager revisions, model filenames, and
+free space. Update only CAUCE to commit
+`180acd890e455a3985448b828cd8fa650d467e25` if needed, restart only ComfyUI, and
+verify all 28 nodes. Do not change ComfyUI core, CUDA, PyTorch, drivers, models,
+or unrelated packages during this gate.
 
-This phase must not update ComfyUI core, CUDA, PyTorch, drivers, models, or
-unrelated custom nodes.
+## 1. Materialize the operational core
 
-## Phase 1 — materialize the canonical operation variants
+Construct and export one active graph at a time. Start with:
 
-Build one active graph at a time. Export its paired UI/API forms through
-Workspace Control and materialize them through Runtime Control.
+1. `generate.keyframed@first-frame`;
+2. `generate.keyframed@first-last`;
+3. `generate.from_references@video-reference`;
+4. `generate.with_guides@single-anchor`;
+5. `continue.native_av@keyframe-overlap`;
+6. `continue.native_av@masked-overlap`;
+7. `complete.native_av@two-sided-infill`;
+8. `rollback.native_av@branch-suffix`;
+9. `frames.assemble@ordered-concatenation`.
 
-| Priority | Operation variant | Primary purpose |
-| --- | --- | --- |
-| 1 | `generate.keyframed@first-frame` | generate forward from one exact frame |
-| 2 | `generate.keyframed@first-last` | connect two exact endpoint frames |
-| 3 | `generate.from_references@image-reference-match` | ordered image references at bounded token cost |
-| 4 | `generate.from_references@video-reference` | motion/structure from one 24 fps reference clip |
-| 5 | `generate.with_guides@single-anchor` | one exact image or clip at an arbitrary frame |
-| 6 | `generate.with_guides@multi-anchor` | two explicit temporal anchors |
-| 7 | `continue.native_av@characterized-layout` | extend retained native state with 22 overlap and 119 new frames |
-| 8 | `connect.two_sided_guides@default` | generate an 80-frame center inside a 124-frame target with 22-frame guides |
-| 9 | `frames.assemble@ordered-concatenation` | concatenate exact accepted decoded ranges |
+Then materialize the remaining catalog entries as their concrete use arises.
+All 22 offline plans already exist; priority here controls live effort, not
+contract completeness.
 
-Text-only, last-frame-only, `ref_image_size=max`, three-or-more-guide, and
-alternative continuation layouts remain later variants. They are not hidden
-branches inside the first canonical graphs.
+## 2. Establish exact baselines
 
-These are exact contract variant IDs. The same ordered queue and its offline
-bindings live in `materialization/catalog.json` and
-`materialization/plans/*.json`; the documents deliberately contain no invented
-ComfyUI node ids or API pointers before live paired export.
+For each graph retain model filenames, geometry, frame count, prompt, seed,
+sampler, scheduler, steps, denoise, video/audio shifts, ordered input hashes,
+output prefix, runtime manifest, graph hashes, prompt id, and receipt.
 
-The following low-complexity variants reuse the same official inference
-surface and are appended to the queue without displacing the primary nine:
+Reference-video baselines use legal `17k+5` lengths within the model's stated
+2–15 second range. Completion and continuation baselines preserve explicit
+timeline origins and independent native video/audio masks.
 
-| Priority | Operation variant | Primary purpose |
-| --- | --- | --- |
-| 10 | `generate.keyframed@last-frame` | construct toward one exact final frame |
-| 11 | `generate.keyframed@text-only` | unanchored FL2VA control baseline |
-| 12 | `generate.from_references@image-reference-max` | isolate the cost/effect of maximum reference-image sizing |
-| 13 | `generate.with_guides@guide-clip` | place one lattice-trimmed decoded clip at an exact frame |
+## 3. Characterize behavior
 
-Together with `first-frame` and `first-last`, this completes the four possible
-endpoint-input topologies exposed by `MiniMaxH3ImageToVideo`. Parameter-only
-duration, guide-length, and continuation ablations remain experiments over one
-materialized graph rather than duplicated workflows.
+Run the ten declared controlled comparisons. Prioritize endpoint behavior,
+reference-video correspondence, AddGuide placement, keyframe versus native-mask
+overlap, mask boundary/fade behavior, and future-guide interaction. Record
+negative visual results as evidence; do not keep an ineffective mechanism as
+accepted knowledge.
 
-## Phase 2 — establish baselines
+## 4. Prove rolling execution
 
-For each materialized H3 graph, retain one baseline configuration:
+Resolve the three-step native continuation example into concrete, prebound API
+graphs. Compile a `comfy.run-series/1` plan, interrupt it after submission,
+resume from its persisted exact prompt id, and verify that no duplicate prompt
+was created. Retain a receipt and content-addressed native checkpoint after each
+step.
 
-```text
-exact model filenames
-resolution and target frame count
-prompt string
-seed
-sampler / scheduler / steps / denoise
-video and structural-audio shifts
-ordered input filenames and hashes
-output prefix
-```
+Create branches only as new plans from checkpoints. Use
+`rollback.native_av` when the branch point requires a synchronized prefix; do
+not mutate accepted chain history.
 
-Reference-video baselines use valid `17k+5` lengths inside the documented
-2–15 second range. Although the current ComfyUI implementation accepts five
-frames, sub-two-second references are out-of-spec experiments rather than
-production defaults.
+## 5. Production and storage
 
-## Phase 3 — controlled visual experiments
+Create project invocations from accepted or intentionally exploratory graphs.
+Index actual media by content hash, download accepted outputs from the tower,
+retain packed AV state for anything that may continue or branch, and delete
+only explicitly identified redundant artifacts. Keep a declared storage
+reserve and never automate model deletion.
 
-Run the checked experiment catalog only after its operation variant has a
-paired graph. Change one declared variable per comparison and retain every
-rejected verdict as evidence rather than as a capability.
+Editorial segments assign accepted outputs to exact 24 fps ranges against the
+fixed external soundtrack.
 
-First comparisons:
+## Operational resilience
 
-1. first-frame versus first-last anchor behavior;
-2. Ref2VA image `match` versus `max`;
-3. Ref2VA reference duration at 56, 73, 90, 107, and 124 frames;
-4. AddGuide length and placement;
-5. native continuation with the same prompt versus a controlled continuation;
-6. two-sided guide lengths 5, 22, and 39.
-
-Procedural motion-reference transforms remain optional until one simple
-Ref2VA baseline demonstrates useful correspondence. Direct latent transport,
-sampler patches, masked temporal inpainting, and LanPaint are excluded.
-
-## Phase 4 — production records and storage
-
-Create real project invocations only from accepted or intentionally exploratory
-materialized variants. Each external media input needs a manifest containing:
-
-```text
-logical id
-content hash
-Comfy input/output filename
-media type
-frame count / fps / geometry
-file size
-origin invocation, when generated
-```
-
-Retain the packed AV latent for any result that may be continued, rolled back,
-or branched. Download accepted outputs away from the laboratory tower. Delete
-only explicitly rejected or redundant artifacts, keep a declared free-space
-reserve, and never automate model deletion.
-
-Editorial segments assign accepted invocation outputs to exact 24 fps frame
-ranges. The fixed soundtrack remains an external editorial clock.
-
-## Operational hardening outside the repositories
-
-The laboratory operator should configure ComfyUI to start with Windows and
-restart after process failure, disable sleep during production windows, and
-confirm the tower's desired behavior after AC loss. `cloudflared` remains a
-service. A scoped Cloudflare Access service token may later authenticate
-Runtime Control without an interactive browser session; it cannot recover an
-offline tower or stopped ComfyUI process.
+Outside these repositories, the laboratory operator should keep ComfyUI and
+`cloudflared` configured for restart, disable sleep during agreed production
+windows, and define desired recovery after AC loss. A Cloudflare service token
+can remove interactive authentication from automation, but cannot revive an
+offline tower or origin process.

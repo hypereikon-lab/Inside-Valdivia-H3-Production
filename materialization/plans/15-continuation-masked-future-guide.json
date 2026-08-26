@@ -3,9 +3,9 @@
   "operation": "continue.native_av",
   "operation_version": 2,
   "operation_contract_hash": "2776bb1db0e844648bcb2b4d98a1ef84b36a2488449ef7bdc77d7e44ceb6a8b5",
-  "variant": "keyframe-overlap",
-  "topology_key": "continue.native_av@keyframe-overlap",
-  "priority": 7,
+  "variant": "masked-overlap-future-guide",
+  "topology_key": "continue.native_av@masked-overlap-future-guide",
+  "priority": 15,
   "status": "offline-ready",
   "runtime_manifest_hash": null,
   "sources": { "workspace_export": null, "parameterization": null, "runtime_manifest": null, "operation_ref": null },
@@ -20,6 +20,21 @@
     "overlap_frames": 22,
     "extension_frames": 119,
     "window_frames": 141,
+    "overlap_transport": "noise_mask",
+    "target_frame_idx": 0,
+    "future_guide_frame": 119,
+    "mask": {
+      "start_frame": 22,
+      "frame_count": 119,
+      "inside_strength_video": 1.0,
+      "outside_strength_video": 0.0,
+      "inside_strength_audio": 1.0,
+      "outside_strength_audio": 0.0,
+      "fade_in_frames": 0,
+      "fade_out_frames": 0,
+      "curve": "smoothstep",
+      "combine": "replace"
+    },
     "prompt": null,
     "seed": null,
     "sampler": null,
@@ -27,9 +42,8 @@
     "steps": null,
     "video_shift": null,
     "audio_shift": null,
-    "overlap_transport": "minimax_keyframes",
-    "inputs": { "source_native_av_latent": null, "source_timeline_origin": 0 }
+    "inputs": { "source_native_av_latent": null, "source_timeline_origin": 0, "future_guide": null }
   },
   "outputs": { "ui_graph": null, "api_template": null, "bindings": null, "materialization_manifest": null, "ui_graph_hash": null, "api_template_hash": null, "bindings_hash": null },
-  "validation": { "schema_status": "pending", "missing_node_types": [], "notes": ["22 and 141 are legal 17k+5 windows; the 119-frame suffix is a token-aligned 17k increment."] }
+  "validation": { "schema_status": "pending", "missing_node_types": [], "notes": ["Use the same masked-overlap baseline and add exactly one official decoded future guide at frame 119."] }
 }

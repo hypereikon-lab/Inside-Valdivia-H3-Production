@@ -1,11 +1,11 @@
 {
   "schema": "inside-valdivia.materialization-plan/1",
-  "operation": "generate.with_guides",
-  "operation_version": 2,
-  "operation_contract_hash": "6aa98ac3795988f9797de0d5043505609fc7e86959b0da0832951ac3e535e3dc",
-  "variant": "single-anchor",
-  "topology_key": "generate.with_guides@single-anchor",
-  "priority": 5,
+  "operation": "complete.native_av",
+  "operation_version": 1,
+  "operation_contract_hash": "bef22c04534126804a4d884ae69f8229a97eb3bc562c8403ffdca508a0043ca4",
+  "variant": "two-sided-infill",
+  "topology_key": "complete.native_av@two-sided-infill",
+  "priority": 8,
   "status": "offline-ready",
   "runtime_manifest_hash": null,
   "sources": { "workspace_export": null, "parameterization": null, "runtime_manifest": null, "operation_ref": null },
@@ -18,6 +18,19 @@
     },
     "resolution": [768, 1344],
     "target_frames": 124,
+    "timeline_origin_frame": 0,
+    "unknown_start_frame": 39,
+    "unknown_frame_count": 51,
+    "mask": {
+      "inside_strength_video": 1.0,
+      "outside_strength_video": 0.0,
+      "inside_strength_audio": 1.0,
+      "outside_strength_audio": 0.0,
+      "fade_in_frames": 0,
+      "fade_out_frames": 0,
+      "curve": "smoothstep",
+      "combine": "replace"
+    },
     "prompt": null,
     "seed": null,
     "sampler": null,
@@ -25,8 +38,8 @@
     "steps": null,
     "video_shift": null,
     "audio_shift": null,
-    "inputs": { "guides": [{ "media": null, "frame_index": null }] }
+    "inputs": { "target_native_av_latent": null }
   },
   "outputs": { "ui_graph": null, "api_template": null, "bindings": null, "materialization_manifest": null, "ui_graph_hash": null, "api_template_hash": null, "bindings_hash": null },
-  "validation": { "schema_status": "pending", "missing_node_types": [], "notes": ["The graph contains exactly one MiniMaxH3AddGuide node."] }
+  "validation": { "schema_status": "pending", "missing_node_types": [], "notes": ["Preserve [0,39) and [90,124); generate only [39,90). Hard and continuous masks are separate runs."] }
 }

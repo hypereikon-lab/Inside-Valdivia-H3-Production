@@ -91,6 +91,12 @@ def verify_lock(project_root: Path, cauce_root: Path) -> list[str]:
             "materialization plans lack CAUCE topology dossiers: "
             + ", ".join(missing_topologies)
         )
+    unplanned_topologies = sorted(topology_keys - planned_keys)
+    if unplanned_topologies:
+        errors.append(
+            "CAUCE topology dossiers lack materialization plans: "
+            + ", ".join(unplanned_topologies)
+        )
     return errors
 
 
@@ -105,7 +111,7 @@ def main(argv: list[str]) -> int:
         return 1
     print(
         "verified: CAUCE source commit, catalog hash, operation hashes, "
-        "and planned topology variants"
+        "and complete topology-plan coverage"
     )
     return 0
 

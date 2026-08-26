@@ -3,9 +3,9 @@
   "operation": "generate.with_guides",
   "operation_version": 2,
   "operation_contract_hash": "6aa98ac3795988f9797de0d5043505609fc7e86959b0da0832951ac3e535e3dc",
-  "variant": "single-anchor",
-  "topology_key": "generate.with_guides@single-anchor",
-  "priority": 5,
+  "variant": "first-last-interior",
+  "topology_key": "generate.with_guides@first-last-interior",
+  "priority": 21,
   "status": "offline-ready",
   "runtime_manifest_hash": null,
   "sources": { "workspace_export": null, "parameterization": null, "runtime_manifest": null, "operation_ref": null },
@@ -25,8 +25,12 @@
     "steps": null,
     "video_shift": null,
     "audio_shift": null,
-    "inputs": { "guides": [{ "media": null, "frame_index": null }] }
+    "inputs": {
+      "first_frame": null,
+      "last_frame": null,
+      "guides": [{ "media": null, "frame_index": 62 }]
+    }
   },
   "outputs": { "ui_graph": null, "api_template": null, "bindings": null, "materialization_manifest": null, "ui_graph_hash": null, "api_template_hash": null, "bindings_hash": null },
-  "validation": { "schema_status": "pending", "missing_node_types": [], "notes": ["The graph contains exactly one MiniMaxH3AddGuide node."] }
+  "validation": { "schema_status": "pending", "missing_node_types": [], "notes": ["Retain both endpoint inputs and exactly one interior AddGuide node at frame 62."] }
 }

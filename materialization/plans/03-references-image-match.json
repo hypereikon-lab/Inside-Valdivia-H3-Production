@@ -1,8 +1,8 @@
 {
   "schema": "inside-valdivia.materialization-plan/1",
   "operation": "generate.from_references",
-  "operation_version": 2,
-  "operation_contract_hash": "2981aea77eaaf6e83d0b0dace34c63ccd2816c13c27a622a8ab87c04fd4411ab",
+  "operation_version": 3,
+  "operation_contract_hash": "479a9e932bc54b533b6f4db693433aeb20f626f4571459705921309cf590e771",
   "variant": "image-reference-match",
   "topology_key": "generate.from_references@image-reference-match",
   "priority": 3,

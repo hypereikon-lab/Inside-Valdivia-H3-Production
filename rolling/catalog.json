@@ -1,0 +1,10 @@
+{
+  "schema": "inside-valdivia.rolling-catalog/1",
+  "plans": [
+    {
+      "id": "native-continuation-chain",
+      "plan": "rolling/plans/native-continuation-chain.json",
+      "status": "offline-ready"
+    }
+  ]
+}

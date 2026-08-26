@@ -2,124 +2,79 @@
 
 ## Operation invocation
 
-An invocation is one call to a locked operation over explicit data:
+One call to one locked operation:
 
 ```text
 id
-operation
-operation_version
-operation_contract_hash
-inputs = arbitrary media references
-parameters = exact materialization values
-status
+operation / version / contract hash
+inputs = opaque media or named native-state references
+parameters = exact materialized values
 outputs
-run_receipts[]
+status and immutable run receipts
 ```
 
-It does not describe what is depicted. Images and clips remain opaque media
-references. Any prompt is stored as the exact string sent to the graph, not as
-an inferred decomposition of the image.
-
-An input may reference a local media URI or a named output of another
-invocation. This produces an explicit data-dependency graph without imposing a
-catalog order.
-
-## Editorial segment
-
-A segment assigns one or more invocation outputs to a range in the final visual
-edit:
-
-```text
-id
-frame_rate = 24
-frame_range = [start, end)
-sources[] = { invocation, output, accepted_range? }
-status
-```
-
-Generation parameters do not live in the segment. The same invocation output
-may be inspected, branched, or reused before any editorial assignment exists.
-
-Frame ranges are authoritative. Seconds are derived display values:
-
-```text
-seconds = frames / 24
-```
-
-## Operation dependency
-
-A generic operation contract is reusable and project-independent. It lives in
-CAUCE, not in this repository. `operations.lock.json` pins its source commit,
-catalog hash, operation version, and contract hash.
-
-`tools/verify_cauce_lock.py` checks those values against an explicit local
-CAUCE checkout; ordinary project validation does not silently depend on a
-sibling directory.
-
-Project records reference the operation; they do not restate its graph. The
-same operation may be invoked repeatedly, nested in a larger composition, or
-connected to another operation through typed outputs.
-
-The CAUCE implementation class remains an ownership statement:
-
-```text
-official-h3
-  only ComfyUI-shipped H3 and vanilla ComfyUI nodes
-
-official-h3-with-cauce-primitives
-  official inference composed with narrow deterministic CAUCE operations
-
-cauce-and-vanilla-deterministic
-  deterministic media processing with no H3 inference
-```
-
-The operation `reference.transform`, for example, produces decoded reference
-media. A later invocation of `generate.from_references` consumes that media;
-neither operation needs to know the project meaning of the frames.
+Prompts are exact submitted strings. Images and clips are never decomposed into
+project-level scene entities.
 
 ## Materialization plan
 
-A plan binds one locked operation to a runtime manifest, exact model files,
-resolution, frame count, prompt, seed, sampler, scheduler, steps, and input
-media. Its products are a paired UI graph and API graph with separate hashes.
+Selects one topology variant and records every invariant knowable before live
+ComfyUI construction. `offline-ready` means the static contract is consistent;
+it does not mean UI/API workflow JSON exists.
 
-The plan state `offline-ready` means its static operation/variant topology and
-project-side invariants are checked. It does not mean a ComfyUI workflow exists.
-Live paired export replaces the pending source/output fields and advances the
-evidence separately.
+## Rolling plan
+
+A strict ordered dependency graph for long native-state production:
+
+```text
+step id and position
+locked operation@variant
+materialization plan
+explicit previous-state binding
+unique output native-state id
+checkpoint and branch policy
+exact CAUCE and Runtime source commits
+```
+
+The first step may have unresolved external media while offline. Every later
+step must explicitly bind the immediately preceding state. Each output state is
+unique. A branch is a new plan from a content-addressed checkpoint; accepted
+history is immutable.
+
+The rolling plan remains distinct from Runtime Control's executable serial
+plan. The latter contains concrete graph and operation-reference paths only
+after all bindings have been compiled.
 
 ## Media catalog
 
-`media/catalog.json` is the project index for concrete inputs and retained
-outputs. A record exists only after the bytes have been hashed; unresolved
-placeholders belong in a materialization plan, not in the media catalog.
+`media/catalog.json` indexes real bytes only after hashing:
 
 ```text
-logical id
-SHA-256 content hash
+logical id and SHA-256
 exact Comfy filename
 image / video / native AV latent
 frame count, fps, geometry, byte size
-origin invocation, when generated
-availability state
+origin invocation and availability state
 ```
 
-The current catalog is intentionally empty because no production assets have
-yet been selected and hashed in this repository.
+Unresolved placeholders remain in plans. Rendered bytes remain in ComfyUI or an
+external artifact store.
+
+## Editorial segment
+
+Assigns accepted invocation outputs to `[start,end)` ranges at 24 fps. It does
+not own generation parameters. Seconds are display values derived as
+`frames / 24`. The fixed soundtrack is aligned here as an external clock.
 
 ## Run receipt
 
-ComfyUI Runtime Control records one immutable receipt per submitted prompt id:
+Runtime Control records the exact operation reference, API graph hash, runtime
+manifest hash, prompt id/history, artifacts, evidence status, and receipt hash.
+A receipt can prove execution but not visual quality.
 
-```text
-operation id / version / contract hash
-API graph hash
-runtime manifest hash
-history hash
-artifacts
-evidence status
-receipt hash
-```
+## Content-addressed ownership
 
-Rendered media stays in ComfyUI or an external artifact store. This repository
-stores only the receipt JSON or its content-addressed reference.
+`operations.lock.json` pins the CAUCE source commit, catalog hash, and every
+operation contract hash. `tools/verify_cauce_lock.py` additionally requires
+one-to-one coverage between all current CAUCE topology dossiers and project
+materialization plans.

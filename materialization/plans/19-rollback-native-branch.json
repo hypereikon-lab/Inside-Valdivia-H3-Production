@@ -1,0 +1,21 @@
+{
+  "schema": "inside-valdivia.materialization-plan/1",
+  "operation": "rollback.native_av",
+  "operation_version": 1,
+  "operation_contract_hash": "e440ecd49654c0f21227593a69af5a009d879c73389bfe6b8c859d64d1d61a1c",
+  "variant": "branch-suffix",
+  "topology_key": "rollback.native_av@branch-suffix",
+  "priority": 19,
+  "status": "offline-ready",
+  "runtime_manifest_hash": null,
+  "sources": { "workspace_export": null, "parameterization": null, "runtime_manifest": null, "operation_ref": null },
+  "bindings": {
+    "source_frame_count": 243,
+    "cut_frame": 124,
+    "output_prefix": null,
+    "artifact_index": null,
+    "inputs": { "source_native_av_latent": null }
+  },
+  "outputs": { "ui_graph": null, "api_template": null, "bindings": null, "materialization_manifest": null, "ui_graph_hash": null, "api_template_hash": null, "bindings_hash": null },
+  "validation": { "schema_status": "pending", "missing_node_types": [], "notes": ["The 124-frame prefix and 119-frame suffix reconstruct the 243-frame source exactly when re-appended."] }
+}
