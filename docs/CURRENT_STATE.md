@@ -6,11 +6,11 @@ This is the authority for present capability claims.
 
 ```text
 CAUCE
-  commit   291bff0307d0717fbe6376346799720a9ebdf891
-  version  5.0.0
+  commit   446c340c57ece866c4714732486243f1db56e733
+  version  5.1.0
   nodes    18
   operations / topology dossiers  7 / 21
-  local tests  36 passing
+  local tests  37 passing
 
 Runtime Control
   commit   a39583a4d2c335eea8ddbb8c8280402c64a160a2
@@ -26,7 +26,7 @@ Production data
 
 The local source repositories are complete and content-addressed. The current
 laboratory process has not yet been re-probed against these commits, so the
-numbers above describe source state, not a claim that CAUCE 5.0 is presently
+numbers above describe source state, not a claim that CAUCE 5.1 is presently
 loaded by the remote ComfyUI process.
 
 ## What is implemented
@@ -45,6 +45,10 @@ CAUCE provides deterministic primitives for:
 Official ComfyUI owns H3 first/last frames, Ref2VA references, arbitrary-frame
 AddGuide conditioning, model loading, prompting, sampling, and decoding. CAUCE
 composes those official mechanisms; it does not replace the model or sampler.
+
+The seven operations are grouped as H3 conditioning grammar, native H3 AV
+state algebra, and decoded media algebra. They are orthogonal functions, not
+seven workflow stages. See [Project model](PROJECT_MODEL.md).
 
 Runtime Control implements guarded materialization plus `comfy.run-series/1`:
 all concrete graphs are validated against one fresh `/object_info`, each prompt

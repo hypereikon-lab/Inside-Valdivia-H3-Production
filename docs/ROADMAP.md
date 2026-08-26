@@ -22,27 +22,37 @@ checked operation@variant plan
 
 Probe runtime, queue, node inventory, Manager revisions, model filenames, and
 free space. Update only CAUCE to commit
-`291bff0307d0717fbe6376346799720a9ebdf891` if needed, restart only ComfyUI, and
+`446c340c57ece866c4714732486243f1db56e733` if needed, restart only ComfyUI, and
 verify all 18 nodes. Do not change ComfyUI core, CUDA, PyTorch, drivers, models,
 or unrelated packages during this gate.
 
 ## 1. Materialize the operational core
 
-Construct and export one active graph at a time. Start with:
+Construct and export one active graph at a time. Establish the official
+conditioning baselines first:
 
-1. `generate.keyframed@first-frame`;
-2. `generate.keyframed@first-last`;
-3. `generate.from_references@video-reference`;
-4. `generate.with_guides@single-anchor`;
-5. `continue.native_av@keyframe-overlap`;
-6. `continue.native_av@masked-overlap`;
-7. `complete.native_av@two-sided-infill`;
-8. `rollback.native_av@branch-suffix`;
-9. `frames.assemble@ordered-concatenation`.
+1. `generate.keyframed@text-only` as the prompt-only control;
+2. `generate.keyframed@first-frame`;
+3. `generate.keyframed@last-frame`;
+4. `generate.keyframed@first-last`;
+5. `generate.from_references@image-reference-match`;
+6. `generate.from_references@video-reference`;
+7. `generate.with_guides@single-anchor`;
+8. `generate.with_guides@guide-clip`.
 
-Then materialize the remaining catalog entries as their concrete use arises.
-All 21 offline plans already exist; priority here controls live effort, not
-contract completeness.
+Then establish the native-state and deterministic baselines:
+
+1. `continue.native_av@keyframe-overlap`;
+2. `continue.native_av@masked-overlap` only after native mask capability is
+   observed in the live core;
+3. `complete.native_av@two-sided-infill` with a hard mask before any fade;
+4. `complete.native_av@local-replacement`;
+5. `rollback.native_av@branch-suffix`, including exact split/append round trip;
+6. `frames.assemble@ordered-concatenation`.
+
+The remaining variants are retained and materialized after their underlying
+mechanism earns baseline evidence. All 21 offline plans already exist; this
+order controls evidence dependencies, not catalog importance or permanence.
 
 ## 2. Establish exact baselines
 
@@ -56,11 +66,17 @@ timeline origins and independent native video/audio masks.
 
 ## 3. Characterize behavior
 
-Run the nine declared controlled comparisons. Prioritize endpoint behavior,
-reference-video correspondence, AddGuide placement, keyframe versus native-mask
-overlap, mask boundary/fade behavior, and future-guide interaction. Record
-negative visual results as evidence; do not keep an ineffective mechanism as
-accepted knowledge.
+Run the nine declared controlled comparisons one variable at a time. Prioritize
+endpoint behavior, reference-video correspondence, AddGuide placement,
+keyframe versus native-mask overlap, mask boundary/fade behavior, and
+future-guide interaction.
+
+For temporal completion, verify technical preservation before judging the
+image: confirm exact unknown range, unchanged tokens outside it, independent
+video/audio masks reaching the official sampler, and cleared mask metadata on
+the retained result. Test a hard mask first, then linear, smoothstep, and
+smootherstep boundaries. Record negative visual results as evidence; do not
+keep an ineffective mechanism as accepted knowledge.
 
 ## 4. Prove rolling execution
 

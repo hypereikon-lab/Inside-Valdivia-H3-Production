@@ -4,6 +4,16 @@
 entry selects one exact CAUCE `operation@variant` topology and one checked plan
 in `materialization/plans/`.
 
+Materialization advances one lifecycle boundary only:
+
+```text
+checked operation@variant topology
+  -> paired UI graph + API template
+```
+
+Concrete project media belongs to an invocation; queue identity, artifacts,
+and receipts belong to a run. See [Project model](PROJECT_MODEL.md).
+
 ## What the offline plans establish
 
 ```text

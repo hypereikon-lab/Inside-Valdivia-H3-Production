@@ -4,7 +4,7 @@
   "status": "offline-ready",
   "frame_rate": 24,
   "source_locks": {
-    "cauce_commit": "291bff0307d0717fbe6376346799720a9ebdf891",
+    "cauce_commit": "446c340c57ece866c4714732486243f1db56e733",
     "runtime_repository": "https://github.com/hypereikon-lab/ComfyUI-Runtime-Control",
     "runtime_commit": "a39583a4d2c335eea8ddbb8c8280402c64a160a2"
   },

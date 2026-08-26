@@ -34,6 +34,14 @@ this repository
 
 ## Locked operations
 
+The catalog is a capability grammar, not a production pipeline:
+
+```text
+H3 conditioning grammar     keyframed / references / guides
+native H3 AV state algebra  continue / complete / rollback
+decoded media algebra       exact frame assembly
+```
+
 ```text
 generate.keyframed
 generate.from_references
@@ -58,6 +66,7 @@ input binding before Runtime Control can execute and resume them safely.
 
 ## Documentation
 
+- [Project model](docs/PROJECT_MODEL.md)
 - [Current state](docs/CURRENT_STATE.md)
 - [Operations](docs/OPERATIONS.md)
 - [Materialization](docs/MATERIALIZATION.md)

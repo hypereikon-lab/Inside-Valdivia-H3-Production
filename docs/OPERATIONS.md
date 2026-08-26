@@ -4,7 +4,7 @@ An operation is a typed graph-level data function over opaque media or packed
 native H3 state. It is not a monolithic custom node and its name does not imply
 production order.
 
-## Official generation
+## H3 conditioning grammar
 
 ### `generate.keyframed`
 
@@ -25,7 +25,7 @@ Official AddGuide chains place images or clips at exact target-frame indices.
 Variants cover one anchor, multiple anchors, one guide clip, and first/last
 endpoints plus an interior guide. A guide is conditioning, not a denoise mask.
 
-## Native AV state
+## Native H3 AV state algebra
 
 ### `continue.native_av`
 
@@ -60,7 +60,7 @@ Packed native AV state must be retained for continuation, completion, rollback,
 or branching. Decoding to MP4 and re-encoding does not reconstruct identical
 native state.
 
-## Deterministic decoded media
+## Decoded media algebra
 
 ### `frames.assemble`
 
@@ -79,3 +79,7 @@ accepted decoded ranges -> frames.assemble
 
 Edges are explicit artifact/native-state references. The catalog never assumes
 that one operation automatically follows another.
+
+The lifecycle after an operation is variant, paired workflow, project
+invocation, exact run, and evidence. These states are defined in
+[Project model](PROJECT_MODEL.md) and must never be collapsed.
