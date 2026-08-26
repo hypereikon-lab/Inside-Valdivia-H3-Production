@@ -1,0 +1,56 @@
+{
+  "schema": "comfy.runtime-requirements/1",
+  "id": "inside-valdivia-h3-core",
+  "required_endpoints": ["features", "system_stats", "object_info", "queue"],
+  "required_node_types": [
+    "BasicGuider",
+    "BasicScheduler",
+    "CLIPLoader",
+    "CauceAcceptDecodedRange",
+    "CauceH3AddAVSpanGuide",
+    "CauceH3AllocateAVWindow",
+    "CauceH3AppendAVSpan",
+    "CauceH3ClearAVDenoiseMask",
+    "CauceH3ExtractAVSpan",
+    "CauceH3InspectAVLatent",
+    "CauceH3InspectConditioning",
+    "CauceH3PlaceAVSpan",
+    "CauceH3PlanAVWindow",
+    "CauceH3PrepareGuideClip",
+    "CauceH3PrepareReferenceClip",
+    "CauceH3ReplaceAVSpan",
+    "CauceH3ResolveTargetShape",
+    "CauceH3SetAVDenoiseInterval",
+    "CauceH3SplitAVLatent",
+    "CauceLoadAVLatent",
+    "CauceSaveAVLatent",
+    "CreateVideo",
+    "KSamplerSelect",
+    "LoadImage",
+    "MiniMaxH3ImageToVideo",
+    "MiniMaxH3SigmaShift",
+    "RandomNoise",
+    "SamplerCustomAdvanced",
+    "SaveVideo",
+    "UNETLoader",
+    "VAEDecode",
+    "VAELoader"
+  ],
+  "node_type_groups": [],
+  "required_models": [
+    "minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+    "minimax_h3_video_vae_fp16.safetensors",
+    "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors"
+  ],
+  "hardware": {
+    "minimum_total_ram_bytes": 60000000000,
+    "minimum_total_vram_bytes": 30000000000,
+    "device_name_contains": "5090"
+  },
+  "require_queue_idle": true,
+  "manual_checks": [
+    "Confirm at least 30 GB of free local storage before any new model or long render.",
+    "Confirm Windows sleep is disabled for the agreed production window.",
+    "Confirm cloudflared and ComfyUI recovery behavior after process restart without changing the GPU stack."
+  ]
+}

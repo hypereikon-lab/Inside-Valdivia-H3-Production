@@ -24,6 +24,14 @@
     "sampler": null,
     "scheduler": null,
     "steps": null,
+    "artifact": {
+      "frame_rate": 24,
+      "filename_prefix": null,
+      "format": "auto",
+      "codec": "auto",
+      "history_resolvable": true,
+      "retain_native_state": true
+    },
     "inputs": {
       "first_frame": null,
       "last_frame": null

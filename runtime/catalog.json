@@ -1,0 +1,15 @@
+{
+  "schema": "inside-valdivia.runtime-requirements-catalog/1",
+  "profiles": [
+    {
+      "id": "h3-core",
+      "path": "runtime/requirements/h3-core.json",
+      "purpose": "Materialize and execute FL2VA endpoint baselines plus verify the complete locked CAUCE node pack."
+    },
+    {
+      "id": "h3-full",
+      "path": "runtime/requirements/h3-full.json",
+      "purpose": "Materialize the complete 21-variant surface including Ref2VA, AddGuide, decoded video persistence, and native-state operations."
+    }
+  ]
+}

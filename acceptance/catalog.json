@@ -1,0 +1,122 @@
+{
+  "schema": "inside-valdivia.acceptance-catalog/1",
+  "profiles": [
+    {
+      "operation": "complete.native_av",
+      "operation_version": 1,
+      "variants": ["backward-prefix", "local-replacement", "two-sided-infill", "two-source-connection"],
+      "technical_checks": [
+        {"id": "target-layout", "description": "The target frame count, video-token layout, audio-token layout, and absolute origin match the checked plan."},
+        {"id": "unknown-interval", "description": "The generated interval uses exact half-open token-aligned boundaries."},
+        {"id": "known-state-preservation", "description": "Known native state outside the denoise interval remains unchanged before decode."},
+        {"id": "mask-cleared", "description": "Consumed denoise-mask metadata is cleared before persistence."},
+        {"id": "artifact-lineage", "description": "The run receipt resolves both the decoded artifact and retained native checkpoint."}
+      ],
+      "visual_checks": [
+        {"id": "left-boundary", "description": "No objectionable discontinuity, freeze, ghosting, or duplicated gesture at the left boundary."},
+        {"id": "right-boundary", "description": "No objectionable discontinuity, freeze, ghosting, or duplicated gesture at the right boundary."},
+        {"id": "interior-coherence", "description": "The generated interval forms a coherent temporal passage between its known contexts."},
+        {"id": "outside-preservation", "description": "Decoded content outside the requested interval remains acceptably stable."}
+      ],
+      "promotion": {"minimum_successful_runs": 2, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
+    },
+    {
+      "operation": "continue.native_av",
+      "operation_version": 2,
+      "variants": ["keyframe-overlap", "masked-overlap", "masked-overlap-future-guide"],
+      "technical_checks": [
+        {"id": "absolute-window", "description": "The overlap and suffix use one globally aligned H3 AV timeline."},
+        {"id": "single-suffix", "description": "Only the explicit new suffix is appended to cumulative state."},
+        {"id": "checkpoint", "description": "The cumulative native result is content-addressed and retained."},
+        {"id": "artifact-lineage", "description": "The receipt binds source state, graph, runtime, prompt id, decoded artifact, and checkpoint."}
+      ],
+      "visual_checks": [
+        {"id": "boundary-motion", "description": "Motion crosses the old/new boundary without a visible stall, reversal, duplicated beat, or jump."},
+        {"id": "appearance-drift", "description": "Appearance drift remains acceptable for the requested continuation."},
+        {"id": "suffix-utility", "description": "The new suffix adds usable temporal material rather than merely repeating the overlap."}
+      ],
+      "promotion": {"minimum_successful_runs": 2, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
+    },
+    {
+      "operation": "frames.assemble",
+      "operation_version": 2,
+      "variants": ["ordered-concatenation"],
+      "technical_checks": [
+        {"id": "source-hashes", "description": "Every source range is bound to an exact content hash."},
+        {"id": "range-cardinality", "description": "The output frame count equals the sum of all declared half-open source ranges."},
+        {"id": "source-order", "description": "Output frames preserve the declared source and intra-source order."},
+        {"id": "artifact-lineage", "description": "The assembled artifact is resolved from the exact run history."}
+      ],
+      "visual_checks": [
+        {"id": "assembly-inspection", "description": "The decoded artifact contains the intended ranges in the intended order without accidental omissions."}
+      ],
+      "promotion": {"minimum_successful_runs": 1, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
+    },
+    {
+      "operation": "generate.from_references",
+      "operation_version": 3,
+      "variants": ["image-reference-match", "image-reference-max", "video-reference", "video-reference-with-guide"],
+      "technical_checks": [
+        {"id": "reference-order", "description": "Reference images and clips enter conditioning in the exact declared order."},
+        {"id": "reference-length", "description": "Every reference clip uses an accepted 24 fps H3-valid length."},
+        {"id": "model-role", "description": "The graph selects the locked Ref2VA model and both required VAEs."},
+        {"id": "artifact-lineage", "description": "The receipt binds ordered input hashes and the saved output artifact."}
+      ],
+      "visual_checks": [
+        {"id": "reference-correspondence", "description": "The requested visible or temporal properties of the supplied references are present in the result."},
+        {"id": "motion-coherence", "description": "The result is temporally coherent rather than a sequence of unstable reference reconstructions."},
+        {"id": "artifact-screen", "description": "No unacceptable tiling, tearing, frozen region, or decode artifact is present."}
+      ],
+      "promotion": {"minimum_successful_runs": 2, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
+    },
+    {
+      "operation": "generate.keyframed",
+      "operation_version": 1,
+      "variants": ["first-frame", "first-last", "last-frame", "text-only"],
+      "technical_checks": [
+        {"id": "endpoint-cardinality", "description": "Only the endpoint inputs declared by the selected variant are connected."},
+        {"id": "target-grid", "description": "Resolution and target length match the checked H3 plan."},
+        {"id": "model-role", "description": "The graph selects the locked FL2VA model, text encoder, and video VAE."},
+        {"id": "artifact-lineage", "description": "The receipt binds exact parameters, runtime manifest, prompt id, and saved video artifact."}
+      ],
+      "visual_checks": [
+        {"id": "endpoint-fidelity", "description": "Supplied endpoints are reconstructed with acceptable fidelity at their declared temporal positions."},
+        {"id": "motion-coherence", "description": "Motion between constrained and unconstrained frames is coherent."},
+        {"id": "prompt-response", "description": "A controlled prompt comparison demonstrates non-identical conditioning behavior at fixed seed."},
+        {"id": "artifact-screen", "description": "No unacceptable tiling, tearing, frozen region, or decode artifact is present."}
+      ],
+      "promotion": {"minimum_successful_runs": 2, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
+    },
+    {
+      "operation": "generate.with_guides",
+      "operation_version": 2,
+      "variants": ["first-last-interior", "guide-clip", "multi-anchor", "single-anchor"],
+      "technical_checks": [
+        {"id": "guide-placement", "description": "Every guide resolves to an exact valid target-frame position and accepted clip length."},
+        {"id": "conditioning-edge", "description": "All guides are chained on the active positive-conditioning edge."},
+        {"id": "target-grid", "description": "Guide and target geometry follow the checked H3 lattice rules."},
+        {"id": "artifact-lineage", "description": "Ordered guide hashes, graph, parameters, and output artifact are retained."}
+      ],
+      "visual_checks": [
+        {"id": "guide-fidelity", "description": "The result reaches the supplied guide at the requested temporal position."},
+        {"id": "approach-departure", "description": "Motion approaching and leaving each guide remains coherent."},
+        {"id": "guide-artifacts", "description": "No unacceptable freeze, duplication, hard snap, or reconstruction scar surrounds a guide."}
+      ],
+      "promotion": {"minimum_successful_runs": 2, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
+    },
+    {
+      "operation": "rollback.native_av",
+      "operation_version": 1,
+      "variants": ["branch-suffix"],
+      "technical_checks": [
+        {"id": "split-boundary", "description": "The cut lies on synchronized visual and structural-audio boundaries."},
+        {"id": "round-trip", "description": "Re-appending the untouched suffix reconstructs the source native state exactly."},
+        {"id": "checkpoint-lineage", "description": "Prefix and reversible suffix are independently content-addressed."}
+      ],
+      "visual_checks": [
+        {"id": "decoded-round-trip", "description": "The reconstructed state's decoded result is visually identical to the source within the chosen deterministic comparison."}
+      ],
+      "promotion": {"minimum_successful_runs": 1, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
+    }
+  ]
+}

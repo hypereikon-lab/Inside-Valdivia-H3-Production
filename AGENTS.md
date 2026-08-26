@@ -32,6 +32,17 @@ rendered media.
   next graph.
 - A run receipt may say `executes`; only inspected media can say
   `visually-accepted` or `rejected`.
+- `materialization/catalog.json` priority is stable inventory order;
+  `materialization/live-gate.json` is the complete empirical execution order.
+- Evaluate the locked runtime requirements and browser diagnostic before live
+  graph construction. A browser-snapshot manifest is valid only when built from
+  the bounded same-origin endpoints without extracting authentication cookies.
+- Every generative workflow must terminate in a history-resolvable saved video
+  artifact. Decoded frames alone are not a durable production result.
+- Promotion follows `acceptance/catalog.json`; all technical checks and an
+  explicit visual verdict are mandatory.
+- Preserve the storage reserve. Never automate model deletion or delete
+  unindexed output paths.
 - No credentials, model binaries, inputs, outputs, or browser state belong here.
 - Preserve dirty worktrees and never force-push.
 
@@ -39,6 +50,7 @@ rendered media.
 
 ```bash
 python3 tools/validate.py
+python3 tools/readiness.py
 python3 -m unittest discover -s tests -v
 git diff --check
 ```

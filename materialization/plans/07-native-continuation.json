@@ -27,6 +27,14 @@
     "steps": null,
     "video_shift": null,
     "audio_shift": null,
+    "artifact": {
+      "frame_rate": 24,
+      "filename_prefix": null,
+      "format": "auto",
+      "codec": "auto",
+      "history_resolvable": true,
+      "retain_native_state": true
+    },
     "overlap_transport": "minimax_keyframes",
     "inputs": { "source_native_av_latent": null, "source_timeline_origin": 0 }
   },

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hypereikon.online/schemas/inside-valdivia-visual-assessment-catalog-1.json",
+  "type": "object",
+  "required": ["schema", "assessments"],
+  "properties": {
+    "schema": {"const": "inside-valdivia.visual-assessment-catalog/1"},
+    "assessments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "path"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "path": {"type": "string", "pattern": "^assessments/records/.+\\.json$"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

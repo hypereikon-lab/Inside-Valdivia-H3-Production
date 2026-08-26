@@ -22,9 +22,13 @@ checked operation@variant plan
 
 Probe runtime, queue, node inventory, Manager revisions, model filenames, and
 free space. Update only CAUCE to commit
-`446c340c57ece866c4714732486243f1db56e733` if needed, restart only ComfyUI, and
+`4c0cb85ea56f782621ecc5df57e143dfb19eb864` if needed, restart only ComfyUI, and
 verify all 18 nodes. Do not change ComfyUI core, CUDA, PyTorch, drivers, models,
 or unrelated packages during this gate.
+
+Run the machine-readable core readiness profile and Workspace Control browser
+diagnostic before any mutation. The exact commits, stop conditions, and phase
+ordering live in `materialization/live-gate.json`; see [Live gate](LIVE_GATE.md).
 
 ## 1. Materialize the operational core
 
@@ -53,6 +57,8 @@ Then establish the native-state and deterministic baselines:
 The remaining variants are retained and materialized after their underlying
 mechanism earns baseline evidence. All 21 offline plans already exist; this
 order controls evidence dependencies, not catalog importance or permanence.
+It is duplicated as machine-validated phase data in the live gate so catalog
+priority cannot be mistaken for execution order.
 
 ## 2. Establish exact baselines
 
@@ -77,6 +83,11 @@ video/audio masks reaching the official sampler, and cleared mask metadata on
 the retained result. Test a hard mask first, then linear, smoothstep, and
 smootherstep boundaries. Record negative visual results as evidence; do not
 keep an ineffective mechanism as accepted knowledge.
+
+Apply the operation profile in `acceptance/catalog.json`. Generative operations
+need two technically successful inspected runs; deterministic assembly and
+rollback round trips need one. No variant is promoted without all technical
+checks and an explicit visual verdict.
 
 ## 4. Prove rolling execution
 

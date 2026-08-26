@@ -26,6 +26,14 @@
     "steps": null,
     "video_shift": null,
     "audio_shift": null,
+    "artifact": {
+      "frame_rate": 24,
+      "filename_prefix": null,
+      "format": "auto",
+      "codec": "auto",
+      "history_resolvable": true,
+      "retain_native_state": true
+    },
     "inputs": {
       "guide_clips": [
         { "media": null, "frame_index": null, "timeline_origin_frame": 0 }

@@ -1,6 +1,7 @@
 import copy
 import unittest
 
+from tools.readiness import build_readiness_report
 from tools.validate import (
     ROOT,
     is_h3_frame_count,
@@ -12,9 +13,16 @@ from tools.validate import (
     validate_operation_lock,
     validate_repository,
     validate_invocation,
+    validate_acceptance_catalog,
+    validate_live_gate,
     validate_rolling_catalog,
     validate_rolling_plan,
+    validate_runtime_requirements,
+    validate_runtime_requirements_catalog,
     validate_segment,
+    validate_storage_policy,
+    validate_visual_assessment,
+    validate_visual_assessment_catalog,
 )
 
 
@@ -179,6 +187,31 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertEqual(continuation["extension_frames"] % 17, 0)
         self.assertTrue(is_h3_frame_count(continuation["window_frames"]))
 
+    def test_every_plan_has_a_fail_closed_artifact_contract(self):
+        catalog = load_json(ROOT / "materialization" / "catalog.json")
+        lock_path = ROOT / "operations.lock.json"
+        _, registry = validate_operation_lock(load_json(lock_path), lock_path)
+        for entry in catalog["plans"]:
+            plan_path = ROOT / entry["plan"]
+            plan = load_json(plan_path)
+            artifact = plan["bindings"]["artifact"]
+            self.assertEqual(artifact["frame_rate"], 24)
+            self.assertIsNone(artifact["filename_prefix"])
+            self.assertEqual(artifact["format"], "auto")
+            self.assertEqual(artifact["codec"], "auto")
+            self.assertTrue(artifact["history_resolvable"])
+            self.assertEqual(
+                artifact["retain_native_state"],
+                plan["operation"] != "frames.assemble",
+            )
+
+            broken = copy.deepcopy(plan)
+            broken["bindings"]["artifact"]["frame_rate"] = 30
+            self.assertIn(
+                f"{plan_path}: materialized artifacts must use 24 fps",
+                validate_materialization_plan(broken, plan_path, registry),
+            )
+
     def test_native_completion_plans_have_exact_token_aligned_ranges(self):
         plans = [
             "08-complete-two-sided-infill.json",
@@ -236,6 +269,11 @@ class RepositoryValidationTests(unittest.TestCase):
             [step["depends_on"] for step in plan["steps"]],
             [None, "seed", "extend-01"],
         )
+        live_gate = load_json(ROOT / "materialization" / "live-gate.json")
+        self.assertEqual(
+            plan["source_locks"]["runtime_commit"],
+            live_gate["source_locks"]["runtime_commit"],
+        )
         broken = copy.deepcopy(plan)
         broken["steps"][2]["depends_on"] = "seed"
         self.assertIn(
@@ -250,6 +288,180 @@ class RepositoryValidationTests(unittest.TestCase):
         catalog = load_json(catalog_path)
         self.assertEqual(validate_media_catalog(catalog, catalog_path), [])
         self.assertEqual(catalog["media"], [])
+
+    def test_runtime_profiles_fail_closed_and_full_is_a_core_superset(self):
+        catalog_path = ROOT / "runtime" / "catalog.json"
+        catalog = load_json(catalog_path)
+        self.assertEqual(validate_runtime_requirements_catalog(catalog, catalog_path, ROOT), [])
+        core_path = ROOT / "runtime" / "requirements" / "h3-core.json"
+        full_path = ROOT / "runtime" / "requirements" / "h3-full.json"
+        core = load_json(core_path)
+        full = load_json(full_path)
+        self.assertEqual(validate_runtime_requirements(core, core_path), [])
+        self.assertEqual(validate_runtime_requirements(full, full_path), [])
+        self.assertTrue(set(core["required_node_types"]) <= set(full["required_node_types"]))
+        self.assertTrue(set(core["required_models"]) <= set(full["required_models"]))
+        self.assertEqual(
+            len([name for name in core["required_node_types"] if name.startswith("Cauce")]),
+            18,
+        )
+        self.assertIn("CreateVideo", core["required_node_types"])
+        self.assertIn("SaveVideo", core["required_node_types"])
+
+        broken = copy.deepcopy(core)
+        broken["required_node_types"].append("CauceSaveAVLatent")
+        self.assertIn(
+            f"{core_path}: required_node_types must not contain duplicates",
+            validate_runtime_requirements(broken, core_path),
+        )
+
+    def test_live_gate_orders_every_topology_once_without_redefining_catalog_priority(self):
+        gate_path = ROOT / "materialization" / "live-gate.json"
+        gate = load_json(gate_path)
+        catalog = load_json(ROOT / "materialization" / "catalog.json")
+        lock = load_json(ROOT / "operations.lock.json")
+        self.assertEqual(
+            validate_live_gate(gate, gate_path, ROOT, catalog, lock["source"]["commit"]),
+            [],
+        )
+        ordered = [key for phase in gate["phases"] for key in phase["topology_keys"]]
+        self.assertEqual(ordered[0], "generate.keyframed@text-only")
+        self.assertEqual(len(ordered), 21)
+        self.assertEqual(len(set(ordered)), 21)
+        self.assertEqual(len(gate["phases"]), 4)
+        self.assertEqual(gate["phases"][0]["runtime_profile"], "core")
+        self.assertTrue(
+            all(
+                key.startswith("generate.keyframed@")
+                for key in gate["phases"][0]["topology_keys"]
+            )
+        )
+        self.assertTrue(
+            all(phase["runtime_profile"] == "full" for phase in gate["phases"][1:])
+        )
+
+        broken = copy.deepcopy(gate)
+        broken["phases"][2]["topology_keys"][0] = ordered[0]
+        self.assertIn(
+            f"{gate_path}: topology keys may occur only once across live phases",
+            validate_live_gate(broken, gate_path, ROOT, catalog, lock["source"]["commit"]),
+        )
+
+    def test_acceptance_profiles_cover_all_operations_and_variants(self):
+        lock_path = ROOT / "operations.lock.json"
+        _, registry = validate_operation_lock(load_json(lock_path), lock_path)
+        materialization = load_json(ROOT / "materialization" / "catalog.json")
+        path = ROOT / "acceptance" / "catalog.json"
+        catalog = load_json(path)
+        self.assertEqual(
+            validate_acceptance_catalog(catalog, path, registry, materialization),
+            [],
+        )
+        covered = {
+            f"{profile['operation']}@{variant}"
+            for profile in catalog["profiles"]
+            for variant in profile["variants"]
+        }
+        self.assertEqual(
+            covered,
+            {entry["topology_key"] for entry in materialization["plans"]},
+        )
+        for profile in catalog["profiles"]:
+            self.assertTrue(profile["promotion"]["require_all_technical_checks"])
+            self.assertTrue(profile["promotion"]["require_explicit_visual_verdict"])
+
+    def test_storage_policy_preserves_reserve_and_disables_broad_deletion(self):
+        path = ROOT / "storage" / "policy.json"
+        policy = load_json(path)
+        self.assertEqual(validate_storage_policy(policy, path), [])
+        self.assertGreater(policy["warning_free_bytes"], policy["minimum_free_bytes"])
+        self.assertFalse(policy["allow_automatic_model_deletion"])
+        self.assertFalse(policy["allow_unindexed_output_deletion"])
+
+    def test_visual_assessments_are_empty_until_live_review_and_fail_closed(self):
+        lock_path = ROOT / "operations.lock.json"
+        _, registry = validate_operation_lock(load_json(lock_path), lock_path)
+        acceptance = load_json(ROOT / "acceptance" / "catalog.json")
+        catalog_path = ROOT / "assessments" / "catalog.json"
+        catalog = load_json(catalog_path)
+        invocation = load_json(ROOT / "invocations" / "example.json")
+        self.assertEqual(
+            validate_visual_assessment_catalog(
+                catalog,
+                catalog_path,
+                ROOT,
+                registry,
+                {invocation["id"]},
+                acceptance,
+            ),
+            [],
+        )
+        self.assertEqual(catalog["assessments"], [])
+
+        profile = next(
+            item for item in acceptance["profiles"] if item["operation"] == "generate.keyframed"
+        )
+        profile_by_topology = {
+            f"generate.keyframed@{variant}": profile for variant in profile["variants"]
+        }
+        assessment = {
+            "schema": "inside-valdivia.visual-assessment/1",
+            "id": "unit-assessment",
+            "invocation": invocation["id"],
+            "operation": "generate.keyframed",
+            "operation_version": 1,
+            "variant": "first-last",
+            "run_receipt": "receipts/prompt-1.json",
+            "artifact": {"filename": "result.mp4", "subfolder": "unit", "type": "output"},
+            "reviewer": "unit-reviewer",
+            "reviewed_at": "2026-08-26T12:00:00Z",
+            "technical_checks": [
+                {"id": check["id"], "result": "pass", "notes": "verified"}
+                for check in profile["technical_checks"]
+            ],
+            "visual_checks": [
+                {"id": check["id"], "result": "pass", "notes": "inspected"}
+                for check in profile["visual_checks"]
+            ],
+            "verdict": "visually-accepted",
+            "notes": "unit fixture",
+        }
+        record_path = ROOT / "assessments" / "records" / "unit.json"
+        self.assertEqual(
+            validate_visual_assessment(
+                assessment,
+                record_path,
+                registry,
+                {invocation["id"]},
+                profile_by_topology,
+            ),
+            [],
+        )
+        assessment["visual_checks"][0]["result"] = "fail"
+        self.assertIn(
+            f"{record_path}: visually-accepted requires every check to pass",
+            validate_visual_assessment(
+                assessment,
+                record_path,
+                registry,
+                {invocation["id"]},
+                profile_by_topology,
+            ),
+        )
+
+    def test_readiness_report_does_not_promote_offline_plans(self):
+        report = build_readiness_report()
+        self.assertTrue(report["offline_valid"])
+        self.assertEqual(report["counts"]["materialization_plans"], 21)
+        self.assertEqual(report["counts"]["paired_workflows"], 0)
+        self.assertEqual(report["counts"]["schema_validated_workflows"], 0)
+        self.assertEqual(report["counts"]["visual_assessments"], 0)
+        self.assertEqual(report["evidence"]["offline_ready_topologies"], 21)
+        self.assertFalse(report["production_ready"])
+        self.assertEqual(
+            report["next_gate"],
+            "capture-runtime-manifest-and-evaluate-h3-core",
+        )
 
 
 if __name__ == "__main__":

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hypereikon.online/schemas/comfy-runtime-requirements-1.json",
+  "type": "object",
+  "required": ["schema", "id", "required_endpoints", "required_node_types", "node_type_groups", "required_models", "hardware", "require_queue_idle", "manual_checks"],
+  "properties": {
+    "schema": {"const": "comfy.runtime-requirements/1"},
+    "id": {"type": "string", "minLength": 1},
+    "required_endpoints": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "required_node_types": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "node_type_groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "any_of"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "any_of": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        },
+        "additionalProperties": false
+      }
+    },
+    "required_models": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "hardware": {
+      "type": "object",
+      "required": ["minimum_total_ram_bytes", "minimum_total_vram_bytes", "device_name_contains"],
+      "properties": {
+        "minimum_total_ram_bytes": {"type": "integer", "minimum": 0},
+        "minimum_total_vram_bytes": {"type": "integer", "minimum": 0},
+        "device_name_contains": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "require_queue_idle": {"type": "boolean"},
+    "manual_checks": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  },
+  "additionalProperties": false
+}

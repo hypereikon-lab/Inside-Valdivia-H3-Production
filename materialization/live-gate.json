@@ -1,0 +1,72 @@
+{
+  "schema": "inside-valdivia.live-materialization-gate/1",
+  "source_locks": {
+    "cauce_commit": "4c0cb85ea56f782621ecc5df57e143dfb19eb864",
+    "runtime_commit": "980e0100e3ef763426ac467763a7f8889cff8409",
+    "workspace_commit": "56c1687df1454da849f095973635d2b745083b3a"
+  },
+  "runtime_profiles": {
+    "core": "runtime/requirements/h3-core.json",
+    "full": "runtime/requirements/h3-full.json"
+  },
+  "workspace_gate": {
+    "required_diagnostic_schema": "comfy.workspace-diagnostic/1",
+    "required_ready": true,
+    "maximum_active_agent_graphs": 1
+  },
+  "stop_conditions": [
+    "The queue is not idle.",
+    "The full runtime manifest cannot validate its own content hashes.",
+    "A required node or model is missing.",
+    "Free storage is below the declared reserve.",
+    "The active workflow identity or signature is ambiguous.",
+    "A submitted prompt id has an unknown outcome; resume or inspect it instead of resubmitting."
+  ],
+  "phases": [
+    {
+      "id": "official-keyframed-baselines",
+      "runtime_profile": "core",
+      "topology_keys": [
+        "generate.keyframed@text-only",
+        "generate.keyframed@first-frame",
+        "generate.keyframed@last-frame",
+        "generate.keyframed@first-last"
+      ]
+    },
+    {
+      "id": "official-reference-and-guide-baselines",
+      "runtime_profile": "full",
+      "topology_keys": [
+        "generate.from_references@image-reference-match",
+        "generate.from_references@video-reference",
+        "generate.with_guides@single-anchor",
+        "generate.with_guides@guide-clip"
+      ]
+    },
+    {
+      "id": "native-state-and-assembly-baselines",
+      "runtime_profile": "full",
+      "topology_keys": [
+        "continue.native_av@keyframe-overlap",
+        "continue.native_av@masked-overlap",
+        "complete.native_av@two-sided-infill",
+        "complete.native_av@local-replacement",
+        "rollback.native_av@branch-suffix",
+        "frames.assemble@ordered-concatenation"
+      ]
+    },
+    {
+      "id": "dependent-variants",
+      "runtime_profile": "full",
+      "topology_keys": [
+        "generate.from_references@image-reference-max",
+        "generate.with_guides@multi-anchor",
+        "continue.native_av@masked-overlap-future-guide",
+        "complete.native_av@backward-prefix",
+        "complete.native_av@two-source-connection",
+        "generate.from_references@video-reference-with-guide",
+        "generate.with_guides@first-last-interior"
+      ]
+    }
+  ]
+}

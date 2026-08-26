@@ -272,6 +272,32 @@ def _validate_canonical_bindings(value: dict[str, Any], path: Path) -> list[str]
     errors: list[str] = []
     operation = value.get("operation")
     variant = value.get("variant")
+    artifact = bindings.get("artifact")
+    expected_artifact_fields = {
+        "frame_rate",
+        "filename_prefix",
+        "format",
+        "codec",
+        "history_resolvable",
+        "retain_native_state",
+    }
+    if not isinstance(artifact, dict) or set(artifact) != expected_artifact_fields:
+        errors.append(f"{path}: canonical bindings require the exact artifact contract")
+    else:
+        if artifact.get("frame_rate") != 24:
+            errors.append(f"{path}: materialized artifacts must use 24 fps")
+        if artifact.get("filename_prefix") is not None:
+            errors.append(f"{path}: filename_prefix must remain null before live pairing")
+        if artifact.get("format") != "auto" or artifact.get("codec") != "auto":
+            errors.append(f"{path}: format and codec must remain auto before live pairing")
+        if artifact.get("history_resolvable") is not True:
+            errors.append(f"{path}: artifacts must be resolvable from prompt history")
+        expected_native_state = operation != "frames.assemble"
+        if artifact.get("retain_native_state") is not expected_native_state:
+            errors.append(
+                f"{path}: retain_native_state must be {expected_native_state} "
+                f"for {operation}"
+            )
     inputs = bindings.get("inputs")
     if not isinstance(inputs, dict):
         errors.append(f"{path}: canonical bindings require an inputs object")
@@ -624,6 +650,429 @@ def validate_media_catalog(value: Any, path: Path) -> list[str]:
     return errors
 
 
+def _unique_strings(value: Any, path: Path, label: str) -> list[str]:
+    if not isinstance(value, list) or any(not isinstance(item, str) or not item for item in value):
+        return [f"{path}: {label} must be a list of non-empty strings"]
+    if len(value) != len(set(value)):
+        return [f"{path}: {label} must not contain duplicates"]
+    return []
+
+
+def validate_runtime_requirements(value: Any, path: Path) -> list[str]:
+    if not isinstance(value, dict) or value.get("schema") != "comfy.runtime-requirements/1":
+        return [f"{path}: invalid runtime requirements"]
+    required = {
+        "schema", "id", "required_endpoints", "required_node_types", "node_type_groups",
+        "required_models", "hardware", "require_queue_idle", "manual_checks",
+    }
+    if set(value) != required:
+        return [f"{path}: runtime requirements fields are incomplete or unexpected"]
+    errors: list[str] = []
+    if not isinstance(value.get("id"), str) or not value["id"]:
+        errors.append(f"{path}: runtime requirements id is required")
+    for label in ("required_endpoints", "required_node_types", "required_models", "manual_checks"):
+        errors.extend(_unique_strings(value.get(label), path, label))
+    groups = value.get("node_type_groups")
+    if not isinstance(groups, list):
+        errors.append(f"{path}: node_type_groups must be a list")
+    else:
+        group_ids: set[str] = set()
+        for group in groups:
+            if not isinstance(group, dict) or set(group) != {"id", "any_of"}:
+                errors.append(f"{path}: malformed node type group")
+                continue
+            group_id = group.get("id")
+            if not isinstance(group_id, str) or not group_id or group_id in group_ids:
+                errors.append(f"{path}: node type group ids must be unique")
+            else:
+                group_ids.add(group_id)
+            errors.extend(_unique_strings(group.get("any_of"), path, f"node group {group_id!r}"))
+            if group.get("any_of") == []:
+                errors.append(f"{path}: node type groups cannot be empty")
+    hardware = value.get("hardware")
+    if not isinstance(hardware, dict) or set(hardware) != {
+        "minimum_total_ram_bytes", "minimum_total_vram_bytes", "device_name_contains"
+    }:
+        errors.append(f"{path}: invalid hardware requirements")
+    else:
+        for name in ("minimum_total_ram_bytes", "minimum_total_vram_bytes"):
+            amount = hardware[name]
+            if isinstance(amount, bool) or not isinstance(amount, int) or amount < 0:
+                errors.append(f"{path}: {name} must be a non-negative integer")
+        if not isinstance(hardware["device_name_contains"], str):
+            errors.append(f"{path}: device_name_contains must be a string")
+    if not isinstance(value.get("require_queue_idle"), bool):
+        errors.append(f"{path}: require_queue_idle must be boolean")
+    return errors
+
+
+def validate_runtime_requirements_catalog(value: Any, path: Path, root: Path) -> list[str]:
+    if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.runtime-requirements-catalog/1":
+        return [f"{path}: invalid runtime requirements catalog"]
+    profiles = value.get("profiles")
+    if not isinstance(profiles, list) or not profiles:
+        return [f"{path}: runtime requirements catalog needs profiles"]
+    errors: list[str] = []
+    ids: set[str] = set()
+    loaded: dict[str, dict[str, Any]] = {}
+    paths: set[Path] = set()
+    for entry in profiles:
+        if not isinstance(entry, dict) or set(entry) != {"id", "path", "purpose"}:
+            errors.append(f"{path}: malformed runtime requirements entry {entry!r}")
+            continue
+        profile_id = entry["id"]
+        if not isinstance(profile_id, str) or not profile_id or profile_id in ids:
+            errors.append(f"{path}: duplicate or invalid runtime profile id {profile_id!r}")
+        ids.add(profile_id)
+        if not isinstance(entry["purpose"], str) or not entry["purpose"]:
+            errors.append(f"{path}: runtime profile purpose is required")
+        profile_path, path_errors = _safe_project_path(
+            entry["path"], path, root, ("runtime", "requirements")
+        )
+        errors.extend(path_errors)
+        if profile_path is None:
+            continue
+        try:
+            profile = load_json(profile_path)
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(f"{profile_path}: invalid JSON: {exc}")
+            continue
+        paths.add(profile_path.resolve())
+        errors.extend(validate_runtime_requirements(profile, profile_path))
+        loaded[profile_id] = profile
+    expected_paths = {item.resolve() for item in (root / "runtime" / "requirements").glob("*.json")}
+    if paths != expected_paths:
+        errors.append(f"{path}: runtime requirements catalog and directory differ")
+    if set(loaded) != {"h3-core", "h3-full"}:
+        errors.append(f"{path}: h3-core and h3-full profiles are both required")
+        return errors
+    core = loaded["h3-core"]
+    full = loaded["h3-full"]
+    for field in ("required_endpoints", "required_node_types", "required_models"):
+        if not set(core.get(field, [])).issubset(set(full.get(field, []))):
+            errors.append(f"{path}: h3-full must include every h3-core {field}")
+    cauce_nodes = {name for name in core.get("required_node_types", []) if name.startswith("Cauce")}
+    if len(cauce_nodes) != 18:
+        errors.append(f"{path}: h3-core must require all 18 locked CAUCE nodes")
+    return errors
+
+
+def validate_live_gate(
+    value: Any,
+    path: Path,
+    root: Path,
+    materialization_catalog: dict[str, Any],
+    cauce_commit: str,
+) -> list[str]:
+    if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.live-materialization-gate/1":
+        return [f"{path}: invalid live materialization gate"]
+    if set(value) != {"schema", "source_locks", "runtime_profiles", "workspace_gate", "stop_conditions", "phases"}:
+        return [f"{path}: live gate fields are incomplete or unexpected"]
+    errors: list[str] = []
+    source_locks = value.get("source_locks")
+    if not isinstance(source_locks, dict) or set(source_locks) != {
+        "cauce_commit", "runtime_commit", "workspace_commit"
+    }:
+        errors.append(f"{path}: live gate source locks are incomplete")
+    else:
+        if source_locks["cauce_commit"] != cauce_commit:
+            errors.append(f"{path}: live gate CAUCE commit does not match operation lock")
+        for name in ("runtime_commit", "workspace_commit"):
+            if not isinstance(source_locks[name], str) or not GIT_SHA.fullmatch(source_locks[name]):
+                errors.append(f"{path}: {name} must be a full Git SHA")
+    runtime_profiles = value.get("runtime_profiles")
+    if not isinstance(runtime_profiles, dict) or set(runtime_profiles) != {"core", "full"}:
+        errors.append(f"{path}: live gate must name core and full runtime profiles")
+    else:
+        for name, expected in {
+            "core": "runtime/requirements/h3-core.json",
+            "full": "runtime/requirements/h3-full.json",
+        }.items():
+            if runtime_profiles.get(name) != expected:
+                errors.append(f"{path}: {name} runtime profile path is not canonical")
+    workspace = value.get("workspace_gate")
+    if workspace != {
+        "required_diagnostic_schema": "comfy.workspace-diagnostic/1",
+        "required_ready": True,
+        "maximum_active_agent_graphs": 1,
+    }:
+        errors.append(f"{path}: workspace gate must require one ready agent graph")
+    errors.extend(_unique_strings(value.get("stop_conditions"), path, "stop_conditions"))
+    phases = value.get("phases")
+    if not isinstance(phases, list) or not phases:
+        return errors + [f"{path}: live gate requires phases"]
+    phase_ids: set[str] = set()
+    ordered_keys: list[str] = []
+    expected_phase_profiles = {
+        "official-keyframed-baselines": "core",
+        "official-reference-and-guide-baselines": "full",
+        "native-state-and-assembly-baselines": "full",
+        "dependent-variants": "full",
+    }
+    for phase in phases:
+        if not isinstance(phase, dict) or set(phase) != {"id", "runtime_profile", "topology_keys"}:
+            errors.append(f"{path}: malformed live gate phase {phase!r}")
+            continue
+        phase_id = phase["id"]
+        if not isinstance(phase_id, str) or not phase_id or phase_id in phase_ids:
+            errors.append(f"{path}: duplicate or invalid phase id {phase_id!r}")
+        phase_ids.add(phase_id)
+        if phase["runtime_profile"] not in {"core", "full"}:
+            errors.append(f"{path}: invalid runtime profile in phase {phase_id!r}")
+        if expected_phase_profiles.get(phase_id) != phase["runtime_profile"]:
+            errors.append(f"{path}: phase {phase_id!r} has the wrong runtime profile")
+        errors.extend(_unique_strings(phase["topology_keys"], path, f"phase {phase_id!r} topology_keys"))
+        ordered_keys.extend(phase["topology_keys"])
+    expected_keys = [entry["topology_key"] for entry in materialization_catalog.get("plans", [])]
+    if len(ordered_keys) != len(set(ordered_keys)):
+        errors.append(f"{path}: topology keys may occur only once across live phases")
+    if set(ordered_keys) != set(expected_keys):
+        errors.append(f"{path}: live phases must cover every materialization topology exactly once")
+    if phase_ids != set(expected_phase_profiles):
+        errors.append(f"{path}: live gate must use the four canonical evidence phases")
+    return errors
+
+
+def validate_acceptance_catalog(
+    value: Any,
+    path: Path,
+    registry: dict[str, dict[str, Any]],
+    materialization_catalog: dict[str, Any],
+) -> list[str]:
+    if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.acceptance-catalog/1":
+        return [f"{path}: invalid acceptance catalog"]
+    profiles = value.get("profiles")
+    if not isinstance(profiles, list) or not profiles:
+        return [f"{path}: acceptance catalog needs profiles"]
+    errors: list[str] = []
+    operations: set[str] = set()
+    topology_keys: set[str] = set()
+    for profile in profiles:
+        required = {
+            "operation", "operation_version", "variants", "technical_checks",
+            "visual_checks", "promotion",
+        }
+        if not isinstance(profile, dict) or set(profile) != required:
+            errors.append(f"{path}: malformed acceptance profile {profile!r}")
+            continue
+        operation = profile["operation"]
+        if operation in operations:
+            errors.append(f"{path}: duplicate acceptance operation {operation!r}")
+        operations.add(operation)
+        errors.extend(
+            _validate_operation_reference(
+                {"operation": operation, "operation_version": profile["operation_version"]},
+                path,
+                registry,
+                require_hash=False,
+            )
+        )
+        errors.extend(_unique_strings(profile["variants"], path, f"{operation} variants"))
+        for variant in profile["variants"]:
+            topology_keys.add(f"{operation}@{variant}")
+        for label in ("technical_checks", "visual_checks"):
+            checks = profile[label]
+            if not isinstance(checks, list) or not checks:
+                errors.append(f"{path}: {operation} needs {label}")
+                continue
+            ids: set[str] = set()
+            for check in checks:
+                if not isinstance(check, dict) or set(check) != {"id", "description"}:
+                    errors.append(f"{path}: malformed {label} entry for {operation}")
+                    continue
+                if not isinstance(check["id"], str) or not check["id"] or check["id"] in ids:
+                    errors.append(f"{path}: duplicate or invalid {label} id for {operation}")
+                ids.add(check["id"])
+                if not isinstance(check["description"], str) or not check["description"]:
+                    errors.append(f"{path}: {label} descriptions are required")
+        promotion = profile["promotion"]
+        if not isinstance(promotion, dict) or set(promotion) != {
+            "minimum_successful_runs", "require_all_technical_checks", "require_explicit_visual_verdict"
+        }:
+            errors.append(f"{path}: malformed promotion rule for {operation}")
+        elif (
+            not isinstance(promotion["minimum_successful_runs"], int)
+            or promotion["minimum_successful_runs"] < 1
+            or promotion["require_all_technical_checks"] is not True
+            or promotion["require_explicit_visual_verdict"] is not True
+        ):
+            errors.append(f"{path}: promotion rules must fail closed for {operation}")
+    expected_operations = set(registry)
+    if operations != expected_operations:
+        errors.append(f"{path}: acceptance profiles must cover every locked operation")
+    expected_keys = {entry["topology_key"] for entry in materialization_catalog.get("plans", [])}
+    if topology_keys != expected_keys:
+        errors.append(f"{path}: acceptance variants must cover every materialization topology")
+    return errors
+
+
+def validate_visual_assessment(
+    value: Any,
+    path: Path,
+    registry: dict[str, dict[str, Any]],
+    invocation_ids: set[str],
+    acceptance_profiles: dict[str, dict[str, Any]],
+) -> list[str]:
+    if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.visual-assessment/1":
+        return [f"{path}: invalid visual assessment"]
+    required = {
+        "schema", "id", "invocation", "operation", "operation_version", "variant",
+        "run_receipt", "artifact", "reviewer", "reviewed_at", "technical_checks",
+        "visual_checks", "verdict", "notes",
+    }
+    if set(value) != required:
+        return [f"{path}: visual assessment fields are incomplete or unexpected"]
+    errors = _validate_operation_reference(value, path, registry, require_hash=False)
+    if not isinstance(value.get("id"), str) or not value["id"]:
+        errors.append(f"{path}: assessment id is required")
+    if value.get("invocation") not in invocation_ids:
+        errors.append(f"{path}: assessment references an unknown invocation")
+    topology_key = f"{value.get('operation')}@{value.get('variant')}"
+    profile = acceptance_profiles.get(topology_key)
+    if profile is None:
+        errors.append(f"{path}: assessment has no acceptance profile for {topology_key}")
+        return errors
+    for field in ("run_receipt", "reviewer", "reviewed_at"):
+        if not isinstance(value.get(field), str) or not value[field]:
+            errors.append(f"{path}: {field} is required")
+    artifact = value.get("artifact")
+    if (
+        not isinstance(artifact, dict)
+        or set(artifact) != {"filename", "subfolder", "type"}
+        or not isinstance(artifact.get("filename"), str)
+        or not artifact.get("filename")
+        or not isinstance(artifact.get("subfolder"), str)
+        or artifact.get("type") not in {"output", "temp"}
+    ):
+        errors.append(f"{path}: artifact identity is invalid")
+
+    check_results: dict[str, dict[str, str]] = {}
+    for label, allowed in (
+        ("technical_checks", {"pass", "fail"}),
+        ("visual_checks", {"pass", "fail", "not-applicable"}),
+    ):
+        checks = value.get(label)
+        if not isinstance(checks, list) or not checks:
+            errors.append(f"{path}: {label} are required")
+            continue
+        results: dict[str, str] = {}
+        for check in checks:
+            if not isinstance(check, dict) or set(check) != {"id", "result", "notes"}:
+                errors.append(f"{path}: malformed {label} result")
+                continue
+            check_id = check.get("id")
+            if not isinstance(check_id, str) or not check_id or check_id in results:
+                errors.append(f"{path}: duplicate or invalid {label} id")
+                continue
+            if check.get("result") not in allowed or not isinstance(check.get("notes"), str):
+                errors.append(f"{path}: invalid {label} result for {check_id!r}")
+            results[check_id] = check.get("result")
+        expected_ids = {check["id"] for check in profile[label]}
+        if set(results) != expected_ids:
+            errors.append(f"{path}: {label} must match the acceptance profile exactly")
+        check_results[label] = results
+
+    verdict = value.get("verdict")
+    if verdict not in {"visually-accepted", "rejected", "mixed"}:
+        errors.append(f"{path}: invalid visual verdict")
+    technical_values = check_results.get("technical_checks", {}).values()
+    visual_values = check_results.get("visual_checks", {}).values()
+    if verdict == "visually-accepted" and (
+        any(result != "pass" for result in technical_values)
+        or any(result != "pass" for result in visual_values)
+    ):
+        errors.append(f"{path}: visually-accepted requires every check to pass")
+    if verdict == "rejected" and not any(result == "fail" for result in visual_values):
+        errors.append(f"{path}: rejected requires at least one failed visual check")
+    if not isinstance(value.get("notes"), str):
+        errors.append(f"{path}: notes must be a string")
+    return errors
+
+
+def validate_visual_assessment_catalog(
+    value: Any,
+    path: Path,
+    root: Path,
+    registry: dict[str, dict[str, Any]],
+    invocation_ids: set[str],
+    acceptance_catalog: dict[str, Any],
+) -> list[str]:
+    if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.visual-assessment-catalog/1":
+        return [f"{path}: invalid visual assessment catalog"]
+    entries = value.get("assessments")
+    if not isinstance(entries, list):
+        return [f"{path}: assessments must be a list"]
+    profiles = {
+        f"{profile['operation']}@{variant}": profile
+        for profile in acceptance_catalog.get("profiles", [])
+        for variant in profile.get("variants", [])
+    }
+    errors: list[str] = []
+    ids: set[str] = set()
+    paths: set[Path] = set()
+    for entry in entries:
+        if not isinstance(entry, dict) or set(entry) != {"id", "path"}:
+            errors.append(f"{path}: malformed assessment catalog entry {entry!r}")
+            continue
+        if not isinstance(entry["id"], str) or not entry["id"] or entry["id"] in ids:
+            errors.append(f"{path}: duplicate or invalid assessment id {entry['id']!r}")
+        ids.add(entry["id"])
+        record_path, path_errors = _safe_project_path(
+            entry["path"], path, root, ("assessments", "records")
+        )
+        errors.extend(path_errors)
+        if record_path is None:
+            continue
+        try:
+            record = load_json(record_path)
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(f"{record_path}: invalid JSON: {exc}")
+            continue
+        paths.add(record_path.resolve())
+        errors.extend(
+            validate_visual_assessment(
+                record, record_path, registry, invocation_ids, profiles
+            )
+        )
+        if record.get("id") != entry["id"]:
+            errors.append(f"{record_path}: assessment id does not match catalog")
+    records_dir = root / "assessments" / "records"
+    expected_paths = {item.resolve() for item in records_dir.glob("*.json")}
+    if paths != expected_paths:
+        errors.append(f"{path}: assessment catalog and record directory differ")
+    return errors
+
+
+def validate_storage_policy(value: Any, path: Path) -> list[str]:
+    if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.storage-policy/1":
+        return [f"{path}: invalid storage policy"]
+    required = {
+        "schema", "minimum_free_bytes", "warning_free_bytes",
+        "allow_automatic_model_deletion", "allow_unindexed_output_deletion",
+        "native_checkpoint_policy", "accepted_output_policy", "temporary_output_policy",
+        "preflight",
+    }
+    if set(value) != required:
+        return [f"{path}: storage policy fields are incomplete or unexpected"]
+    errors: list[str] = []
+    minimum = value["minimum_free_bytes"]
+    warning = value["warning_free_bytes"]
+    if (
+        isinstance(minimum, bool) or not isinstance(minimum, int) or minimum <= 0
+        or isinstance(warning, bool) or not isinstance(warning, int) or warning <= minimum
+    ):
+        errors.append(f"{path}: storage warning must exceed one positive minimum reserve")
+    if value["allow_automatic_model_deletion"] is not False:
+        errors.append(f"{path}: automatic model deletion must remain disabled")
+    if value["allow_unindexed_output_deletion"] is not False:
+        errors.append(f"{path}: unindexed output deletion must remain disabled")
+    for field in ("native_checkpoint_policy", "accepted_output_policy", "temporary_output_policy"):
+        if not isinstance(value[field], str) or not value[field]:
+            errors.append(f"{path}: {field} is required")
+    errors.extend(_unique_strings(value["preflight"], path, "storage preflight"))
+    return errors
+
+
 def validate_runtime_operation_ref(
     value: Any, path: Path, registry: dict[str, dict[str, Any]]
 ) -> list[str]:
@@ -650,6 +1099,7 @@ def validate_rolling_plan(
     registry: dict[str, dict[str, Any]],
     root: Path,
     cauce_commit: str,
+    runtime_commit: str | None = None,
 ) -> list[str]:
     if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.rolling-plan/1":
         return [f"{path}: invalid rolling plan"]
@@ -668,6 +1118,8 @@ def validate_rolling_plan(
             locks["runtime_commit"]
         ):
             errors.append(f"{path}: rolling Runtime commit must be a full Git SHA")
+        elif runtime_commit is not None and locks["runtime_commit"] != runtime_commit:
+            errors.append(f"{path}: rolling Runtime commit does not match live gate")
         if not isinstance(locks.get("runtime_repository"), str) or not locks["runtime_repository"]:
             errors.append(f"{path}: rolling Runtime repository is required")
     if value.get("execution") != {
@@ -772,6 +1224,7 @@ def validate_rolling_catalog(
     registry: dict[str, dict[str, Any]],
     root: Path,
     cauce_commit: str,
+    runtime_commit: str | None = None,
 ) -> list[str]:
     if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.rolling-catalog/1":
         return [f"{path}: invalid rolling catalog"]
@@ -798,7 +1251,11 @@ def validate_rolling_catalog(
             errors.append(f"{plan_path}: invalid JSON: {exc}")
             continue
         paths.add(plan_path.resolve())
-        errors.extend(validate_rolling_plan(plan, plan_path, registry, root, cauce_commit))
+        errors.extend(
+            validate_rolling_plan(
+                plan, plan_path, registry, root, cauce_commit, runtime_commit
+            )
+        )
         if plan.get("id") != entry["id"] or plan.get("status") != entry["status"]:
             errors.append(f"{plan_path}: rolling plan does not match catalog entry")
     expected_paths = {item.resolve() for item in (root / "rolling" / "plans").glob("*.json")}
@@ -836,9 +1293,45 @@ def validate_repository(root: Path = ROOT) -> list[str]:
     catalog_path = root / "experiments" / "catalog.json"
     errors.extend(validate_experiment_catalog(load_json(catalog_path), catalog_path, registry))
     materialization_path = root / "materialization" / "catalog.json"
+    materialization_catalog = load_json(materialization_path)
     errors.extend(
         validate_materialization_catalog(
-            load_json(materialization_path), materialization_path, registry, root
+            materialization_catalog, materialization_path, registry, root
+        )
+    )
+    runtime_requirements_path = root / "runtime" / "catalog.json"
+    errors.extend(
+        validate_runtime_requirements_catalog(
+            load_json(runtime_requirements_path), runtime_requirements_path, root
+        )
+    )
+    live_gate_path = root / "materialization" / "live-gate.json"
+    live_gate = load_json(live_gate_path)
+    errors.extend(
+        validate_live_gate(
+            live_gate,
+            live_gate_path,
+            root,
+            materialization_catalog,
+            lock.get("source", {}).get("commit"),
+        )
+    )
+    acceptance_path = root / "acceptance" / "catalog.json"
+    acceptance_catalog = load_json(acceptance_path)
+    errors.extend(
+        validate_acceptance_catalog(
+            acceptance_catalog, acceptance_path, registry, materialization_catalog
+        )
+    )
+    assessment_path = root / "assessments" / "catalog.json"
+    errors.extend(
+        validate_visual_assessment_catalog(
+            load_json(assessment_path),
+            assessment_path,
+            root,
+            registry,
+            invocation_ids,
+            acceptance_catalog,
         )
     )
     rolling_path = root / "rolling" / "catalog.json"
@@ -849,10 +1342,13 @@ def validate_repository(root: Path = ROOT) -> list[str]:
             registry,
             root,
             lock.get("source", {}).get("commit"),
+            live_gate.get("source_locks", {}).get("runtime_commit"),
         )
     )
     media_path = root / "media" / "catalog.json"
     errors.extend(validate_media_catalog(load_json(media_path), media_path))
+    storage_path = root / "storage" / "policy.json"
+    errors.extend(validate_storage_policy(load_json(storage_path), storage_path))
     for path in sorted((root / "fixtures").glob("*.json")):
         try:
             value = load_json(path)
@@ -874,7 +1370,7 @@ def main() -> int:
         return 1
     print(
         "validated: operation lock, project invocations, materialization plans, "
-        "rolling plans, media, experiments, fixtures, and schemas"
+        "runtime gates, acceptance evidence, storage, rolling plans, media, experiments, fixtures, and schemas"
     )
     return 0
 

@@ -1,0 +1,16 @@
+{
+  "schema": "inside-valdivia.storage-policy/1",
+  "minimum_free_bytes": 30000000000,
+  "warning_free_bytes": 45000000000,
+  "allow_automatic_model_deletion": false,
+  "allow_unindexed_output_deletion": false,
+  "native_checkpoint_policy": "retain-until-dependent-branches-are-resolved",
+  "accepted_output_policy": "download-and-hash-before-remote-deletion",
+  "temporary_output_policy": "delete-only-by-explicit-history-artifact-identity",
+  "preflight": [
+    "Measure free storage on the actual model/output volume.",
+    "Resolve the exact download size before approving any model installation.",
+    "Reserve space for one in-flight render, its decoded video, and its native checkpoint.",
+    "Never infer safe deletion from a filename prefix alone."
+  ]
+}

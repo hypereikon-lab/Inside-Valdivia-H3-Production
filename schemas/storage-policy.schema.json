@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hypereikon.online/schemas/inside-valdivia-storage-policy-1.json",
+  "type": "object",
+  "required": ["schema", "minimum_free_bytes", "warning_free_bytes", "allow_automatic_model_deletion", "allow_unindexed_output_deletion", "native_checkpoint_policy", "accepted_output_policy", "temporary_output_policy", "preflight"],
+  "properties": {
+    "schema": {"const": "inside-valdivia.storage-policy/1"},
+    "minimum_free_bytes": {"type": "integer", "minimum": 1},
+    "warning_free_bytes": {"type": "integer", "minimum": 1},
+    "allow_automatic_model_deletion": {"const": false},
+    "allow_unindexed_output_deletion": {"const": false},
+    "native_checkpoint_policy": {"type": "string", "minLength": 1},
+    "accepted_output_policy": {"type": "string", "minLength": 1},
+    "temporary_output_policy": {"type": "string", "minLength": 1},
+    "preflight": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+  },
+  "additionalProperties": false
+}

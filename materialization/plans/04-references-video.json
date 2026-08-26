@@ -29,6 +29,14 @@
     "steps": null,
     "video_shift": null,
     "audio_shift": null,
+    "artifact": {
+      "frame_rate": 24,
+      "filename_prefix": null,
+      "format": "auto",
+      "codec": "auto",
+      "history_resolvable": true,
+      "retain_native_state": true
+    },
     "inputs": { "reference_images": [null], "reference_clips": [null] }
   },
   "outputs": { "ui_graph": null, "api_template": null, "bindings": null, "materialization_manifest": null, "ui_graph_hash": null, "api_template_hash": null, "bindings_hash": null },

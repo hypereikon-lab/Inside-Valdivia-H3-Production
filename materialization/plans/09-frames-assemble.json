@@ -11,6 +11,14 @@
   "sources": { "workspace_export": null, "parameterization": null, "runtime_manifest": null, "operation_ref": null },
   "bindings": {
     "frame_rate": 24,
+    "artifact": {
+      "frame_rate": 24,
+      "filename_prefix": null,
+      "format": "auto",
+      "codec": "auto",
+      "history_resolvable": true,
+      "retain_native_state": false
+    },
     "inputs": {
       "sources": [
         { "media": null, "range": null },

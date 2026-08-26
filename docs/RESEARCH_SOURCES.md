@@ -5,6 +5,7 @@ changes, not inferred from workflow screenshots:
 
 - [MiniMax H3 official repository](https://github.com/MiniMax-AI/MiniMax-H3)
 - [Official ComfyUI H3 nodes](https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_minimax_h3.py)
+- [Official ComfyUI video load/create/save nodes](https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_video.py)
 - [ComfyUI PR #15439: MiniMax H3 AddGuide](https://github.com/Comfy-Org/ComfyUI/pull/15439)
 - [ComfyUI PR #15375: continuous per-token denoise masks](https://github.com/Comfy-Org/ComfyUI/pull/15375)
 - [AddGuide embedded documentation](https://github.com/Comfy-Org/embedded-docs/blob/main/comfyui_embedded_docs/docs/MiniMaxH3AddGuide/en.md)
@@ -25,3 +26,10 @@ the H3 sampler. CAUCE preserves those semantics while adding exact timebase,
 placement, mask-construction, replacement, persistence, and rollback
 primitives. Community techniques become production capabilities only after
 their mechanism is reproduced transparently and live evidence is retained.
+
+The official source was rechecked on 2026-08-26. The current H3 surface exposes
+`MiniMaxH3ImageToVideo`, `MiniMaxH3ReferenceToVideo`, `MiniMaxH3AddGuide`, and
+`MiniMaxH3SigmaShift`; the core video path exposes `LoadVideo`, `CreateVideo`,
+and `SaveVideo`. These upstream observations inform readiness requirements but
+do not prove that the laboratory is on the same commit. Live `/object_info`
+remains authoritative.

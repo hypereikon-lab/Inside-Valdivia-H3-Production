@@ -6,23 +6,39 @@ This is the authority for present capability claims.
 
 ```text
 CAUCE
-  commit   446c340c57ece866c4714732486243f1db56e733
+  commit   4c0cb85ea56f782621ecc5df57e143dfb19eb864
   version  5.1.0
   nodes    18
   operations / topology dossiers  7 / 21
   local tests  37 passing
 
 Runtime Control
-  commit   a39583a4d2c335eea8ddbb8c8280402c64a160a2
+  commit   980e0100e3ef763426ac467763a7f8889cff8409
+  version  0.4.0
+  local tests  20 passing
+
+Workspace Control
+  commit   56c1687df1454da849f095973635d2b745083b3a
   version  0.3.0
-  local tests  18 passing
+  local tests  7 passing
 
 Production data
   exact CAUCE commit/catalog/contract lock
   21 offline materialization plans
   9 controlled experiment definitions
   1 offline rolling-chain plan
+  2 runtime requirements profiles
+  7 acceptance profiles covering all 21 variants
+  0 visual assessment records until live artifacts exist
+  1 four-phase live materialization gate
+  1 fail-closed storage policy
+  local tests  22 passing
 ```
+
+All 37 CAUCE tests pass under the bundled local Python runtime with NumPy. The
+plain system Python omits 21 tensor-dependent cases because it lacks NumPy; that
+reduced run is not counted as full coverage. Across the four active repositories
+the complete offline suites currently contain 86 passing checks.
 
 The local source repositories are complete and content-addressed. The current
 laboratory process has not yet been re-probed against these commits, so the
@@ -57,6 +73,12 @@ are resumed rather than duplicated, and every completed step receives an
 immutable receipt. It intentionally neither interprets H3 nor binds one step's
 outputs into the next graph.
 
+Runtime Control 0.4 also evaluates project requirements against one full
+content-addressed manifest. A manifest can come from direct HTTP access or from
+bounded endpoint JSON captured inside an authenticated browser; browser cookies
+are never extracted. Workspace Control 0.3 adds a browser-local diagnostic that
+must pass before tab or graph automation begins.
+
 ## Operation evidence
 
 | Operation | Current implementation evidence | Live/visual evidence |
@@ -82,6 +104,13 @@ input cardinality, mask semantics, and output slots are checked. Live-owned
 values remain null: actual media ids, sampler, scheduler, steps, flow shifts,
 seed, graph node ids, `/object_info` manifest, and paired graph hashes.
 
+Stable catalog priority no longer doubles as empirical execution order. The
+four phases in `materialization/live-gate.json` cover every topology once and
+put core FL2VA controls before full Ref2VA/AddGuide and native-state mechanisms.
+The runtime core and full profiles verify expected H3/CAUCE nodes, models,
+hardware, and queue; free storage and physical recovery remain explicit manual
+checks.
+
 The rolling chain is also offline-ready. It specifies strict dependencies,
 native-state identities, exact source commits, per-step checkpoints, and a
 new-plan-from-checkpoint branch policy. It is not an executable Runtime Control
@@ -102,6 +131,10 @@ When the tunnel is available:
    perform visual acceptance separately;
 5. compile the accepted, explicitly prebound graphs into a Runtime Control
    serial plan and test interruption/resume before long unattended production.
+
+Every graph must persist a resolvable video artifact through the current core
+`CreateVideo -> SaveVideo` path. `VAEDecode` alone is not sufficient evidence
+of a durable production result.
 
 An HTTP 504 establishes only that the Cloudflare path could not reach a healthy
 origin at that moment. It does not diagnose the tower, tunnel service, or

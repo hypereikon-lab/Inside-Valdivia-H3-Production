@@ -29,6 +29,7 @@ ComfyUI-Workspace-Control
 
 this repository
   exact CAUCE lock, 21 offline materialization plans, project data,
+  runtime readiness profiles, acceptance criteria, storage policy,
   experiments, rolling dependency/checkpoint plans
 ```
 
@@ -64,6 +65,12 @@ strict serial native-state chain, immutable checkpoints, and branch rules. It
 does not auto-wire artifacts: concrete API graphs must already contain every
 input binding before Runtime Control can execute and resume them safely.
 
+[`materialization/live-gate.json`](materialization/live-gate.json) owns the
+empirical materialization order independently of stable catalog priority. The
+core and full runtime profiles fail closed on missing nodes, models, hardware,
+or queue availability. [`acceptance/catalog.json`](acceptance/catalog.json)
+requires technical checks and a separate visual verdict before promotion.
+
 ## Documentation
 
 - [Project model](docs/PROJECT_MODEL.md)
@@ -72,6 +79,9 @@ input binding before Runtime Control can execute and resume them safely.
 - [Materialization](docs/MATERIALIZATION.md)
 - [Data model](docs/DATA_MODEL.md)
 - [Experiments](docs/EXPERIMENTS.md)
+- [Live laboratory gate](docs/LIVE_GATE.md)
+- [Acceptance](docs/ACCEPTANCE.md)
+- [Storage safety](docs/STORAGE.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Primary technical sources](docs/RESEARCH_SOURCES.md)
 
@@ -79,6 +89,7 @@ input binding before Runtime Control can execute and resume them safely.
 
 ```bash
 python3 tools/validate.py
+python3 tools/readiness.py
 python3 -m unittest discover -s tests -v
 python3 tools/verify_cauce_lock.py ../ComfyUI-Cauce
 git diff --check
