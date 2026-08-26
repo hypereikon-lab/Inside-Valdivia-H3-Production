@@ -144,6 +144,10 @@ class RepositoryValidationTests(unittest.TestCase):
                 "continue.native_av@characterized-layout",
                 "connect.two_sided_guides@default",
                 "frames.assemble@ordered-concatenation",
+                "generate.keyframed@last-frame",
+                "generate.keyframed@text-only",
+                "generate.from_references@image-reference-max",
+                "generate.with_guides@guide-clip",
             ],
         )
         for entry in catalog["plans"]:

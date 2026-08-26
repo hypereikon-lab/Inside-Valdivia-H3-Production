@@ -61,6 +61,21 @@ bindings live in `materialization/catalog.json` and
 `materialization/plans/*.json`; the documents deliberately contain no invented
 ComfyUI node ids or API pointers before live paired export.
 
+The following low-complexity variants reuse the same official inference
+surface and are appended to the queue without displacing the primary nine:
+
+| Priority | Operation variant | Primary purpose |
+| --- | --- | --- |
+| 10 | `generate.keyframed@last-frame` | construct toward one exact final frame |
+| 11 | `generate.keyframed@text-only` | unanchored FL2VA control baseline |
+| 12 | `generate.from_references@image-reference-max` | isolate the cost/effect of maximum reference-image sizing |
+| 13 | `generate.with_guides@guide-clip` | place one lattice-trimmed decoded clip at an exact frame |
+
+Together with `first-frame` and `first-last`, this completes the four possible
+endpoint-input topologies exposed by `MiniMaxH3ImageToVideo`. Parameter-only
+duration, guide-length, and continuation ablations remain experiments over one
+materialized graph rather than duplicated workflows.
+
 ## Phase 2 — establish baselines
 
 For each materialized H3 graph, retain one baseline configuration:

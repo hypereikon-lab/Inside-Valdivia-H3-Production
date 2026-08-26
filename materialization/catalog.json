@@ -99,6 +99,50 @@
       "topology_key": "frames.assemble@ordered-concatenation",
       "plan": "materialization/plans/09-frames-assemble.json",
       "state": "offline-ready"
+    },
+    {
+      "id": "keyframed-last-frame",
+      "priority": 10,
+      "operation": "generate.keyframed",
+      "operation_version": 1,
+      "operation_contract_hash": "293c342e54d66ac4b8f5147636e9aa0617635abba5d2d4acc2919999104208b1",
+      "variant": "last-frame",
+      "topology_key": "generate.keyframed@last-frame",
+      "plan": "materialization/plans/10-keyframed-last-frame.json",
+      "state": "offline-ready"
+    },
+    {
+      "id": "keyframed-text-only",
+      "priority": 11,
+      "operation": "generate.keyframed",
+      "operation_version": 1,
+      "operation_contract_hash": "293c342e54d66ac4b8f5147636e9aa0617635abba5d2d4acc2919999104208b1",
+      "variant": "text-only",
+      "topology_key": "generate.keyframed@text-only",
+      "plan": "materialization/plans/11-keyframed-text-only.json",
+      "state": "offline-ready"
+    },
+    {
+      "id": "references-image-max",
+      "priority": 12,
+      "operation": "generate.from_references",
+      "operation_version": 2,
+      "operation_contract_hash": "2981aea77eaaf6e83d0b0dace34c63ccd2816c13c27a622a8ab87c04fd4411ab",
+      "variant": "image-reference-max",
+      "topology_key": "generate.from_references@image-reference-max",
+      "plan": "materialization/plans/12-references-image-max.json",
+      "state": "offline-ready"
+    },
+    {
+      "id": "guides-guide-clip",
+      "priority": 13,
+      "operation": "generate.with_guides",
+      "operation_version": 1,
+      "operation_contract_hash": "dcc117fc281eddddc5568de0f7f55940c671b5bf6fedfb892514473eb77ead27",
+      "variant": "guide-clip",
+      "topology_key": "generate.with_guides@guide-clip",
+      "plan": "materialization/plans/13-guides-guide-clip.json",
+      "state": "offline-ready"
     }
   ]
 }

@@ -95,6 +95,6 @@ output, never by assuming implicit progression.
 Only `continue.native_av` has current-system live execution evidence, and that
 evidence is a synthetic one-step structural smoke without visual evaluation.
 All seven operations now have internally checked offline topology coverage,
-with ten dossiers in total for the selected static variants,
+with fourteen dossiers in total and thirteen selected project plans,
 but none has a retained UI/API pair. All other operations remain locked
 contracts until paired graphs are materialized and evaluated.

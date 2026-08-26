@@ -39,9 +39,9 @@ frames.assemble
 
 These names are independent functions, not stages. Their generic contracts are
 content-addressed in CAUCE and pinned by `operations.lock.json`. This repository
-stores concrete invocations only. CAUCE contains ten checked, non-executable
-topology dossiers covering every current operation and the nine canonical
-production variants; no reusable UI/API graph pair has yet been promoted. See
+stores concrete invocations only. CAUCE contains fourteen checked,
+non-executable topology dossiers. Thirteen are selected by this project's
+materialization queue; no reusable UI/API graph pair has yet been promoted. See
 [operation usage](docs/OPERATIONS.md),
 [data model](docs/DATA_MODEL.md), and [materialization](docs/MATERIALIZATION.md).
 

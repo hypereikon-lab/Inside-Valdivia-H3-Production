@@ -2,7 +2,7 @@
   "schema": "inside-valdivia.cauce-operation-lock/1",
   "source": {
     "repository": "https://github.com/hypereikon-lab/ComfyUI-Cauce",
-    "commit": "630218affb1c51bf7924e396feee9b540bad6f2e",
+    "commit": "fafd1db452297f18ed34fa00e01cf73062d47577",
     "catalog_hash": "0568f70a436a95ae823c50e4c391d0eeed4a3d1676088a264ccc682fa01c1874"
   },
   "operations": [

@@ -265,7 +265,9 @@ def _validate_canonical_bindings(value: dict[str, Any], path: Path) -> list[str]
 
     if operation == "generate.keyframed":
         expected = {
+            "text-only": set(),
             "first-frame": {"first_frame"},
+            "last-frame": {"last_frame"},
             "first-last": {"first_frame", "last_frame"},
         }.get(variant)
         if expected is not None and set(inputs) != expected:
@@ -273,12 +275,15 @@ def _validate_canonical_bindings(value: dict[str, Any], path: Path) -> list[str]
     elif operation == "generate.from_references":
         expected = {
             "image-reference-match": {"reference_images"},
+            "image-reference-max": {"reference_images"},
             "video-reference": {"reference_images", "reference_clips"},
         }.get(variant)
         if expected is not None and set(inputs) != expected:
             errors.append(f"{path}: {variant} requires exactly {sorted(expected)}")
         if variant == "image-reference-match" and bindings.get("reference_image_size") != "match":
             errors.append(f"{path}: image-reference-match must guard ref_image_size=match")
+        if variant == "image-reference-max" and bindings.get("reference_image_size") != "max":
+            errors.append(f"{path}: image-reference-max must guard ref_image_size=max")
         if variant == "video-reference":
             reference_frames = bindings.get("reference_frames")
             if not is_h3_frame_count(reference_frames) or not 48 <= reference_frames <= 360:
@@ -286,12 +291,22 @@ def _validate_canonical_bindings(value: dict[str, Any], path: Path) -> list[str]
             if bindings.get("reference_fps") != 24:
                 errors.append(f"{path}: video-reference baseline must be 24 fps")
     elif operation == "generate.with_guides":
-        guides = inputs.get("guides")
-        expected_count = {"single-anchor": 1, "multi-anchor": 2}.get(variant)
-        if expected_count is not None and (
-            not isinstance(guides, list) or len(guides) != expected_count
-        ):
-            errors.append(f"{path}: {variant} requires exactly {expected_count} guide records")
+        if variant == "guide-clip":
+            clips = inputs.get("guide_clips")
+            guide_frames = bindings.get("guide_frames")
+            if set(inputs) != {"guide_clips"} or not isinstance(clips, list) or len(clips) != 1:
+                errors.append(f"{path}: guide-clip requires exactly one guide clip record")
+            if not is_h3_frame_count(guide_frames):
+                errors.append(f"{path}: guide clip baseline must be on the H3 frame grid")
+        else:
+            guides = inputs.get("guides")
+            expected_count = {"single-anchor": 1, "multi-anchor": 2}.get(variant)
+            if expected_count is not None and (
+                set(inputs) != {"guides"}
+                or not isinstance(guides, list)
+                or len(guides) != expected_count
+            ):
+                errors.append(f"{path}: {variant} requires exactly {expected_count} guide records")
     elif operation == "continue.native_av" and variant == "characterized-layout":
         overlap = bindings.get("overlap_frames")
         extension = bindings.get("extension_frames")

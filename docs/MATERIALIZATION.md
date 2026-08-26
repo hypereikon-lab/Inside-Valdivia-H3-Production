@@ -2,7 +2,7 @@
 
 ## Offline package available before the lab session
 
-`materialization/catalog.json` is the authoritative nine-item queue. Each
+`materialization/catalog.json` is the authoritative thirteen-item queue. Each
 entry points to one project plan in `materialization/plans/` and to one exact
 CAUCE dossier key written as `operation@variant`. The plans already fix every
 invariant that can be known without the runtime:

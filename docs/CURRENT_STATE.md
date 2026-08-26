@@ -46,10 +46,12 @@ The laboratory had `ComfyUI-Cauce` commit
 all six H3 AV primitive nodes were present in `/object_info`.
 
 The project operation lock points to CAUCE 3.3.0 commit
-`630218affb1c51bf7924e396feee9b540bad6f2e`. It retains the same seven semantic
-operation contracts and now contains ten checked, non-executable topology
-dossiers: one for every operation plus separate first-frame, image-reference,
-and single-guide canonical variants. The source registry remains 24 nodes. The
+`fafd1db452297f18ed34fa00e01cf73062d47577`. It retains the same seven semantic
+operation contracts and now contains fourteen checked, non-executable topology
+dossiers. These cover all four FL2VA endpoint-input combinations, both Ref2VA
+image-sizing modes, Ref2VA video reference, single/multiple image anchors, a
+prepared guide clip, continuation, two-sided connection, assembly, and one
+reference transform. The source registry remains 24 nodes. The
 five additional
 primitives are:
 
@@ -169,7 +171,7 @@ possible to compose
 Current retained products include a content-addressed CAUCE operation lock,
 project invocation schemas, deterministic CAUCE primitives, visible H3 temporal
 preflight and conditioning inspection, reversible native-state branching,
-ten offline topology dossiers, nine project materialization plans, an empty
+fourteen offline topology dossiers, thirteen project materialization plans, an empty
 content-addressed media catalog ready for real assets, the paired-export bridge in
 Runtime Control, and Workspace Control source code. The five CAUCE 3.3.0 nodes
 are source- and unit-validated only until the live update. CAUCE does not yet
