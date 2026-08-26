@@ -65,6 +65,32 @@ def verify_lock(project_root: Path, cauce_root: Path) -> list[str]:
             errors.append(f"version mismatch for {operation_id}")
         if content_hash(spec) != locked[operation_id]["contract_hash"]:
             errors.append(f"contract hash mismatch for {operation_id}")
+
+    topology_catalog = load_json(cauce_root / "operations" / "topologies" / "catalog.json")
+    if topology_catalog.get("schema") != "cauce.operation-topology-catalog/2":
+        errors.append("CAUCE topology catalog is not variant-addressable schema 2")
+        topology_keys: set[str] = set()
+    else:
+        topology_keys = {
+            f"{entry.get('operation')}@{entry.get('variant')}"
+            for entry in topology_catalog.get("topologies", [])
+            if isinstance(entry, dict)
+        }
+        if len(topology_keys) != len(topology_catalog.get("topologies", [])):
+            errors.append("CAUCE topology catalog contains duplicate or malformed variants")
+
+    materialization = load_json(project_root / "materialization" / "catalog.json")
+    planned_keys = {
+        entry.get("topology_key")
+        for entry in materialization.get("plans", [])
+        if isinstance(entry, dict)
+    }
+    missing_topologies = sorted(planned_keys - topology_keys)
+    if missing_topologies:
+        errors.append(
+            "materialization plans lack CAUCE topology dossiers: "
+            + ", ".join(missing_topologies)
+        )
     return errors
 
 
@@ -77,7 +103,10 @@ def main(argv: list[str]) -> int:
         for error in errors:
             print(error, file=sys.stderr)
         return 1
-    print("verified: CAUCE source commit, catalog hash, versions, and operation hashes")
+    print(
+        "verified: CAUCE source commit, catalog hash, operation hashes, "
+        "and planned topology variants"
+    )
     return 0
 
 

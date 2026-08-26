@@ -1,5 +1,33 @@
 # Materializing an operation invocation
 
+## Offline package available before the lab session
+
+`materialization/catalog.json` is the authoritative nine-item queue. Each
+entry points to one project plan in `materialization/plans/` and to one exact
+CAUCE dossier key written as `operation@variant`. The plans already fix every
+invariant that can be known without the runtime:
+
+```text
+operation version and contract hash
+static topology variant
+model family and known laboratory filenames
+canonical geometry and temporal baseline
+input cardinality
+operation-specific range arithmetic
+promotion state = offline-ready
+```
+
+Values whose authority is the active graph or `/object_info` remain `null`:
+sampler, scheduler, steps, shifts, seed, actual media ids, workspace export,
+API pointers, runtime manifest, and output hashes. Filling those from memory
+would make the plan look more complete while making it less reproducible.
+
+`python3 tools/validate.py` checks the queue is contiguous, every file is
+cataloged exactly once, every plan matches the operation lock, variant aliases
+have not drifted, and the canonical H3 temporal/range rules still hold.
+`python3 tools/verify_cauce_lock.py ../ComfyUI-Cauce` additionally checks the
+locked CAUCE commit, operation contracts, and planned topology variants.
+
 ## Gate A — runtime capture
 
 Run R1 immediately before graph construction and persist the full manifest:
@@ -16,7 +44,9 @@ materialization because it does not contain the captured node schemas.
 
 ## Gate B — resolve and bind the operation
 
-Copy `fixtures/materialization-plan.json` and set:
+Open the next entry in `materialization/catalog.json` and complete its existing
+plan. `fixtures/materialization-plan.json` remains a minimal format example.
+Set or confirm:
 
 - exact operation id, version, and contract hash from `operations.lock.json`;
 - exact operation variant matching the graph topology being materialized;
@@ -29,6 +59,8 @@ Copy `fixtures/materialization-plan.json` and set:
 
 Create the corresponding Runtime Control reference using
 `fixtures/operation-ref.json`; its three values must match the same lock entry.
+Use a distinct operation-reference value for each selected operation; the
+fixture is not a universal reference.
 
 For `continue.native_av`, also bind `overlap_frames`, `extension_frames`, and
 every sampled window's `timeline_origin_frame`. For

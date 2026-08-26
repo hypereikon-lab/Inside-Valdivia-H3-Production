@@ -4,6 +4,9 @@
   "operation_version": 1,
   "operation_contract_hash": "293c342e54d66ac4b8f5147636e9aa0617635abba5d2d4acc2919999104208b1",
   "variant": "first-last",
+  "topology_key": "generate.keyframed@first-last",
+  "priority": 2,
+  "status": "offline-ready",
   "runtime_manifest_hash": null,
   "sources": {
     "workspace_export": null,
@@ -21,7 +24,10 @@
     "sampler": null,
     "scheduler": null,
     "steps": null,
-    "inputs": {}
+    "inputs": {
+      "first_frame": null,
+      "last_frame": null
+    }
   },
   "outputs": {
     "ui_graph": null,

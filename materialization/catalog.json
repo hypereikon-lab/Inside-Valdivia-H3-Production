@@ -1,0 +1,104 @@
+{
+  "schema": "inside-valdivia.materialization-catalog/1",
+  "plans": [
+    {
+      "id": "keyframed-first-frame",
+      "priority": 1,
+      "operation": "generate.keyframed",
+      "operation_version": 1,
+      "operation_contract_hash": "293c342e54d66ac4b8f5147636e9aa0617635abba5d2d4acc2919999104208b1",
+      "variant": "first-frame",
+      "topology_key": "generate.keyframed@first-frame",
+      "plan": "materialization/plans/01-keyframed-first-frame.json",
+      "state": "offline-ready"
+    },
+    {
+      "id": "keyframed-first-last",
+      "priority": 2,
+      "operation": "generate.keyframed",
+      "operation_version": 1,
+      "operation_contract_hash": "293c342e54d66ac4b8f5147636e9aa0617635abba5d2d4acc2919999104208b1",
+      "variant": "first-last",
+      "topology_key": "generate.keyframed@first-last",
+      "plan": "materialization/plans/02-keyframed-first-last.json",
+      "state": "offline-ready"
+    },
+    {
+      "id": "references-image-match",
+      "priority": 3,
+      "operation": "generate.from_references",
+      "operation_version": 2,
+      "operation_contract_hash": "2981aea77eaaf6e83d0b0dace34c63ccd2816c13c27a622a8ab87c04fd4411ab",
+      "variant": "image-reference-match",
+      "topology_key": "generate.from_references@image-reference-match",
+      "plan": "materialization/plans/03-references-image-match.json",
+      "state": "offline-ready"
+    },
+    {
+      "id": "references-video",
+      "priority": 4,
+      "operation": "generate.from_references",
+      "operation_version": 2,
+      "operation_contract_hash": "2981aea77eaaf6e83d0b0dace34c63ccd2816c13c27a622a8ab87c04fd4411ab",
+      "variant": "video-reference",
+      "topology_key": "generate.from_references@video-reference",
+      "plan": "materialization/plans/04-references-video.json",
+      "state": "offline-ready"
+    },
+    {
+      "id": "guides-single-anchor",
+      "priority": 5,
+      "operation": "generate.with_guides",
+      "operation_version": 1,
+      "operation_contract_hash": "dcc117fc281eddddc5568de0f7f55940c671b5bf6fedfb892514473eb77ead27",
+      "variant": "single-anchor",
+      "topology_key": "generate.with_guides@single-anchor",
+      "plan": "materialization/plans/05-guides-single-anchor.json",
+      "state": "offline-ready"
+    },
+    {
+      "id": "guides-multi-anchor",
+      "priority": 6,
+      "operation": "generate.with_guides",
+      "operation_version": 1,
+      "operation_contract_hash": "dcc117fc281eddddc5568de0f7f55940c671b5bf6fedfb892514473eb77ead27",
+      "variant": "multi-anchor",
+      "topology_key": "generate.with_guides@multi-anchor",
+      "plan": "materialization/plans/06-guides-multi-anchor.json",
+      "state": "offline-ready"
+    },
+    {
+      "id": "native-continuation-characterized",
+      "priority": 7,
+      "operation": "continue.native_av",
+      "operation_version": 1,
+      "operation_contract_hash": "6cb5eae61f6ae6b5ecca51103c0eb0ffe9f1b4474b4b25b28da7be050382d95c",
+      "variant": "characterized-layout",
+      "topology_key": "continue.native_av@characterized-layout",
+      "plan": "materialization/plans/07-native-continuation.json",
+      "state": "offline-ready"
+    },
+    {
+      "id": "two-sided-guides-default",
+      "priority": 8,
+      "operation": "connect.two_sided_guides",
+      "operation_version": 1,
+      "operation_contract_hash": "94fd065fdb448a6d1dd23ac98440b1a3100d70eb88d3db98ad7086f56f1de534",
+      "variant": "default",
+      "topology_key": "connect.two_sided_guides@default",
+      "plan": "materialization/plans/08-two-sided-guides.json",
+      "state": "offline-ready"
+    },
+    {
+      "id": "frames-ordered-concatenation",
+      "priority": 9,
+      "operation": "frames.assemble",
+      "operation_version": 2,
+      "operation_contract_hash": "bf6da173fa4785bee22643d838c56cafdaf095a2b33fb43f71ff201308c0f19b",
+      "variant": "ordered-concatenation",
+      "topology_key": "frames.assemble@ordered-concatenation",
+      "plan": "materialization/plans/09-frames-assemble.json",
+      "state": "offline-ready"
+    }
+  ]
+}

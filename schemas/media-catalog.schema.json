@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hypereikon.online/schemas/inside-valdivia-media-catalog-1.json",
+  "title": "Content-addressed project media catalog",
+  "type": "object",
+  "required": ["schema", "media"],
+  "properties": {
+    "schema": { "const": "inside-valdivia.media-catalog/1" },
+    "media": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "logical_id", "content_hash", "comfy_filename", "kind", "frame_count",
+          "fps", "geometry", "size_bytes", "origin_invocation", "status"
+        ],
+        "properties": {
+          "logical_id": { "type": "string", "minLength": 1 },
+          "content_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "comfy_filename": { "type": "string", "minLength": 1 },
+          "kind": { "enum": ["image", "video", "native-av-latent"] },
+          "frame_count": { "type": ["integer", "null"], "minimum": 1 },
+          "fps": { "type": ["number", "null"], "exclusiveMinimum": 0 },
+          "geometry": {
+            "oneOf": [
+              { "type": "null" },
+              {
+                "type": "array", "minItems": 2, "maxItems": 2,
+                "items": { "type": "integer", "minimum": 1 }
+              }
+            ]
+          },
+          "size_bytes": { "type": "integer", "minimum": 0 },
+          "origin_invocation": { "type": ["string", "null"] },
+          "status": { "enum": ["hash-verified", "runtime-available", "archived"] }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

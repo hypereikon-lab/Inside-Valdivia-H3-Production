@@ -1,0 +1,34 @@
+{
+  "schema": "inside-valdivia.materialization-plan/1",
+  "operation": "continue.native_av",
+  "operation_version": 1,
+  "operation_contract_hash": "6cb5eae61f6ae6b5ecca51103c0eb0ffe9f1b4474b4b25b28da7be050382d95c",
+  "variant": "characterized-layout",
+  "topology_key": "continue.native_av@characterized-layout",
+  "priority": 7,
+  "status": "offline-ready",
+  "runtime_manifest_hash": null,
+  "sources": { "workspace_export": null, "parameterization": null, "runtime_manifest": null, "operation_ref": null },
+  "bindings": {
+    "model_variant": "FL2VA",
+    "model_files": {
+      "diffusion_model": "diffusion_models/minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+      "text_encoder": "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "video_vae": "vae/minimax_h3_video_vae_fp16.safetensors"
+    },
+    "resolution": [768, 1344],
+    "overlap_frames": 22,
+    "extension_frames": 119,
+    "window_frames": 141,
+    "prompt": null,
+    "seed": null,
+    "sampler": null,
+    "scheduler": null,
+    "steps": null,
+    "video_shift": null,
+    "audio_shift": null,
+    "inputs": { "source_native_av_latent": null, "source_timeline_origin": 0 }
+  },
+  "outputs": { "ui_graph": null, "api_template": null, "bindings": null, "materialization_manifest": null, "ui_graph_hash": null, "api_template_hash": null, "bindings_hash": null },
+  "validation": { "schema_status": "pending", "missing_node_types": [], "notes": ["22 and 141 are legal 17k+5 windows; the 119-frame suffix is a token-aligned 17k increment."] }
+}

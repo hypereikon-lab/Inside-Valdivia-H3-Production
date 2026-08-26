@@ -1,0 +1,23 @@
+{
+  "schema": "inside-valdivia.materialization-plan/1",
+  "operation": "frames.assemble",
+  "operation_version": 2,
+  "operation_contract_hash": "bf6da173fa4785bee22643d838c56cafdaf095a2b33fb43f71ff201308c0f19b",
+  "variant": "ordered-concatenation",
+  "topology_key": "frames.assemble@ordered-concatenation",
+  "priority": 9,
+  "status": "offline-ready",
+  "runtime_manifest_hash": null,
+  "sources": { "workspace_export": null, "parameterization": null, "runtime_manifest": null, "operation_ref": null },
+  "bindings": {
+    "frame_rate": 24,
+    "inputs": {
+      "sources": [
+        { "media": null, "range": null },
+        { "media": null, "range": null }
+      ]
+    }
+  },
+  "outputs": { "ui_graph": null, "api_template": null, "bindings": null, "materialization_manifest": null, "ui_graph_hash": null, "api_template_hash": null, "bindings_hash": null },
+  "validation": { "schema_status": "pending", "missing_node_types": [], "notes": ["Each source range is half-open; geometry must match before ImageBatch."] }
+}

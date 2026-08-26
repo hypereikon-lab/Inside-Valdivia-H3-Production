@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hypereikon.online/schemas/inside-valdivia-materialization-plan-1.json",
+  "title": "Offline plan for one CAUCE operation variant",
+  "type": "object",
+  "required": [
+    "schema", "operation", "operation_version", "operation_contract_hash",
+    "variant", "topology_key", "priority", "status", "runtime_manifest_hash",
+    "sources", "bindings", "outputs", "validation"
+  ],
+  "properties": {
+    "schema": { "const": "inside-valdivia.materialization-plan/1" },
+    "operation": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$" },
+    "operation_version": { "type": "integer", "minimum": 1 },
+    "operation_contract_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "variant": { "type": "string", "minLength": 1 },
+    "topology_key": { "type": "string", "minLength": 3 },
+    "priority": { "type": "integer", "minimum": 1 },
+    "status": { "const": "offline-ready" },
+    "runtime_manifest_hash": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      ]
+    },
+    "sources": {
+      "type": "object",
+      "required": ["workspace_export", "parameterization", "runtime_manifest", "operation_ref"],
+      "properties": {
+        "workspace_export": { "type": ["string", "null"] },
+        "parameterization": { "type": ["string", "null"] },
+        "runtime_manifest": { "type": ["string", "null"] },
+        "operation_ref": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "bindings": { "type": "object" },
+    "outputs": {
+      "type": "object",
+      "required": [
+        "ui_graph", "api_template", "bindings", "materialization_manifest",
+        "ui_graph_hash", "api_template_hash", "bindings_hash"
+      ],
+      "additionalProperties": { "type": ["string", "null"] }
+    },
+    "validation": {
+      "type": "object",
+      "required": ["schema_status", "missing_node_types", "notes"],
+      "properties": {
+        "schema_status": { "enum": ["pending", "validated"] },
+        "missing_node_types": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

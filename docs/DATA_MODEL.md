@@ -83,6 +83,30 @@ A plan binds one locked operation to a runtime manifest, exact model files,
 resolution, frame count, prompt, seed, sampler, scheduler, steps, and input
 media. Its products are a paired UI graph and API graph with separate hashes.
 
+The plan state `offline-ready` means its static operation/variant topology and
+project-side invariants are checked. It does not mean a ComfyUI workflow exists.
+Live paired export replaces the pending source/output fields and advances the
+evidence separately.
+
+## Media catalog
+
+`media/catalog.json` is the project index for concrete inputs and retained
+outputs. A record exists only after the bytes have been hashed; unresolved
+placeholders belong in a materialization plan, not in the media catalog.
+
+```text
+logical id
+SHA-256 content hash
+exact Comfy filename
+image / video / native AV latent
+frame count, fps, geometry, byte size
+origin invocation, when generated
+availability state
+```
+
+The current catalog is intentionally empty because no production assets have
+yet been selected and hashed in this repository.
+
 ## Run receipt
 
 ComfyUI Runtime Control records one immutable receipt per submitted prompt id:

@@ -5,7 +5,9 @@ from tools.validate import (
     ROOT,
     is_h3_frame_count,
     load_json,
+    validate_materialization_catalog,
     validate_materialization_plan,
+    validate_media_catalog,
     validate_operation_lock,
     validate_repository,
     validate_invocation,
@@ -121,6 +123,56 @@ class RepositoryValidationTests(unittest.TestCase):
             f"{plan_path}: variant must be a non-empty string",
             validate_materialization_plan(plan, plan_path, registry),
         )
+
+    def test_materialization_catalog_uses_exact_canonical_variants(self):
+        lock_path = ROOT / "operations.lock.json"
+        _, registry = validate_operation_lock(load_json(lock_path), lock_path)
+        catalog_path = ROOT / "materialization" / "catalog.json"
+        catalog = load_json(catalog_path)
+        self.assertEqual(
+            validate_materialization_catalog(catalog, catalog_path, registry, ROOT), []
+        )
+        self.assertEqual(
+            [entry["topology_key"] for entry in catalog["plans"]],
+            [
+                "generate.keyframed@first-frame",
+                "generate.keyframed@first-last",
+                "generate.from_references@image-reference-match",
+                "generate.from_references@video-reference",
+                "generate.with_guides@single-anchor",
+                "generate.with_guides@multi-anchor",
+                "continue.native_av@characterized-layout",
+                "connect.two_sided_guides@default",
+                "frames.assemble@ordered-concatenation",
+            ],
+        )
+        for entry in catalog["plans"]:
+            self.assertEqual(entry["topology_key"], f"{entry['operation']}@{entry['variant']}")
+
+    def test_offline_baselines_obey_h3_temporal_rules(self):
+        reference = load_json(
+            ROOT / "materialization" / "plans" / "04-references-video.json"
+        )["bindings"]
+        self.assertEqual(reference["reference_fps"], 24)
+        self.assertTrue(is_h3_frame_count(reference["reference_frames"]))
+        self.assertGreaterEqual(reference["reference_frames"], 2 * 24)
+
+        continuation = load_json(
+            ROOT / "materialization" / "plans" / "07-native-continuation.json"
+        )["bindings"]
+        self.assertEqual(
+            continuation["overlap_frames"] + continuation["extension_frames"],
+            continuation["window_frames"],
+        )
+        self.assertTrue(is_h3_frame_count(continuation["overlap_frames"]))
+        self.assertEqual(continuation["extension_frames"] % 17, 0)
+        self.assertTrue(is_h3_frame_count(continuation["window_frames"]))
+
+    def test_media_catalog_is_empty_until_real_assets_are_hashed(self):
+        catalog_path = ROOT / "media" / "catalog.json"
+        catalog = load_json(catalog_path)
+        self.assertEqual(validate_media_catalog(catalog, catalog_path), [])
+        self.assertEqual(catalog["media"], [])
 
 
 if __name__ == "__main__":

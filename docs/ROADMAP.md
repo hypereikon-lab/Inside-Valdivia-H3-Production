@@ -42,19 +42,24 @@ Workspace Control and materialize them through Runtime Control.
 
 | Priority | Operation variant | Primary purpose |
 | --- | --- | --- |
-| 1 | `generate.keyframed.first-frame` | generate forward from one exact frame |
-| 2 | `generate.keyframed.first-last` | connect two exact endpoint frames |
-| 3 | `generate.from-references.image-match` | ordered image references at bounded token cost |
-| 4 | `generate.from-references.video-reference` | motion/structure from one 24 fps reference clip |
-| 5 | `generate.with-guides.single` | one exact image or clip at an arbitrary frame |
-| 6 | `generate.with-guides.two` | two explicit temporal anchors |
-| 7 | `continue.native-av.overlap-22-extension-119` | extend retained native state without a sampler patch |
-| 8 | `connect.two-sided-guides.guide-22-target-124` | generate and retain an explicit center between sources |
-| 9 | `frames.assemble.ordered` | concatenate exact accepted decoded ranges |
+| 1 | `generate.keyframed@first-frame` | generate forward from one exact frame |
+| 2 | `generate.keyframed@first-last` | connect two exact endpoint frames |
+| 3 | `generate.from_references@image-reference-match` | ordered image references at bounded token cost |
+| 4 | `generate.from_references@video-reference` | motion/structure from one 24 fps reference clip |
+| 5 | `generate.with_guides@single-anchor` | one exact image or clip at an arbitrary frame |
+| 6 | `generate.with_guides@multi-anchor` | two explicit temporal anchors |
+| 7 | `continue.native_av@characterized-layout` | extend retained native state with 22 overlap and 119 new frames |
+| 8 | `connect.two_sided_guides@default` | generate an 80-frame center inside a 124-frame target with 22-frame guides |
+| 9 | `frames.assemble@ordered-concatenation` | concatenate exact accepted decoded ranges |
 
 Text-only, last-frame-only, `ref_image_size=max`, three-or-more-guide, and
 alternative continuation layouts remain later variants. They are not hidden
 branches inside the first canonical graphs.
+
+These are exact contract variant IDs. The same ordered queue and its offline
+bindings live in `materialization/catalog.json` and
+`materialization/plans/*.json`; the documents deliberately contain no invented
+ComfyUI node ids or API pointers before live paired export.
 
 ## Phase 2 — establish baselines
 

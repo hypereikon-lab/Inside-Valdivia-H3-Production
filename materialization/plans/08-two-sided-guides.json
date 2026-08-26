@@ -1,0 +1,36 @@
+{
+  "schema": "inside-valdivia.materialization-plan/1",
+  "operation": "connect.two_sided_guides",
+  "operation_version": 1,
+  "operation_contract_hash": "94fd065fdb448a6d1dd23ac98440b1a3100d70eb88d3db98ad7086f56f1de534",
+  "variant": "default",
+  "topology_key": "connect.two_sided_guides@default",
+  "priority": 8,
+  "status": "offline-ready",
+  "runtime_manifest_hash": null,
+  "sources": { "workspace_export": null, "parameterization": null, "runtime_manifest": null, "operation_ref": null },
+  "bindings": {
+    "model_variant": "FL2VA",
+    "model_files": {
+      "diffusion_model": "diffusion_models/minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+      "text_encoder": "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "video_vae": "vae/minimax_h3_video_vae_fp16.safetensors"
+    },
+    "resolution": [768, 1344],
+    "target_frames": 124,
+    "guide_frames": 22,
+    "left_guide_frame": 0,
+    "right_guide_frame": 102,
+    "accepted_center_range": [22, 102],
+    "prompt": null,
+    "seed": null,
+    "sampler": null,
+    "scheduler": null,
+    "steps": null,
+    "video_shift": null,
+    "audio_shift": null,
+    "inputs": { "left_source": null, "right_source": null }
+  },
+  "outputs": { "ui_graph": null, "api_template": null, "bindings": null, "materialization_manifest": null, "ui_graph_hash": null, "api_template_hash": null, "bindings_hash": null },
+  "validation": { "schema_status": "pending", "missing_node_types": [], "notes": ["The retained generated center is [22, 102), exactly 80 frames."] }
+}

@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import re
 import sys
 from typing import Any
@@ -209,6 +209,14 @@ def validate_materialization_plan(
     errors = _validate_operation_reference(value, path, registry, require_hash=True)
     if not isinstance(value.get("variant"), str) or not value["variant"]:
         errors.append(f"{path}: variant must be a non-empty string")
+    topology_key = value.get("topology_key")
+    expected_topology_key = f"{value.get('operation')}@{value.get('variant')}"
+    if topology_key != expected_topology_key:
+        errors.append(f"{path}: topology_key must match operation@variant")
+    if not isinstance(value.get("priority"), int) or value["priority"] < 1:
+        errors.append(f"{path}: priority must be a positive integer")
+    if value.get("status") != "offline-ready":
+        errors.append(f"{path}: materialization plan must remain offline-ready")
     if not isinstance(value.get("bindings"), dict):
         errors.append(f"{path}: bindings must be an object")
     sources = value.get("sources")
@@ -237,6 +245,233 @@ def validate_materialization_plan(
         not isinstance(manifest_hash, str) or not SHA256.fullmatch(manifest_hash)
     ):
         errors.append(f"{path}: runtime_manifest_hash must be null or lowercase SHA-256")
+    errors.extend(_validate_canonical_bindings(value, path))
+    return errors
+
+
+def _validate_canonical_bindings(value: dict[str, Any], path: Path) -> list[str]:
+    """Validate invariants that do not depend on live ComfyUI node schemas."""
+
+    bindings = value.get("bindings")
+    if not isinstance(bindings, dict):
+        return []
+    errors: list[str] = []
+    operation = value.get("operation")
+    variant = value.get("variant")
+    inputs = bindings.get("inputs")
+    if not isinstance(inputs, dict):
+        errors.append(f"{path}: canonical bindings require an inputs object")
+        return errors
+
+    if operation == "generate.keyframed":
+        expected = {
+            "first-frame": {"first_frame"},
+            "first-last": {"first_frame", "last_frame"},
+        }.get(variant)
+        if expected is not None and set(inputs) != expected:
+            errors.append(f"{path}: {variant} requires exactly {sorted(expected)}")
+    elif operation == "generate.from_references":
+        expected = {
+            "image-reference-match": {"reference_images"},
+            "video-reference": {"reference_images", "reference_clips"},
+        }.get(variant)
+        if expected is not None and set(inputs) != expected:
+            errors.append(f"{path}: {variant} requires exactly {sorted(expected)}")
+        if variant == "image-reference-match" and bindings.get("reference_image_size") != "match":
+            errors.append(f"{path}: image-reference-match must guard ref_image_size=match")
+        if variant == "video-reference":
+            reference_frames = bindings.get("reference_frames")
+            if not is_h3_frame_count(reference_frames) or not 48 <= reference_frames <= 360:
+                errors.append(f"{path}: video-reference baseline must be a 2-15s H3 length")
+            if bindings.get("reference_fps") != 24:
+                errors.append(f"{path}: video-reference baseline must be 24 fps")
+    elif operation == "generate.with_guides":
+        guides = inputs.get("guides")
+        expected_count = {"single-anchor": 1, "multi-anchor": 2}.get(variant)
+        if expected_count is not None and (
+            not isinstance(guides, list) or len(guides) != expected_count
+        ):
+            errors.append(f"{path}: {variant} requires exactly {expected_count} guide records")
+    elif operation == "continue.native_av" and variant == "characterized-layout":
+        overlap = bindings.get("overlap_frames")
+        extension = bindings.get("extension_frames")
+        window = bindings.get("window_frames")
+        if not is_h3_frame_count(overlap):
+            errors.append(f"{path}: continuation overlap must be on the H3 frame grid")
+        if not isinstance(extension, int) or extension < 17 or extension % 17:
+            errors.append(f"{path}: continuation extension must be a positive 17-frame increment")
+        if (
+            not is_h3_frame_count(window)
+            or not isinstance(overlap, int)
+            or not isinstance(extension, int)
+            or overlap + extension != window
+        ):
+            errors.append(f"{path}: continuation window must equal overlap plus extension")
+    elif operation == "connect.two_sided_guides" and variant == "default":
+        target = bindings.get("target_frames")
+        guide = bindings.get("guide_frames")
+        expected_right = target - guide if isinstance(target, int) and isinstance(guide, int) else None
+        expected_range = [guide, expected_right]
+        if not is_h3_frame_count(target) or not is_h3_frame_count(guide):
+            errors.append(f"{path}: target and guide lengths must be on the H3 frame grid")
+        if bindings.get("left_guide_frame") != 0 or bindings.get("right_guide_frame") != expected_right:
+            errors.append(f"{path}: two-sided guide indices do not match the target")
+        if bindings.get("accepted_center_range") != expected_range:
+            errors.append(f"{path}: accepted center must exclude both guide ranges")
+    elif operation == "frames.assemble" and variant == "ordered-concatenation":
+        sources = inputs.get("sources")
+        if bindings.get("frame_rate") != 24:
+            errors.append(f"{path}: frame assembly must use 24 fps")
+        if not isinstance(sources, list) or len(sources) < 2:
+            errors.append(f"{path}: ordered concatenation requires at least two source ranges")
+    return errors
+
+
+def validate_materialization_catalog(
+    value: Any,
+    path: Path,
+    registry: dict[str, dict[str, Any]],
+    root: Path,
+) -> list[str]:
+    if (
+        not isinstance(value, dict)
+        or value.get("schema") != "inside-valdivia.materialization-catalog/1"
+    ):
+        return [f"{path}: invalid materialization catalog"]
+    entries = value.get("plans")
+    if not isinstance(entries, list) or not entries:
+        return [f"{path}: materialization catalog needs plans"]
+    errors: list[str] = []
+    ids: set[str] = set()
+    keys: set[str] = set()
+    priorities: set[int] = set()
+    paths: set[Path] = set()
+    for entry in entries:
+        required = {
+            "id",
+            "priority",
+            "operation",
+            "operation_version",
+            "operation_contract_hash",
+            "variant",
+            "topology_key",
+            "plan",
+            "state",
+        }
+        if not isinstance(entry, dict) or set(entry) != required:
+            errors.append(f"{path}: malformed materialization entry {entry!r}")
+            continue
+        entry_id = entry["id"]
+        if not isinstance(entry_id, str) or not entry_id or entry_id in ids:
+            errors.append(f"{path}: invalid or duplicate materialization id {entry_id!r}")
+        ids.add(entry_id)
+        priority = entry["priority"]
+        if not isinstance(priority, int) or priority < 1 or priority in priorities:
+            errors.append(f"{path}: invalid or duplicate materialization priority {priority!r}")
+        priorities.add(priority)
+        errors.extend(_validate_operation_reference(entry, path, registry, require_hash=True))
+        expected_key = f"{entry['operation']}@{entry['variant']}"
+        if entry["topology_key"] != expected_key or expected_key in keys:
+            errors.append(f"{path}: invalid or duplicate topology key {entry['topology_key']!r}")
+        keys.add(expected_key)
+        if entry["state"] != "offline-ready":
+            errors.append(f"{path}: catalog plans must remain offline-ready")
+        relative = PurePosixPath(str(entry["plan"]))
+        if relative.is_absolute() or ".." in relative.parts or relative.parts[:2] != (
+            "materialization",
+            "plans",
+        ):
+            errors.append(f"{path}: unsafe materialization plan path {entry['plan']!r}")
+            continue
+        plan_path = root / Path(*relative.parts)
+        try:
+            plan = load_json(plan_path)
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(f"{plan_path}: invalid JSON: {exc}")
+            continue
+        paths.add(plan_path.resolve())
+        errors.extend(validate_materialization_plan(plan, plan_path, registry))
+        for field in (
+            "priority",
+            "operation",
+            "operation_version",
+            "operation_contract_hash",
+            "variant",
+            "topology_key",
+            "status",
+        ):
+            expected_field = "state" if field == "status" else field
+            if plan.get(field) != entry.get(expected_field):
+                errors.append(f"{plan_path}: {field} does not match catalog entry")
+    if priorities != set(range(1, len(entries) + 1)):
+        errors.append(f"{path}: priorities must be contiguous from one")
+    expected_paths = {
+        item.resolve() for item in (root / "materialization" / "plans").glob("*.json")
+    }
+    if paths != expected_paths:
+        errors.append(f"{path}: materialization catalog and plan directory differ")
+    return errors
+
+
+def validate_media_catalog(value: Any, path: Path) -> list[str]:
+    if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.media-catalog/1":
+        return [f"{path}: invalid media catalog"]
+    records = value.get("media")
+    if not isinstance(records, list):
+        return [f"{path}: media must be a list"]
+    errors: list[str] = []
+    logical_ids: set[str] = set()
+    content_hashes: set[str] = set()
+    for record in records:
+        required = {
+            "logical_id",
+            "content_hash",
+            "comfy_filename",
+            "kind",
+            "frame_count",
+            "fps",
+            "geometry",
+            "size_bytes",
+            "origin_invocation",
+            "status",
+        }
+        if not isinstance(record, dict) or set(record) != required:
+            errors.append(f"{path}: malformed media record {record!r}")
+            continue
+        logical_id = record["logical_id"]
+        if not isinstance(logical_id, str) or not logical_id or logical_id in logical_ids:
+            errors.append(f"{path}: invalid or duplicate media logical_id {logical_id!r}")
+        logical_ids.add(logical_id)
+        content_hash = record["content_hash"]
+        if not isinstance(content_hash, str) or not SHA256.fullmatch(content_hash):
+            errors.append(f"{path}: media content_hash must be lowercase SHA-256")
+        elif content_hash in content_hashes:
+            errors.append(f"{path}: duplicate media content_hash {content_hash!r}")
+        else:
+            content_hashes.add(content_hash)
+        if record["kind"] not in {"image", "video", "native-av-latent"}:
+            errors.append(f"{path}: invalid media kind {record['kind']!r}")
+        if not isinstance(record["comfy_filename"], str) or not record["comfy_filename"]:
+            errors.append(f"{path}: comfy_filename is required")
+        if record["frame_count"] is not None and (
+            not isinstance(record["frame_count"], int) or record["frame_count"] < 1
+        ):
+            errors.append(f"{path}: frame_count must be null or positive")
+        if record["fps"] is not None and (
+            not isinstance(record["fps"], (int, float)) or record["fps"] <= 0
+        ):
+            errors.append(f"{path}: fps must be null or positive")
+        geometry = record["geometry"]
+        if geometry is not None and (
+            not isinstance(geometry, list)
+            or len(geometry) != 2
+            or not all(isinstance(item, int) and item > 0 for item in geometry)
+        ):
+            errors.append(f"{path}: geometry must be null or [width, height]")
+        if not isinstance(record["size_bytes"], int) or record["size_bytes"] < 0:
+            errors.append(f"{path}: size_bytes must be non-negative")
+        if record["status"] not in {"hash-verified", "runtime-available", "archived"}:
+            errors.append(f"{path}: invalid media status {record['status']!r}")
     return errors
 
 
@@ -281,6 +516,14 @@ def validate_repository(root: Path = ROOT) -> list[str]:
         errors.extend(validate_segment(load_json(path), path, invocation_ids))
     catalog_path = root / "experiments" / "catalog.json"
     errors.extend(validate_experiment_catalog(load_json(catalog_path), catalog_path, registry))
+    materialization_path = root / "materialization" / "catalog.json"
+    errors.extend(
+        validate_materialization_catalog(
+            load_json(materialization_path), materialization_path, registry, root
+        )
+    )
+    media_path = root / "media" / "catalog.json"
+    errors.extend(validate_media_catalog(load_json(media_path), media_path))
     for path in sorted((root / "fixtures").glob("*.json")):
         try:
             value = load_json(path)
@@ -300,7 +543,10 @@ def main() -> int:
         for error in errors:
             print(error, file=sys.stderr)
         return 1
-    print("validated: operation lock, project invocations, experiments, fixtures, and schemas")
+    print(
+        "validated: operation lock, project invocations, materialization plans, "
+        "media, experiments, fixtures, and schemas"
+    )
     return 0
 
 
