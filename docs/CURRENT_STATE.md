@@ -6,11 +6,11 @@ This is the authority for present capability claims.
 
 ```text
 CAUCE
-  commit   180acd890e455a3985448b828cd8fa650d467e25
-  version  4.0.0
-  nodes    28
-  operations / topology dossiers  8 / 22
-  local tests  45 passing
+  commit   291bff0307d0717fbe6376346799720a9ebdf891
+  version  5.0.0
+  nodes    18
+  operations / topology dossiers  7 / 21
+  local tests  36 passing
 
 Runtime Control
   commit   a39583a4d2c335eea8ddbb8c8280402c64a160a2
@@ -19,14 +19,14 @@ Runtime Control
 
 Production data
   exact CAUCE commit/catalog/contract lock
-  22 offline materialization plans
-  10 controlled experiment definitions
+  21 offline materialization plans
+  9 controlled experiment definitions
   1 offline rolling-chain plan
 ```
 
 The local source repositories are complete and content-addressed. The current
 laboratory process has not yet been re-probed against these commits, so the
-numbers above describe source state, not a claim that CAUCE 4.0 is presently
+numbers above describe source state, not a claim that CAUCE 5.0 is presently
 loaded by the remote ComfyUI process.
 
 ## What is implemented
@@ -40,8 +40,7 @@ CAUCE provides deterministic primitives for:
   and smootherstep ramps;
 - exact native AV interval replacement;
 - native span guides, synchronized append, split/rollback, save, and load;
-- H3 target/reference/guide preflight and conditioning inspection;
-- decoded coordinate maps and image warps for inspectable reference media.
+- H3 target/reference/guide preflight and conditioning inspection.
 
 Official ComfyUI owns H3 first/last frames, Ref2VA references, arbitrary-frame
 AddGuide conditioning, model loading, prompting, sampling, and decoding. CAUCE
@@ -64,17 +63,16 @@ outputs into the next graph.
 | `continue.native_av` | CAUCE layout/span/mask paths unit-validated | older keyframe mechanism executed synthetically; current variants uncharacterized |
 | `complete.native_av` | placement/mask/replacement layer unit-validated | not yet sampled live |
 | `rollback.native_av` | synchronized split/branch layer unit-validated | not yet exercised in production |
-| `reference.transform` | deterministic decoded-map layer unit-validated | H3 correspondence remains experimental |
 | `frames.assemble` | deterministic range layer unit-validated | no inference claim |
 
 `implemented`, `materialized`, `executes`, and `visually accepted` are separate
 states. No current-lock topology yet has a retained paired UI/API graph. The
-repository therefore makes no claim that any of the 22 variants is presently
+repository therefore makes no claim that any of the 21 variants is presently
 production-ready or visually accepted.
 
 ## Offline-ready assets
 
-The 22 materialization plans cover the entire CAUCE topology catalog. Their
+The 21 materialization plans cover the entire CAUCE topology catalog. Their
 static operation hashes, variants, model filenames, geometry, frame arithmetic,
 input cardinality, mask semantics, and output slots are checked. Live-owned
 values remain null: actual media ids, sampler, scheduler, steps, flow shifts,
@@ -93,7 +91,7 @@ When the tunnel is available:
 1. capture `/features`, `/system_stats`, `/object_info`, queue state, Manager
    inventory, installed revisions, model filenames, and free storage;
 2. update only CAUCE to the locked commit if required, restart only ComfyUI, and
-   verify all 28 node types;
+   verify all 18 node types;
 3. materialize one graph at a time from the checked plans, beginning with a
    small operational core;
 4. run exact prompt-id technical smokes, retain receipts and native state, then

@@ -1,9 +1,9 @@
 # Controlled H3 experiments
 
-`experiments/catalog.json` contains ten planned, one-variable comparisons:
+`experiments/catalog.json` contains nine planned, one-variable comparisons:
 endpoint mode, reference-image sizing, reference duration, guide length, guide
 placement, continuation prompt relation, native mask boundary, overlap
-transport, future guide, and decoded motion-reference mapping.
+transport, and future guide.
 
 Every run records source hashes/order, operation and materialized graph hashes,
 model files, geometry, frame count, exact prompt/seed, sampler/scheduler/steps,

@@ -22,8 +22,8 @@ checked operation@variant plan
 
 Probe runtime, queue, node inventory, Manager revisions, model filenames, and
 free space. Update only CAUCE to commit
-`180acd890e455a3985448b828cd8fa650d467e25` if needed, restart only ComfyUI, and
-verify all 28 nodes. Do not change ComfyUI core, CUDA, PyTorch, drivers, models,
+`291bff0307d0717fbe6376346799720a9ebdf891` if needed, restart only ComfyUI, and
+verify all 18 nodes. Do not change ComfyUI core, CUDA, PyTorch, drivers, models,
 or unrelated packages during this gate.
 
 ## 1. Materialize the operational core
@@ -41,7 +41,7 @@ Construct and export one active graph at a time. Start with:
 9. `frames.assemble@ordered-concatenation`.
 
 Then materialize the remaining catalog entries as their concrete use arises.
-All 22 offline plans already exist; priority here controls live effort, not
+All 21 offline plans already exist; priority here controls live effort, not
 contract completeness.
 
 ## 2. Establish exact baselines
@@ -56,7 +56,7 @@ timeline origins and independent native video/audio masks.
 
 ## 3. Characterize behavior
 
-Run the ten declared controlled comparisons. Prioritize endpoint behavior,
+Run the nine declared controlled comparisons. Prioritize endpoint behavior,
 reference-video correspondence, AddGuide placement, keyframe versus native-mask
 overlap, mask boundary/fade behavior, and future-guide interaction. Record
 negative visual results as evidence; do not keep an ineffective mechanism as

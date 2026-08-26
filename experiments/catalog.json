@@ -81,18 +81,6 @@
       "variable": { "future_guide": ["absent", "present at frame 119"] },
       "measure": ["arrival fidelity", "overlap continuity", "motion coherence", "guide reconstruction artifact"],
       "status": "planned"
-    },
-    {
-      "id": "motion-reference-map",
-      "operations": [
-        { "id": "reference.transform", "version": 1 },
-        { "id": "generate.from_references", "version": 3 }
-      ],
-      "question": "Which inspectable decoded reference construction produces the strongest usable motion correspondence through official Ref2VA conditioning?",
-      "fixed": ["source frames", "reference duration", "model", "resolution", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps"],
-      "variable": { "map_family": ["affine", "perspective", "depth-camera", "external-displacement", "advection"] },
-      "measure": ["reference clip validity", "motion correspondence", "appearance stability", "failure mode"],
-      "status": "planned"
     }
   ]
 }

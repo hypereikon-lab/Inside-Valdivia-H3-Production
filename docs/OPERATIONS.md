@@ -62,12 +62,6 @@ native state.
 
 ## Deterministic decoded media
 
-### `reference.transform`
-
-Applies inspectable decoded coordinate maps, including an affine baseline, to
-produce reference media. It does not alter sampler internals or claim that H3
-will follow a map until an empirical generation is evaluated.
-
 ### `frames.assemble`
 
 Selects exact half-open decoded ranges and concatenates them without inference
@@ -77,8 +71,6 @@ or resampling.
 
 ```text
 generate.keyframed -> continue.native_av -> continue.native_av
-
-reference.transform -> generate.from_references
 
 native state + explicit interval -> complete.native_av -> rollback.native_av
 

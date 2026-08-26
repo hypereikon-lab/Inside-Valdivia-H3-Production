@@ -44,7 +44,6 @@ class RepositoryValidationTests(unittest.TestCase):
                 "generate.from_references",
                 "generate.keyframed",
                 "generate.with_guides",
-                "reference.transform",
                 "rollback.native_av",
             },
         )
@@ -79,13 +78,6 @@ class RepositoryValidationTests(unittest.TestCase):
                 self.assertIn("id", operation)
                 self.assertIn("version", operation)
                 self.assertEqual(operation["version"], registry[operation["id"]]["version"])
-        motion = next(
-            value for value in catalog["experiments"] if value["id"] == "motion-reference-map"
-        )
-        self.assertEqual(
-            [value["id"] for value in motion["operations"]],
-            ["reference.transform", "generate.from_references"],
-        )
 
     def test_reference_duration_baseline_stays_on_documented_h3_lengths(self):
         catalog = load_json(ROOT / "experiments" / "catalog.json")
@@ -163,7 +155,6 @@ class RepositoryValidationTests(unittest.TestCase):
                 "rollback.native_av@branch-suffix",
                 "generate.from_references@video-reference-with-guide",
                 "generate.with_guides@first-last-interior",
-                "reference.transform@affine",
             ],
         )
         for entry in catalog["plans"]:
