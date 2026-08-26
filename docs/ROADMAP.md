@@ -22,8 +22,8 @@ checked operation@variant plan
 
 Probe runtime, queue, node inventory, Manager revisions, model filenames, and
 free space. Update only CAUCE to commit
-`4c0cb85ea56f782621ecc5df57e143dfb19eb864` if needed, restart only ComfyUI, and
-verify all 18 nodes. Do not change ComfyUI core, CUDA, PyTorch, drivers, models,
+`dcb48570b362cbbdcb9d5b739c6b1c0ca278fa40` if needed, restart only ComfyUI, and
+verify all 20 nodes. Do not change ComfyUI core, CUDA, PyTorch, drivers, models,
 or unrelated packages during this gate.
 
 Run the machine-readable core readiness profile and Workspace Control browser
@@ -54,8 +54,17 @@ Then establish the native-state and deterministic baselines:
 5. `rollback.native_av@branch-suffix`, including exact split/append round trip;
 6. `frames.assemble@ordered-concatenation`.
 
+After those mechanisms execute, establish the new native editing surface:
+
+1. `edit.masked_video@static-spatial` with a hard control mask;
+2. `edit.masked_video@local-retake` as temporal/spatial intersection;
+3. `reframe.outpaint_video@centered` with a 32-pixel border;
+4. animated masks and offset outpaint only after their simpler controls;
+5. `refine.video@full-frame` as a one-variable strength ladder, followed by
+   `refine.video@masked` only if the full-frame pass shows useful behavior.
+
 The remaining variants are retained and materialized after their underlying
-mechanism earns baseline evidence. All 21 offline plans already exist; this
+mechanism earns baseline evidence. All 28 offline plans already exist; this
 order controls evidence dependencies, not catalog importance or permanence.
 It is duplicated as machine-validated phase data in the live gate so catalog
 priority cannot be mistaken for execution order.
@@ -72,10 +81,11 @@ timeline origins and independent native video/audio masks.
 
 ## 3. Characterize behavior
 
-Run the nine declared controlled comparisons one variable at a time. Prioritize
+Run the twelve declared controlled comparisons one variable at a time. Prioritize
 endpoint behavior, reference-video correspondence, AddGuide placement,
 keyframe versus native-mask overlap, mask boundary/fade behavior, and
-future-guide interaction.
+future-guide interaction, then masked-edit edge profiles, exact outpaint
+placement, and native refinement strength.
 
 For temporal completion, verify technical preservation before judging the
 image: confirm exact unknown range, unchanged tokens outside it, independent

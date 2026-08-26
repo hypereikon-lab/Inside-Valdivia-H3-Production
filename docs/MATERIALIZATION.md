@@ -1,6 +1,6 @@
 # Materialization and execution
 
-`materialization/catalog.json` is the complete 21-variant offline queue. Every
+`materialization/catalog.json` is the complete 28-variant offline queue. Every
 entry selects one exact CAUCE `operation@variant` topology and one checked plan
 in `materialization/plans/`.
 
@@ -42,6 +42,9 @@ The queue covers:
 - 4 AddGuide image/clip/endpoint combinations;
 - 3 native continuation transports;
 - 4 native completion/replacement layouts;
+- 3 spatial/spatiotemporal masked-edit layouts;
+- 2 native outpaint placements;
+- 2 bounded-refinement layouts;
 - 1 rollback and 1 deterministic assembly.
 
 ## Live materialization gates

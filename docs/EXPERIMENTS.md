@@ -1,9 +1,10 @@
 # Controlled H3 experiments
 
-`experiments/catalog.json` contains nine planned, one-variable comparisons:
+`experiments/catalog.json` contains twelve planned, one-variable comparisons:
 endpoint mode, reference-image sizing, reference duration, guide length, guide
 placement, continuation prompt relation, native mask boundary, overlap
-transport, and future guide.
+transport, future guide, masked-edit edge profile, outpaint placement, and
+native refinement strength.
 
 Every run records source hashes/order, operation and materialized graph hashes,
 model files, geometry, frame count, exact prompt/seed, sampler/scheduler/steps,
@@ -14,6 +15,10 @@ Native masks are tested as the official H3 sampler consumes them: continuous
 per-token video and structural-audio strengths. Comparisons isolate curve,
 fade, boundary, or transport; they do not mix several changes and call the
 result causal.
+
+Refinement is intentionally a characterization experiment: no denoise value is
+accepted as a default. The source native state, prompt, seed, sampler,
+scheduler, steps, and shifts remain fixed while only the video strength changes.
 
 Metrics such as pixel difference, optical-flow magnitude, or queue completion
 are diagnostic only. They cannot establish useful motion correspondence,

@@ -1,0 +1,37 @@
+{
+  "schema": "inside-valdivia.materialization-plan/1",
+  "operation": "edit.masked_video",
+  "operation_version": 1,
+  "operation_contract_hash": "d4efeb87b8e651427cf230989a9359dab0d3791fd062ae22e5fed19c5696361c",
+  "variant": "static-spatial",
+  "topology_key": "edit.masked_video@static-spatial",
+  "priority": 22,
+  "status": "offline-ready",
+  "runtime_manifest_hash": null,
+  "sources": { "workspace_export": null, "parameterization": null, "runtime_manifest": null, "operation_ref": null },
+  "bindings": {
+    "model_variant": "FL2VA",
+    "model_files": {
+      "diffusion_model": "diffusion_models/minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+      "text_encoder": "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "video_vae": "vae/minimax_h3_video_vae_fp16.safetensors"
+    },
+    "resolution": [768, 1344],
+    "target_frames": 124,
+    "timeline_origin_frame": 0,
+    "mask_start_frame": 0,
+    "mask_frame_count": 124,
+    "video_mask": { "cardinality": "static", "inside_strength": 1.0, "outside_strength": 0.0, "audio_strength": 0.0, "combine": "replace" },
+    "prompt": null,
+    "seed": null,
+    "sampler": null,
+    "scheduler": null,
+    "steps": null,
+    "video_shift": null,
+    "audio_shift": null,
+    "artifact": { "frame_rate": 24, "filename_prefix": null, "format": "auto", "codec": "auto", "history_resolvable": true, "retain_native_state": true },
+    "inputs": { "source_native_av_latent": null, "video_mask": null }
+  },
+  "outputs": { "ui_graph": null, "api_template": null, "bindings": null, "materialization_manifest": null, "ui_graph_hash": null, "api_template_hash": null, "bindings_hash": null },
+  "validation": { "schema_status": "pending", "missing_node_types": [], "notes": ["Project one continuous static mask over the complete native duration; preserve its complement and keep structural audio at strength zero."] }
+}

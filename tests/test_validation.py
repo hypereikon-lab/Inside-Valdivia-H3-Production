@@ -48,10 +48,13 @@ class RepositoryValidationTests(unittest.TestCase):
             {
                 "complete.native_av",
                 "continue.native_av",
+                "edit.masked_video",
                 "frames.assemble",
                 "generate.from_references",
                 "generate.keyframed",
                 "generate.with_guides",
+                "reframe.outpaint_video",
+                "refine.video",
                 "rollback.native_av",
             },
         )
@@ -163,6 +166,13 @@ class RepositoryValidationTests(unittest.TestCase):
                 "rollback.native_av@branch-suffix",
                 "generate.from_references@video-reference-with-guide",
                 "generate.with_guides@first-last-interior",
+                "edit.masked_video@static-spatial",
+                "edit.masked_video@animated-spatiotemporal",
+                "edit.masked_video@local-retake",
+                "reframe.outpaint_video@centered",
+                "reframe.outpaint_video@offset",
+                "refine.video@full-frame",
+                "refine.video@masked",
             ],
         )
         for entry in catalog["plans"]:
@@ -237,6 +247,39 @@ class RepositoryValidationTests(unittest.TestCase):
                 self.assertGreaterEqual(mask[key], 0)
                 self.assertLessEqual(mask[key], 1)
 
+    def test_masked_edit_outpaint_and_refine_plans_are_fail_closed(self):
+        lock_path = ROOT / "operations.lock.json"
+        _, registry = validate_operation_lock(load_json(lock_path), lock_path)
+
+        edit_path = ROOT / "materialization" / "plans" / "24-edit-masked-local-retake.json"
+        edit = load_json(edit_path)
+        self.assertEqual(validate_materialization_plan(edit, edit_path, registry), [])
+        broken_edit = copy.deepcopy(edit)
+        broken_edit["bindings"]["video_mask"]["combine"] = "replace"
+        self.assertIn(
+            f"{edit_path}: local retake must intersect temporal and video masks",
+            validate_materialization_plan(broken_edit, edit_path, registry),
+        )
+
+        outpaint_path = ROOT / "materialization" / "plans" / "25-outpaint-centered.json"
+        outpaint = load_json(outpaint_path)
+        self.assertEqual(validate_materialization_plan(outpaint, outpaint_path, registry), [])
+        broken_outpaint = copy.deepcopy(outpaint)
+        broken_outpaint["bindings"]["offset_x"] = 0
+        self.assertIn(
+            f"{outpaint_path}: centered outpaint requires equal margins",
+            validate_materialization_plan(broken_outpaint, outpaint_path, registry),
+        )
+
+        refine_path = ROOT / "materialization" / "plans" / "27-refine-full-frame.json"
+        refine = load_json(refine_path)
+        self.assertEqual(validate_materialization_plan(refine, refine_path, registry), [])
+        broken_refine = copy.deepcopy(refine)
+        broken_refine["bindings"]["video_denoise_strength"] = 0.2
+        self.assertIn(
+            f"{refine_path}: refinement strength must remain unbound before live characterization",
+            validate_materialization_plan(broken_refine, refine_path, registry),
+        )
     def test_backward_prefix_preserves_visual_and_audio_phase(self):
         bindings = load_json(
             ROOT / "materialization" / "plans" / "17-complete-backward-prefix.json"
@@ -303,7 +346,7 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertTrue(set(core["required_models"]) <= set(full["required_models"]))
         self.assertEqual(
             len([name for name in core["required_node_types"] if name.startswith("Cauce")]),
-            18,
+            20,
         )
         self.assertIn("CreateVideo", core["required_node_types"])
         self.assertIn("SaveVideo", core["required_node_types"])
@@ -326,9 +369,9 @@ class RepositoryValidationTests(unittest.TestCase):
         )
         ordered = [key for phase in gate["phases"] for key in phase["topology_keys"]]
         self.assertEqual(ordered[0], "generate.keyframed@text-only")
-        self.assertEqual(len(ordered), 21)
-        self.assertEqual(len(set(ordered)), 21)
-        self.assertEqual(len(gate["phases"]), 4)
+        self.assertEqual(len(ordered), 28)
+        self.assertEqual(len(set(ordered)), 28)
+        self.assertEqual(len(gate["phases"]), 6)
         self.assertEqual(gate["phases"][0]["runtime_profile"], "core")
         self.assertTrue(
             all(
@@ -452,11 +495,11 @@ class RepositoryValidationTests(unittest.TestCase):
     def test_readiness_report_does_not_promote_offline_plans(self):
         report = build_readiness_report()
         self.assertTrue(report["offline_valid"])
-        self.assertEqual(report["counts"]["materialization_plans"], 21)
+        self.assertEqual(report["counts"]["materialization_plans"], 28)
         self.assertEqual(report["counts"]["paired_workflows"], 0)
         self.assertEqual(report["counts"]["schema_validated_workflows"], 0)
         self.assertEqual(report["counts"]["visual_assessments"], 0)
-        self.assertEqual(report["evidence"]["offline_ready_topologies"], 21)
+        self.assertEqual(report["evidence"]["offline_ready_topologies"], 28)
         self.assertFalse(report["production_ready"])
         self.assertEqual(
             report["next_gate"],

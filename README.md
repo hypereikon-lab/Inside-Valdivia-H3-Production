@@ -17,9 +17,9 @@ official ComfyUI H3 nodes
   model conditioning, sampling, decoding
 
 ComfyUI-Cauce
-  18 deterministic low-level nodes
-  7 typed operation contracts
-  21 checked topology dossiers
+  20 deterministic low-level nodes
+  10 typed operation contracts
+  28 checked topology dossiers
 
 ComfyUI-Runtime-Control
   HTTP/runtime validation, prompt execution, receipts, durable serial resume
@@ -28,7 +28,7 @@ ComfyUI-Workspace-Control
   paired UI/API export and guarded browser-workspace operations
 
 this repository
-  exact CAUCE lock, 21 offline materialization plans, project data,
+  exact CAUCE lock, 28 offline materialization plans, project data,
   runtime readiness profiles, acceptance criteria, storage policy,
   experiments, rolling dependency/checkpoint plans
 ```
@@ -39,7 +39,7 @@ The catalog is a capability grammar, not a production pipeline:
 
 ```text
 H3 conditioning grammar     keyframed / references / guides
-native H3 AV state algebra  continue / complete / rollback
+native H3 AV state algebra  continue / complete / masked edit / refine / outpaint / rollback
 decoded media algebra       exact frame assembly
 ```
 
@@ -49,11 +49,14 @@ generate.from_references
 generate.with_guides
 continue.native_av
 complete.native_av
+edit.masked_video
+refine.video
+reframe.outpaint_video
 rollback.native_av
 frames.assemble
 ```
 
-Operations are independent typed functions, not workflow stages. Their 21
+Operations are independent typed functions, not workflow stages. Their 28
 variants are cataloged in
 [`materialization/catalog.json`](materialization/catalog.json). A topology
 dossier is a checked design, not executable workflow JSON. Each variant becomes

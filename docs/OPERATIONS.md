@@ -50,6 +50,30 @@ Video and structural-audio masks are independent continuous values in `[0,1]`.
 tokens. Fades are evaluated at each stream's real token centers, not by copying
 one approximate mask between 24 fps and 40 Hz clocks.
 
+### `edit.masked_video`
+
+Re-denoises a continuous spatial or spatiotemporal region of an existing native
+H3 state. A static mask spans the selected interval; an animated mask supplies
+exactly one mask per selected decoded frame and is reduced with `amax` inside
+each native visual token. `local-retake` intersects an exact temporal interval
+with the video mask. The complement and structural-audio stream remain
+preserved in the baseline.
+
+### `refine.video`
+
+Runs a bounded second H3 pass from the original native AV state. `full-frame`
+applies one continuous video strength to the complete duration; `masked`
+multiplies that strength by a spatial or spatiotemporal mask. Denoise strength
+has no accepted default and must be selected through a fixed-source,
+fixed-seed live ladder.
+
+### `reframe.outpaint_video`
+
+Copies an existing visual latent without interpolation into a larger
+32-pixel-aligned canvas, preserves structural audio and duration, and samples
+only newly allocated regions. Variants distinguish exact centered placement
+from an explicit aligned offset.
+
 ### `rollback.native_av`
 
 Splits cumulative state at an exact synchronized boundary into a branchable
@@ -73,6 +97,10 @@ or resampling.
 generate.keyframed -> continue.native_av -> continue.native_av
 
 native state + explicit interval -> complete.native_av -> rollback.native_av
+
+native state + continuous mask -> edit.masked_video
+
+native state -> refine.video or reframe.outpaint_video
 
 accepted decoded ranges -> frames.assemble
 ```

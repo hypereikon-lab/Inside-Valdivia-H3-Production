@@ -1,0 +1,40 @@
+{
+  "schema": "inside-valdivia.materialization-plan/1",
+  "operation": "reframe.outpaint_video",
+  "operation_version": 1,
+  "operation_contract_hash": "49ba366f6033cef8a0bce2dc3a71eb492846b08708217adae151600d4a303465",
+  "variant": "offset",
+  "topology_key": "reframe.outpaint_video@offset",
+  "priority": 26,
+  "status": "offline-ready",
+  "runtime_manifest_hash": null,
+  "sources": { "workspace_export": null, "parameterization": null, "runtime_manifest": null, "operation_ref": null },
+  "bindings": {
+    "model_variant": "FL2VA",
+    "model_files": {
+      "diffusion_model": "diffusion_models/minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+      "text_encoder": "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "video_vae": "vae/minimax_h3_video_vae_fp16.safetensors"
+    },
+    "source_resolution": [768, 1344],
+    "target_resolution": [768, 1408],
+    "target_frames": 124,
+    "timeline_origin_frame": 0,
+    "offset_x": 64,
+    "offset_y": 0,
+    "source_strength_video": 0.0,
+    "new_region_strength_video": 1.0,
+    "audio_strength": 0.0,
+    "prompt": null,
+    "seed": null,
+    "sampler": null,
+    "scheduler": null,
+    "steps": null,
+    "video_shift": null,
+    "audio_shift": null,
+    "artifact": { "frame_rate": 24, "filename_prefix": null, "format": "auto", "codec": "auto", "history_resolvable": true, "retain_native_state": true },
+    "inputs": { "source_native_av_latent": null }
+  },
+  "outputs": { "ui_graph": null, "api_template": null, "bindings": null, "materialization_manifest": null, "ui_graph_hash": null, "api_template_hash": null, "bindings_hash": null },
+  "validation": { "schema_status": "pending", "missing_node_types": [], "notes": ["Place the complete source at x=64 and generate only the newly exposed left strip."] }
+}

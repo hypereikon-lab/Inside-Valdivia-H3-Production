@@ -9,7 +9,7 @@
     {
       "id": "h3-full",
       "path": "runtime/requirements/h3-full.json",
-      "purpose": "Materialize the complete 21-variant surface including Ref2VA, AddGuide, decoded video persistence, and native-state operations."
+      "purpose": "Materialize the complete 28-variant surface including Ref2VA, AddGuide, masked editing, outpainting, refinement, decoded video persistence, and native-state operations."
     }
   ]
 }

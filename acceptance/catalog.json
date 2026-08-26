@@ -38,6 +38,24 @@
       "promotion": {"minimum_successful_runs": 2, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
     },
     {
+      "operation": "edit.masked_video",
+      "operation_version": 1,
+      "variants": ["animated-spatiotemporal", "local-retake", "static-spatial"],
+      "technical_checks": [
+        {"id": "mask-cardinality", "description": "The mask is either one static image or exactly one continuous mask per selected decoded frame, as declared by the variant."},
+        {"id": "token-projection", "description": "Spatial resizing and temporal amax projection produce the checked H3 visual-token mask and preserve structural audio."},
+        {"id": "complement-preservation", "description": "Native state outside the selected spatiotemporal generation volume remains unchanged before decode."},
+        {"id": "mask-cleared", "description": "Consumed denoise-mask metadata is cleared before the edited native checkpoint is retained."},
+        {"id": "artifact-lineage", "description": "The receipt binds source state, exact mask hash, prompt, graph, output video, and retained native state."}
+      ],
+      "visual_checks": [
+        {"id": "edit-locality", "description": "Visible change remains concentrated in the requested spatial or spatiotemporal region."},
+        {"id": "boundary-quality", "description": "No unacceptable seam, halo, ghost, frozen edge, or temporal pop surrounds the edited volume."},
+        {"id": "edit-utility", "description": "The regenerated region responds usefully to the requested prompt while remaining coherent with preserved context."}
+      ],
+      "promotion": {"minimum_successful_runs": 2, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
+    },
+    {
       "operation": "frames.assemble",
       "operation_version": 2,
       "variants": ["ordered-concatenation"],
@@ -101,6 +119,43 @@
         {"id": "guide-fidelity", "description": "The result reaches the supplied guide at the requested temporal position."},
         {"id": "approach-departure", "description": "Motion approaching and leaving each guide remains coherent."},
         {"id": "guide-artifacts", "description": "No unacceptable freeze, duplication, hard snap, or reconstruction scar surrounds a guide."}
+      ],
+      "promotion": {"minimum_successful_runs": 2, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
+    },
+    {
+      "operation": "reframe.outpaint_video",
+      "operation_version": 1,
+      "variants": ["centered", "offset"],
+      "technical_checks": [
+        {"id": "canvas-layout", "description": "Source and target canvases plus offsets use exact 32-pixel alignment and the source fits entirely in the target."},
+        {"id": "source-copy", "description": "The source visual latent is copied without interpolation and structural audio is retained byte-for-byte."},
+        {"id": "new-region-mask", "description": "Only newly allocated visual regions carry generation strength in the baseline."},
+        {"id": "mask-cleared", "description": "Consumed denoise-mask metadata is cleared before persistence."},
+        {"id": "artifact-lineage", "description": "The receipt resolves the source checkpoint, expanded native result, and decoded artifact."}
+      ],
+      "visual_checks": [
+        {"id": "interior-preservation", "description": "The original picture remains acceptably stable inside its exact source rectangle."},
+        {"id": "border-continuity", "description": "Newly generated regions continue structures, light, texture, and motion without unacceptable border seams."},
+        {"id": "reframing-utility", "description": "The expanded composition is usable at the requested centered or directional placement."}
+      ],
+      "promotion": {"minimum_successful_runs": 2, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
+    },
+    {
+      "operation": "refine.video",
+      "operation_version": 1,
+      "variants": ["full-frame", "masked"],
+      "technical_checks": [
+        {"id": "controlled-ladder", "description": "Every comparison holds source, prompt, seed, sampler, scheduler, steps, and shifts fixed while changing only denoise strength."},
+        {"id": "source-initial-state", "description": "The original native AV state, not a decoded/re-encoded substitute, is the sampler initial state."},
+        {"id": "audio-preservation", "description": "Structural-audio generation strength remains zero for every ladder member."},
+        {"id": "mask-cleared", "description": "Consumed denoise-mask metadata is cleared before persistence."},
+        {"id": "artifact-lineage", "description": "Each ladder result resolves its exact strength, graph, prompt id, video artifact, and retained native state."}
+      ],
+      "visual_checks": [
+        {"id": "detail-gain", "description": "The pass produces a useful visible improvement rather than an effectively identical copy."},
+        {"id": "motion-preservation", "description": "Temporal motion remains coherent without ghost delay, drag, stutter, or changed gesture timing."},
+        {"id": "identity-drift", "description": "Appearance and composition drift remain acceptable at the chosen strength."},
+        {"id": "mask-locality", "description": "For the masked variant, visible changes remain concentrated in the requested region."}
       ],
       "promotion": {"minimum_successful_runs": 2, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
     },

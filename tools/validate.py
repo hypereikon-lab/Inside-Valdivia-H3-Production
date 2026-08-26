@@ -443,6 +443,112 @@ def _validate_canonical_bindings(value: dict[str, Any], path: Path) -> list[str]
                 or right.get("frame_count") != target - (start + count)
             ):
                 errors.append(f"{path}: two-source spans do not exactly flank the interval")
+    elif operation == "edit.masked_video":
+        target = bindings.get("target_frames")
+        start = bindings.get("mask_start_frame")
+        count = bindings.get("mask_frame_count")
+        if not is_h3_frame_count(target):
+            errors.append(f"{path}: masked edit target must satisfy 17k+5")
+        if (
+            not isinstance(start, int)
+            or not isinstance(count, int)
+            or count < 1
+            or not isinstance(target, int)
+            or start < 0
+            or start + count > target
+            or not is_h3_visual_boundary(start)
+            or not is_h3_visual_boundary(start + count)
+        ):
+            errors.append(f"{path}: masked edit interval must end on visual-token boundaries")
+        video_mask = bindings.get("video_mask")
+        errors.extend(_validate_video_mask_bindings(video_mask, path))
+        expected_cardinality = {
+            "static-spatial": "static",
+            "animated-spatiotemporal": "per-selected-frame",
+            "local-retake": "per-selected-frame",
+        }.get(variant)
+        if isinstance(video_mask, dict) and expected_cardinality is not None:
+            if video_mask.get("cardinality") != expected_cardinality:
+                errors.append(f"{path}: video-mask cardinality does not match {variant}")
+        expected_inputs = {
+            "static-spatial": {"source_native_av_latent", "video_mask"},
+            "animated-spatiotemporal": {
+                "source_native_av_latent",
+                "video_mask_sequence",
+            },
+            "local-retake": {"source_native_av_latent", "video_mask_sequence"},
+        }.get(variant)
+        if expected_inputs is not None and set(inputs) != expected_inputs:
+            errors.append(f"{path}: masked edit inputs do not match {variant}")
+        if variant == "local-retake":
+            errors.extend(_validate_mask_bindings(bindings.get("temporal_mask"), path))
+            if isinstance(video_mask, dict) and video_mask.get("combine") != "multiply":
+                errors.append(f"{path}: local retake must intersect temporal and video masks")
+    elif operation == "reframe.outpaint_video":
+        source_resolution = bindings.get("source_resolution")
+        target_resolution = bindings.get("target_resolution")
+        offset_x = bindings.get("offset_x")
+        offset_y = bindings.get("offset_y")
+        if not _is_aligned_resolution(source_resolution) or not _is_aligned_resolution(
+            target_resolution
+        ):
+            errors.append(f"{path}: outpaint resolutions must be [height,width] multiples of 32")
+        else:
+            source_h, source_w = source_resolution
+            target_h, target_w = target_resolution
+            if target_h < source_h or target_w < source_w or target_resolution == source_resolution:
+                errors.append(f"{path}: outpaint target must strictly expand the source canvas")
+            if (
+                not isinstance(offset_x, int)
+                or not isinstance(offset_y, int)
+                or offset_x < 0
+                or offset_y < 0
+                or offset_x % 32
+                or offset_y % 32
+                or offset_x + source_w > target_w
+                or offset_y + source_h > target_h
+            ):
+                errors.append(f"{path}: outpaint offset must be aligned and fit the target canvas")
+            elif variant == "centered" and (
+                offset_x * 2 != target_w - source_w
+                or offset_y * 2 != target_h - source_h
+            ):
+                errors.append(f"{path}: centered outpaint requires equal margins")
+        if bindings.get("source_strength_video") != 0.0:
+            errors.append(f"{path}: outpaint baseline must preserve the source region")
+        if bindings.get("new_region_strength_video") != 1.0:
+            errors.append(f"{path}: outpaint baseline must generate the complete new region")
+        if bindings.get("audio_strength") != 0.0:
+            errors.append(f"{path}: outpaint baseline must preserve structural audio")
+        if set(inputs) != {"source_native_av_latent"}:
+            errors.append(f"{path}: outpaint requires exactly one native AV source")
+    elif operation == "refine.video":
+        if not is_h3_frame_count(bindings.get("target_frames")):
+            errors.append(f"{path}: refinement target must satisfy 17k+5")
+        if bindings.get("video_denoise_strength") is not None:
+            errors.append(f"{path}: refinement strength must remain unbound before live characterization")
+        values = bindings.get("characterization_values")
+        if (
+            not isinstance(values, list)
+            or not values
+            or values != sorted(set(values))
+            or any(not isinstance(item, (int, float)) or not 0 < item <= 1 for item in values)
+        ):
+            errors.append(f"{path}: refinement characterization values must be unique ordered strengths in (0,1]")
+        if bindings.get("audio_strength") != 0.0:
+            errors.append(f"{path}: refinement baseline must preserve structural audio")
+        expected_inputs = {
+            "full-frame": {"source_native_av_latent"},
+            "masked": {"source_native_av_latent", "video_mask"},
+        }.get(variant)
+        if expected_inputs is not None and set(inputs) != expected_inputs:
+            errors.append(f"{path}: refinement inputs do not match {variant}")
+        if variant == "masked":
+            errors.extend(_validate_video_mask_bindings(bindings.get("video_mask"), path))
+            if isinstance(bindings.get("video_mask"), dict) and bindings["video_mask"].get(
+                "combine"
+            ) != "multiply":
+                errors.append(f"{path}: masked refinement must multiply its video mask")
     elif operation == "rollback.native_av":
         source_frames = bindings.get("source_frame_count")
         cut = bindings.get("cut_frame")
@@ -500,6 +606,42 @@ def _validate_mask_bindings(value: Any, path: Path) -> list[str]:
     if any(not isinstance(value[name], int) or value[name] < 0 for name in ("fade_in_frames", "fade_out_frames")):
         errors.append(f"{path}: mask fades must be non-negative integers")
     return errors
+
+
+def _validate_video_mask_bindings(value: Any, path: Path) -> list[str]:
+    if not isinstance(value, dict):
+        return [f"{path}: spatial native operation requires a video_mask object"]
+    required = {
+        "cardinality",
+        "inside_strength",
+        "outside_strength",
+        "audio_strength",
+        "combine",
+    }
+    if set(value) != required:
+        return [f"{path}: video_mask fields are incomplete or unexpected"]
+    errors: list[str] = []
+    if value["cardinality"] not in {
+        "static",
+        "per-selected-frame",
+        "static-or-per-selected-frame",
+    }:
+        errors.append(f"{path}: invalid video-mask cardinality")
+    for name in ("inside_strength", "outside_strength", "audio_strength"):
+        strength = value[name]
+        if not isinstance(strength, (int, float)) or not 0 <= strength <= 1:
+            errors.append(f"{path}: video-mask {name} must lie in [0,1]")
+    if value["combine"] not in {"replace", "maximum", "minimum", "multiply"}:
+        errors.append(f"{path}: invalid video-mask combine mode")
+    return errors
+
+
+def _is_aligned_resolution(value: Any) -> bool:
+    return (
+        isinstance(value, list)
+        and len(value) == 2
+        and all(isinstance(item, int) and item >= 32 and item % 32 == 0 for item in value)
+    )
 
 
 def validate_materialization_catalog(
@@ -752,8 +894,8 @@ def validate_runtime_requirements_catalog(value: Any, path: Path, root: Path) ->
         if not set(core.get(field, [])).issubset(set(full.get(field, []))):
             errors.append(f"{path}: h3-full must include every h3-core {field}")
     cauce_nodes = {name for name in core.get("required_node_types", []) if name.startswith("Cauce")}
-    if len(cauce_nodes) != 18:
-        errors.append(f"{path}: h3-core must require all 18 locked CAUCE nodes")
+    if len(cauce_nodes) != 20:
+        errors.append(f"{path}: h3-core must require all 20 locked CAUCE nodes")
     return errors
 
 
@@ -808,6 +950,8 @@ def validate_live_gate(
         "official-reference-and-guide-baselines": "full",
         "native-state-and-assembly-baselines": "full",
         "dependent-variants": "full",
+        "native-masked-editing-and-outpaint": "full",
+        "bounded-refinement-characterization": "full",
     }
     for phase in phases:
         if not isinstance(phase, dict) or set(phase) != {"id", "runtime_profile", "topology_keys"}:
@@ -829,7 +973,7 @@ def validate_live_gate(
     if set(ordered_keys) != set(expected_keys):
         errors.append(f"{path}: live phases must cover every materialization topology exactly once")
     if phase_ids != set(expected_phase_profiles):
-        errors.append(f"{path}: live gate must use the four canonical evidence phases")
+        errors.append(f"{path}: live gate must use the six canonical evidence phases")
     return errors
 
 

@@ -2,16 +2,19 @@
   "schema": "inside-valdivia.cauce-operation-lock/1",
   "source": {
     "repository": "https://github.com/hypereikon-lab/ComfyUI-Cauce",
-    "commit": "4c0cb85ea56f782621ecc5df57e143dfb19eb864",
-    "catalog_hash": "adc894f901c9693dedf66feafa15b4e3082c88465a4df90a1d30c16c250124ac"
+    "commit": "dcb48570b362cbbdcb9d5b739c6b1c0ca278fa40",
+    "catalog_hash": "c203584e6cea7425ebb06d9e9950a2bc71ff4ccb7c52a5163d75f06c7f1f88b2"
   },
   "operations": [
     { "id": "complete.native_av", "version": 1, "contract_hash": "bef22c04534126804a4d884ae69f8229a97eb3bc562c8403ffdca508a0043ca4" },
     { "id": "continue.native_av", "version": 2, "contract_hash": "2776bb1db0e844648bcb2b4d98a1ef84b36a2488449ef7bdc77d7e44ceb6a8b5" },
+    { "id": "edit.masked_video", "version": 1, "contract_hash": "d4efeb87b8e651427cf230989a9359dab0d3791fd062ae22e5fed19c5696361c" },
     { "id": "frames.assemble", "version": 2, "contract_hash": "bf6da173fa4785bee22643d838c56cafdaf095a2b33fb43f71ff201308c0f19b" },
     { "id": "generate.from_references", "version": 3, "contract_hash": "479a9e932bc54b533b6f4db693433aeb20f626f4571459705921309cf590e771" },
     { "id": "generate.keyframed", "version": 1, "contract_hash": "293c342e54d66ac4b8f5147636e9aa0617635abba5d2d4acc2919999104208b1" },
     { "id": "generate.with_guides", "version": 2, "contract_hash": "6aa98ac3795988f9797de0d5043505609fc7e86959b0da0832951ac3e535e3dc" },
+    { "id": "refine.video", "version": 1, "contract_hash": "5eab6c144af380fd3e0d86f4ac8b5112a1c8b62f5a902f0c81ef758716724ab9" },
+    { "id": "reframe.outpaint_video", "version": 1, "contract_hash": "49ba366f6033cef8a0bce2dc3a71eb492846b08708217adae151600d4a303465" },
     { "id": "rollback.native_av", "version": 1, "contract_hash": "e440ecd49654c0f21227593a69af5a009d879c73389bfe6b8c859d64d1d61a1c" }
   ]
 }

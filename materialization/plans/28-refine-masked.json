@@ -1,0 +1,38 @@
+{
+  "schema": "inside-valdivia.materialization-plan/1",
+  "operation": "refine.video",
+  "operation_version": 1,
+  "operation_contract_hash": "5eab6c144af380fd3e0d86f4ac8b5112a1c8b62f5a902f0c81ef758716724ab9",
+  "variant": "masked",
+  "topology_key": "refine.video@masked",
+  "priority": 28,
+  "status": "offline-ready",
+  "runtime_manifest_hash": null,
+  "sources": { "workspace_export": null, "parameterization": null, "runtime_manifest": null, "operation_ref": null },
+  "bindings": {
+    "model_variant": "FL2VA",
+    "model_files": {
+      "diffusion_model": "diffusion_models/minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+      "text_encoder": "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "video_vae": "vae/minimax_h3_video_vae_fp16.safetensors"
+    },
+    "resolution": [768, 1344],
+    "target_frames": 124,
+    "timeline_origin_frame": 0,
+    "video_denoise_strength": null,
+    "characterization_values": [0.1, 0.2, 0.35],
+    "audio_strength": 0.0,
+    "video_mask": { "cardinality": "static-or-per-selected-frame", "inside_strength": 1.0, "outside_strength": 0.0, "audio_strength": 0.0, "combine": "multiply" },
+    "prompt": null,
+    "seed": null,
+    "sampler": null,
+    "scheduler": null,
+    "steps": null,
+    "video_shift": null,
+    "audio_shift": null,
+    "artifact": { "frame_rate": 24, "filename_prefix": null, "format": "auto", "codec": "auto", "history_resolvable": true, "retain_native_state": true },
+    "inputs": { "source_native_av_latent": null, "video_mask": null }
+  },
+  "outputs": { "ui_graph": null, "api_template": null, "bindings": null, "materialization_manifest": null, "ui_graph_hash": null, "api_template_hash": null, "bindings_hash": null },
+  "validation": { "schema_status": "pending", "missing_node_types": [], "notes": ["Multiply a bounded full-frame refinement strength by one supplied continuous mask; preserve its complement and structural audio."] }
+}

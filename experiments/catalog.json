@@ -81,6 +81,33 @@
       "variable": { "future_guide": ["absent", "present at frame 119"] },
       "measure": ["arrival fidelity", "overlap continuity", "motion coherence", "guide reconstruction artifact"],
       "status": "planned"
+    },
+    {
+      "id": "masked-edit-edge-profile",
+      "operations": [{ "id": "edit.masked_video", "version": 1 }],
+      "question": "How does continuous spatial feathering change edit locality and boundary quality for the same static H3 mask?",
+      "fixed": ["source native state", "mask geometry", "model", "resolution", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps", "denoise strengths"],
+      "variable": { "spatial_edge_profile": ["hard", "16-pixel smoothstep", "32-pixel smoothstep"] },
+      "measure": ["complement preservation", "boundary seam", "halo or ghosting", "edit locality"],
+      "status": "planned"
+    },
+    {
+      "id": "outpaint-placement",
+      "operations": [{ "id": "reframe.outpaint_video", "version": 1 }],
+      "question": "At fixed source and target canvases, how does exact aligned source placement affect H3 outpaint continuity?",
+      "fixed": ["source native state", "target canvas", "model", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps", "mask strengths"],
+      "variable": { "source_offset": [[0, 32], [32, 32], [64, 32]] },
+      "measure": ["source-region preservation", "border continuity", "motion continuity", "composition utility"],
+      "status": "planned"
+    },
+    {
+      "id": "native-refinement-strength",
+      "operations": [{ "id": "refine.video", "version": 1 }],
+      "question": "Does bounded native-state V2V produce useful detail gain before motion or identity drift becomes objectionable?",
+      "fixed": ["source native state", "model", "resolution", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps", "video/audio shifts"],
+      "variable": { "video_denoise_strength": [0.1, 0.2, 0.35] },
+      "measure": ["detail gain", "motion preservation", "identity drift", "temporal ghosting", "runtime_seconds"],
+      "status": "planned"
     }
   ]
 }

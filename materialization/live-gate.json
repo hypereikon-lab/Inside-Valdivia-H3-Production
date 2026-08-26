@@ -1,7 +1,7 @@
 {
   "schema": "inside-valdivia.live-materialization-gate/1",
   "source_locks": {
-    "cauce_commit": "4c0cb85ea56f782621ecc5df57e143dfb19eb864",
+    "cauce_commit": "dcb48570b362cbbdcb9d5b739c6b1c0ca278fa40",
     "runtime_commit": "980e0100e3ef763426ac467763a7f8889cff8409",
     "workspace_commit": "56c1687df1454da849f095973635d2b745083b3a"
   },
@@ -66,6 +66,25 @@
         "complete.native_av@two-source-connection",
         "generate.from_references@video-reference-with-guide",
         "generate.with_guides@first-last-interior"
+      ]
+    },
+    {
+      "id": "native-masked-editing-and-outpaint",
+      "runtime_profile": "full",
+      "topology_keys": [
+        "edit.masked_video@static-spatial",
+        "edit.masked_video@local-retake",
+        "reframe.outpaint_video@centered",
+        "edit.masked_video@animated-spatiotemporal",
+        "reframe.outpaint_video@offset"
+      ]
+    },
+    {
+      "id": "bounded-refinement-characterization",
+      "runtime_profile": "full",
+      "topology_keys": [
+        "refine.video@full-frame",
+        "refine.video@masked"
       ]
     }
   ]

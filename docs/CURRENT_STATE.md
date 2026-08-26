@@ -6,11 +6,11 @@ This is the authority for present capability claims.
 
 ```text
 CAUCE
-  commit   4c0cb85ea56f782621ecc5df57e143dfb19eb864
-  version  5.1.0
-  nodes    18
-  operations / topology dossiers  7 / 21
-  local tests  37 passing
+  commit   dcb48570b362cbbdcb9d5b739c6b1c0ca278fa40
+  version  5.2.0
+  nodes    20
+  operations / topology dossiers  10 / 28
+  local tests  40 passing
 
 Runtime Control
   commit   980e0100e3ef763426ac467763a7f8889cff8409
@@ -24,25 +24,25 @@ Workspace Control
 
 Production data
   exact CAUCE commit/catalog/contract lock
-  21 offline materialization plans
-  9 controlled experiment definitions
+  28 offline materialization plans
+  12 controlled experiment definitions
   1 offline rolling-chain plan
   2 runtime requirements profiles
-  7 acceptance profiles covering all 21 variants
+  10 acceptance profiles covering all 28 variants
   0 visual assessment records until live artifacts exist
-  1 four-phase live materialization gate
+  1 six-phase live materialization gate
   1 fail-closed storage policy
-  local tests  22 passing
+  local tests  23 passing
 ```
 
-All 37 CAUCE tests pass under the bundled local Python runtime with NumPy. The
-plain system Python omits 21 tensor-dependent cases because it lacks NumPy; that
-reduced run is not counted as full coverage. Across the four active repositories
-the complete offline suites currently contain 86 passing checks.
+All 40 CAUCE tests pass under the bundled local Python runtime with NumPy. A
+reduced interpreter without NumPy is not release evidence. Across the four
+active repositories the complete offline suites currently contain 90 passing
+checks.
 
 The local source repositories are complete and content-addressed. The current
 laboratory process has not yet been re-probed against these commits, so the
-numbers above describe source state, not a claim that CAUCE 5.1 is presently
+numbers above describe source state, not a claim that CAUCE 5.2 is presently
 loaded by the remote ComfyUI process.
 
 ## What is implemented
@@ -54,6 +54,8 @@ CAUCE provides deterministic primitives for:
 - packed AV window allocation, span extraction and absolute placement;
 - independent continuous video/audio denoise masks with linear, smoothstep,
   and smootherstep ramps;
+- static and per-frame continuous video-mask projection onto native H3 tokens;
+- exact 32-pixel-aligned native canvas expansion for outpainting;
 - exact native AV interval replacement;
 - native span guides, synchronized append, split/rollback, save, and load;
 - H3 target/reference/guide preflight and conditioning inspection.
@@ -62,9 +64,9 @@ Official ComfyUI owns H3 first/last frames, Ref2VA references, arbitrary-frame
 AddGuide conditioning, model loading, prompting, sampling, and decoding. CAUCE
 composes those official mechanisms; it does not replace the model or sampler.
 
-The seven operations are grouped as H3 conditioning grammar, native H3 AV
-state algebra, and decoded media algebra. They are orthogonal functions, not
-seven workflow stages. See [Project model](PROJECT_MODEL.md).
+The ten operations are grouped as H3 conditioning grammar, native H3 AV state
+algebra, and decoded media algebra. They are orthogonal functions, not workflow
+stages. See [Project model](PROJECT_MODEL.md).
 
 Runtime Control implements guarded materialization plus `comfy.run-series/1`:
 all concrete graphs are validated against one fresh `/object_info`, each prompt
@@ -88,24 +90,27 @@ must pass before tab or graph automation begins.
 | `generate.with_guides` | official H3/AddGuide contract + checked variants | not materialized at current lock |
 | `continue.native_av` | CAUCE layout/span/mask paths unit-validated | older keyframe mechanism executed synthetically; current variants uncharacterized |
 | `complete.native_av` | placement/mask/replacement layer unit-validated | not yet sampled live |
+| `edit.masked_video` | static/animated mask projection and composition unit-validated | not yet sampled live |
+| `refine.video` | bounded native-state denoise contract unit-validated | useful strength range uncharacterized |
+| `reframe.outpaint_video` | aligned allocation, exact copy, and new-region mask unit-validated | not yet sampled live |
 | `rollback.native_av` | synchronized split/branch layer unit-validated | not yet exercised in production |
 | `frames.assemble` | deterministic range layer unit-validated | no inference claim |
 
 `implemented`, `materialized`, `executes`, and `visually accepted` are separate
 states. No current-lock topology yet has a retained paired UI/API graph. The
-repository therefore makes no claim that any of the 21 variants is presently
+repository therefore makes no claim that any of the 28 variants is presently
 production-ready or visually accepted.
 
 ## Offline-ready assets
 
-The 21 materialization plans cover the entire CAUCE topology catalog. Their
+The 28 materialization plans cover the entire CAUCE topology catalog. Their
 static operation hashes, variants, model filenames, geometry, frame arithmetic,
 input cardinality, mask semantics, and output slots are checked. Live-owned
 values remain null: actual media ids, sampler, scheduler, steps, flow shifts,
 seed, graph node ids, `/object_info` manifest, and paired graph hashes.
 
 Stable catalog priority no longer doubles as empirical execution order. The
-four phases in `materialization/live-gate.json` cover every topology once and
+six phases in `materialization/live-gate.json` cover every topology once and
 put core FL2VA controls before full Ref2VA/AddGuide and native-state mechanisms.
 The runtime core and full profiles verify expected H3/CAUCE nodes, models,
 hardware, and queue; free storage and physical recovery remain explicit manual
@@ -124,7 +129,7 @@ When the tunnel is available:
 1. capture `/features`, `/system_stats`, `/object_info`, queue state, Manager
    inventory, installed revisions, model filenames, and free storage;
 2. update only CAUCE to the locked commit if required, restart only ComfyUI, and
-   verify all 18 node types;
+   verify all 20 node types;
 3. materialize one graph at a time from the checked plans, beginning with a
    small operational core;
 4. run exact prompt-id technical smokes, retain receipts and native state, then
