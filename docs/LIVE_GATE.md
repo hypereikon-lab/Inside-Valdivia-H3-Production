@@ -78,9 +78,11 @@ Complete the manual checks separately: at least 30 GB free on the actual
 model/output volume, sleep disabled for the production window, and known
 ComfyUI/cloudflared recovery behavior.
 
-If the profile fails because CAUCE or Workspace Control is on an older locked
-commit, stop and request confirmation for one targeted Manager update. Update
-no core, CUDA, PyTorch, driver, model, or unrelated node.
+If the profile disagrees with `runtime/compatibility-lock.json`, stop and report
+the exact component or platform mismatch. A first install must come from the
+public Registry or Runtime Control's journaled public-Git path with independent
+recovery. A known package revision may use one targeted Manager update. Never
+combine that with CUDA, PyTorch, driver, model, or unrelated-node changes.
 
 ## 4. Diagnose the browser workspace
 
@@ -94,7 +96,9 @@ Require:
 
 ```text
 schema = comfy.workspace-diagnostic/1
+capabilities.version = 0.4.0
 readiness.ready = true
+required methods include planOpenExact and planCloseOwned
 ```
 
 Then capture `inventory()`, treat every pre-existing workflow as user-owned,
@@ -103,14 +107,17 @@ temporary, unidentified, or signature-changed workflows.
 
 ## 5. Materialize, do not reconstruct from memory
 
-Start with `generate.keyframed@text-only`. Build the graph from its topology
-dossier using current live schemas. The artifact path must end in:
+Start with `generate.keyframed@text-only`. Resolve its locked graph archetype,
+then build the graph from its topology dossier using current live schemas. A
+later binding profile may reuse that paired graph only when the archetype id is
+identical. The artifact path must end in:
 
 ```text
 VAEDecode -> CreateVideo(fps=24) -> SaveVideo
 ```
 
-Export `uiGraph` and `apiGraph` together with `exportActive()`. Parameterize only
+Export `uiGraph` and `apiGraph` together as `comfy.workspace-export/2` with
+`exportActive()`. Parameterize only
 captured literal values and guard every pointer with its expected value. Use
 `materialize-export` with the same runtime manifest.
 

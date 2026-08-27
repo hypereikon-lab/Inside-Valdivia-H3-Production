@@ -6,25 +6,26 @@ This is the authority for present capability claims.
 
 ```text
 CAUCE
-  commit   dcb48570b362cbbdcb9d5b739c6b1c0ca278fa40
-  version  5.2.0
+  commit   99731a39d4e69b09153e564408b7029e50e8b1bb
+  version  5.3.0
   nodes    20
-  operations / topology dossiers  10 / 28
-  local tests  40 passing
+  operations / topology dossiers / graph archetypes  10 / 28 / 25
+  local release tests  41 passing, zero skips
 
 Runtime Control
-  commit   980e0100e3ef763426ac467763a7f8889cff8409
-  version  0.4.0
-  local tests  20 passing
+  commit   28dc00151912ecbd3ccf2093edf0c8259dce7473
+  version  0.5.0
+  local tests  24 passing
 
 Workspace Control
-  commit   56c1687df1454da849f095973635d2b745083b3a
-  version  0.3.0
-  local tests  7 passing
+  commit   2f9174e61ae911c1573a26b64e5ee4aa80527b0e
+  version  0.4.0
+  local tests  9 passing
 
 Production data
-  exact CAUCE commit/catalog/contract lock
-  28 offline materialization plans
+  exact component commit/tree/version/metadata locks
+  exact CAUCE operation and graph-archetype locks
+  28 offline binding/materialization profiles over 25 graph archetypes
   12 controlled experiment definitions
   1 offline rolling-chain plan
   2 runtime requirements profiles
@@ -32,47 +33,34 @@ Production data
   0 visual assessment records until live artifacts exist
   1 six-phase live materialization gate
   1 fail-closed storage policy
-  local tests  23 passing
+  local tests  25 passing
 ```
 
-All 40 CAUCE tests pass under the bundled local Python runtime with NumPy. A
+All 41 CAUCE tests pass under the bundled local Python runtime with NumPy. A
 reduced interpreter without NumPy is not release evidence. Across the four
-active repositories the complete offline suites currently contain 90 passing
+active repositories the complete offline suites currently contain 99 passing
 checks.
 
-The local source repositories are complete and content-addressed. On 2026-08-26
-the authenticated laboratory runtime was updated through Manager to the exact
-CAUCE commit above, restarted at process level, and re-probed through the same
-Cloudflare tunnel.
+The local source repositories are complete, public, pushed, and
+content-addressed. CAUCE and Workspace Control are Registry-prepared but not
+published; publishing still requires the `hypereikon-lab` Registry publisher
+and its release secret. Runtime Control remains a separate source package.
 
-## Live runtime verification
+## Live runtime state
 
-```text
-ComfyUI       0.33.0
-frontend      1.49.6
-PyTorch       2.13.0+cu130
-device        NVIDIA GeForce RTX 5090
-total VRAM    34,190,458,880 bytes
-total RAM     67,768,381,440 bytes
-CAUCE commit  dcb48570b362cbbdcb9d5b739c6b1c0ca278fa40
-CAUCE nodes   20 present / 0 missing / 0 legacy motion nodes
-queue         idle after restart and deterministic smokes
-```
+There is no current runtime manifest for this source lock. The latest retained
+live observations predate these three component commits and therefore cannot
+satisfy the deployment or compatibility gate. A previous first-install request
+for Workspace Control lost its response while Manager was cloning; its outcome
+must be reconciled from Manager inventory and the exact host directory before
+any resubmission.
 
-The process restart produced transient 502 responses and recovered through the
-unchanged tunnel after 8.8 seconds. No ComfyUI core, CUDA, PyTorch, driver,
-model, Manager, or unrelated custom-node update was requested.
-
-Two non-generative prompt-id smokes executed successfully on the live process:
-
-- `CauceH3ExpandAVCanvas`: 22-frame 64x64 native state placed at `(32,32)` in
-  a 128x128 canvas, with exact source and target latent shapes reported;
-- `CauceH3ApplyVideoDenoiseMask`: one static 0.5 mask projected over all seven
-  native visual tokens, reporting result minimum and maximum both equal to 0.5.
-
-The reports are tiny JSON artifacts under `output/cauce/live_smoke`. These
-smokes prove the deterministic node paths load and execute; they do not prove
-H3 sampling quality, useful outpaint, masked-edit locality, or refinement.
+The compatibility lock records the last tested frontend separately from the
+next target. The core profile may be evaluated on ComfyUI 0.33.0, while the full
+profile requires ComfyUI 0.34.0 for the released official H3 AddGuide and
+per-token denoise-mask surface. Neither target is treated as installed until a
+fresh `/system_stats`, `/object_info`, Manager inventory, queue, and browser
+diagnostic capture says so.
 
 ## What is implemented
 
@@ -104,11 +92,14 @@ are resumed rather than duplicated, and every completed step receives an
 immutable receipt. It intentionally neither interprets H3 nor binds one step's
 outputs into the next graph.
 
-Runtime Control 0.4 also evaluates project requirements against one full
+Runtime Control 0.5 also evaluates project requirements against one full
 content-addressed manifest. A manifest can come from direct HTTP access or from
 bounded endpoint JSON captured inside an authenticated browser; browser cookies
-are never extracted. Workspace Control 0.3 adds a browser-local diagnostic that
-must pass before tab or graph automation begins.
+are never extracted. First installs now persist a mutation journal before the
+Manager request and require reconciliation after an unknown transport outcome.
+Workspace Control 0.4 adds browser-local dry-run plans for exact open/close
+targets, whole-set close validation, and provenance-rich paired exports. Its
+diagnostic must pass before tab or graph automation begins.
 
 ## Operation evidence
 
@@ -132,7 +123,8 @@ production-ready or visually accepted.
 
 ## Offline-ready assets
 
-The 28 materialization plans cover the entire CAUCE topology catalog. Their
+The 28 materialization plans cover the entire CAUCE topology catalog and map
+through the locked archetype catalog to 25 distinct node/edge structures. Their
 static operation hashes, variants, model filenames, geometry, frame arithmetic,
 input cardinality, mask semantics, and output slots are checked. Live-owned
 values remain null: actual media ids, sampler, scheduler, steps, flow shifts,
@@ -153,16 +145,19 @@ graphs and operation-reference files.
 
 ## Next live gate
 
-With the tunnel and CAUCE 5.2 now available:
+When the laboratory origin is healthy again:
 
-1. persist the full content-addressed runtime manifest and verify free storage;
-2. install and validate Workspace Control before any automated tab or graph
-   mutation; it is not present in the currently loaded browser page;
-3. materialize one graph at a time from the checked plans, beginning with a
+1. inspect Manager inventory and the exact Workspace Control directory to
+   reconcile the interrupted first-install outcome; do not resubmit blindly;
+2. capture a full content-addressed runtime manifest, verify free storage, and
+   compare it with `runtime/compatibility-lock.json`;
+3. update to the full-profile ComfyUI target only as a separate guarded action,
+   then re-capture schemas and run Workspace Control's browser diagnostic;
+4. materialize one archetype at a time from the checked profiles, beginning with a
    small operational core;
-4. run exact prompt-id technical smokes, retain receipts and native state, then
+5. run exact prompt-id technical smokes, retain receipts and native state, then
    perform visual acceptance separately;
-5. compile the accepted, explicitly prebound graphs into a Runtime Control
+6. compile the accepted, explicitly prebound graphs into a Runtime Control
    serial plan and test interruption/resume before long unattended production.
 
 Every graph must persist a resolvable video artifact through the current core

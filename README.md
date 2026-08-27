@@ -19,7 +19,7 @@ official ComfyUI H3 nodes
 ComfyUI-Cauce
   20 deterministic low-level nodes
   10 typed operation contracts
-  28 checked topology dossiers
+  28 checked topology dossiers grouped into 25 graph archetypes
 
 ComfyUI-Runtime-Control
   HTTP/runtime validation, prompt execution, receipts, durable serial resume
@@ -28,7 +28,7 @@ ComfyUI-Workspace-Control
   paired UI/API export and guarded browser-workspace operations
 
 this repository
-  exact CAUCE lock, 28 offline materialization plans, project data,
+  exact operation/archetype/component locks, 28 offline binding profiles, project data,
   runtime readiness profiles, acceptance criteria, storage policy,
   experiments, rolling dependency/checkpoint plans
 ```
@@ -57,7 +57,8 @@ frames.assemble
 ```
 
 Operations are independent typed functions, not workflow stages. Their 28
-variants are cataloged in
+variants resolve through [`archetypes.lock.json`](archetypes.lock.json) to 25
+structurally distinct graphs, then to project binding profiles cataloged in
 [`materialization/catalog.json`](materialization/catalog.json). A topology
 dossier is a checked design, not executable workflow JSON. Each variant becomes
 executable only after one live ComfyUI graph is exported in paired UI/API form,
@@ -73,6 +74,9 @@ empirical materialization order independently of stable catalog priority. The
 core and full runtime profiles fail closed on missing nodes, models, hardware,
 or queue availability. [`acceptance/catalog.json`](acceptance/catalog.json)
 requires technical checks and a separate visual verdict before promotion.
+[`runtime/compatibility-lock.json`](runtime/compatibility-lock.json) pins all
+three control components and separates last-observed platform versions from the
+next required compatibility target.
 
 ## Documentation
 
@@ -95,5 +99,7 @@ python3 tools/validate.py
 python3 tools/readiness.py
 python3 -m unittest discover -s tests -v
 python3 tools/verify_cauce_lock.py ../ComfyUI-Cauce
+python3 tools/verify_component_locks.py \
+  ../ComfyUI-Cauce ../ComfyUI-Runtime-Control ../ComfyUI-Workspace-Control
 git diff --check
 ```

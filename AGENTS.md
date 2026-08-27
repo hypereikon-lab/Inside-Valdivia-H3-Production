@@ -22,6 +22,9 @@ rendered media.
 - A CAUCE offline topology dossier is a graph design, not workflow JSON. Build
   the active graph from it, export the paired UI/API forms with Workspace
   Control, and use Runtime Control for guarded materialization.
+- Resolve each topology key through `archetypes.lock.json`. A graph archetype
+  is node/edge identity; the project materialization plan is its binding
+  profile. Do not duplicate a paired graph when only guarded literals differ.
 - Project data binds operations to concrete media and parameters; it must not
   duplicate generic graph ownership or create a creative workflow ontology.
 - Rolling plans may encode only explicit serial data dependencies. Every later
@@ -37,6 +40,9 @@ rendered media.
 - Evaluate the locked runtime requirements and browser diagnostic before live
   graph construction. A browser-snapshot manifest is valid only when built from
   the bounded same-origin endpoints without extracting authentication cookies.
+- `runtime/compatibility-lock.json` is the authority for source versions and
+  core/full ComfyUI gates. A previous live version never proves the locked
+  source is deployed.
 - Every generative workflow must terminate in a history-resolvable saved video
   artifact. Decoded frames alone are not a durable production result.
 - Promotion follows `acceptance/catalog.json`; all technical checks and an
@@ -52,5 +58,8 @@ rendered media.
 python3 tools/validate.py
 python3 tools/readiness.py
 python3 -m unittest discover -s tests -v
+python3 tools/verify_cauce_lock.py ../ComfyUI-Cauce
+python3 tools/verify_component_locks.py \
+  ../ComfyUI-Cauce ../ComfyUI-Runtime-Control ../ComfyUI-Workspace-Control
 git diff --check
 ```

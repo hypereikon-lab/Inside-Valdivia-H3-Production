@@ -8,10 +8,14 @@ changes, not inferred from workflow screenshots:
 - [Official ComfyUI video load/create/save nodes](https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_video.py)
 - [ComfyUI PR #15439: MiniMax H3 AddGuide](https://github.com/Comfy-Org/ComfyUI/pull/15439)
 - [ComfyUI PR #15375: continuous per-token denoise masks](https://github.com/Comfy-Org/ComfyUI/pull/15375)
+- [ComfyUI v0.34.0 release](https://github.com/Comfy-Org/ComfyUI/releases/tag/v0.34.0)
+- [ComfyUI frontend v1.53.2 release](https://github.com/Comfy-Org/ComfyUI_frontend/releases/tag/v1.53.2)
 - [Official H3 mask projection and preserved-state injection](https://github.com/Comfy-Org/ComfyUI/blob/master/comfy/model_base.py)
 - [AddGuide embedded documentation](https://github.com/Comfy-Org/embedded-docs/blob/main/comfyui_embedded_docs/docs/MiniMaxH3AddGuide/en.md)
 - [ComfyUI server routes](https://docs.comfy.org/development/comfyui-server/comms_routes)
 - [ComfyUI frontend workflow service](https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/platform/workflow/core/services/workflowService.ts)
+- [Official Comfy Registry metadata specification](https://docs.comfy.org/registry/specifications)
+- [Official Comfy Registry publishing guide](https://docs.comfy.org/registry/publishing)
 
 Inspected community implementations are design references, never runtime
 dependencies or behavioral proof:

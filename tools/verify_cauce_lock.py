@@ -97,6 +97,15 @@ def verify_lock(project_root: Path, cauce_root: Path) -> list[str]:
             "CAUCE topology dossiers lack materialization plans: "
             + ", ".join(unplanned_topologies)
         )
+
+    archetype_lock = load_json(project_root / "archetypes.lock.json")
+    archetype_catalog = load_json(cauce_root / "operations" / "archetypes" / "catalog.json")
+    if archetype_lock.get("source", {}).get("commit") != actual_commit:
+        errors.append("CAUCE archetype lock requires a different source commit")
+    if archetype_lock.get("source", {}).get("catalog_hash") != content_hash(archetype_catalog):
+        errors.append("CAUCE archetype catalog hash does not match lock")
+    if archetype_lock.get("archetypes") != archetype_catalog.get("archetypes"):
+        errors.append("locked graph archetypes differ from the CAUCE catalog")
     return errors
 
 
@@ -111,7 +120,7 @@ def main(argv: list[str]) -> int:
         return 1
     print(
         "verified: CAUCE source commit, catalog hash, operation hashes, "
-        "and complete topology-plan coverage"
+        "graph archetypes, and complete topology-plan coverage"
     )
     return 0
 

@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python tools/validate.py
+      - run: python tools/readiness.py
+      - run: python -m unittest discover -s tests -v
+
+  source-locks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: git clone https://github.com/hypereikon-lab/ComfyUI-Cauce "$RUNNER_TEMP/cauce"
+      - run: git -C "$RUNNER_TEMP/cauce" checkout 99731a39d4e69b09153e564408b7029e50e8b1bb
+      - run: git clone https://github.com/hypereikon-lab/ComfyUI-Runtime-Control "$RUNNER_TEMP/runtime-control"
+      - run: git -C "$RUNNER_TEMP/runtime-control" checkout 28dc00151912ecbd3ccf2093edf0c8259dce7473
+      - run: git clone https://github.com/hypereikon-lab/ComfyUI-Workspace-Control "$RUNNER_TEMP/workspace-control"
+      - run: git -C "$RUNNER_TEMP/workspace-control" checkout 2f9174e61ae911c1573a26b64e5ee4aa80527b0e
+      - run: python tools/verify_cauce_lock.py "$RUNNER_TEMP/cauce"
+      - run: python tools/verify_component_locks.py "$RUNNER_TEMP/cauce" "$RUNNER_TEMP/runtime-control" "$RUNNER_TEMP/workspace-control"

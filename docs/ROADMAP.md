@@ -21,10 +21,17 @@ checked operation@variant plan
 ## 0. Reconcile the laboratory
 
 Probe runtime, queue, node inventory, Manager revisions, model filenames, and
-free space. Update only CAUCE to commit
-`dcb48570b362cbbdcb9d5b739c6b1c0ca278fa40` if needed, restart only ComfyUI, and
-verify all 20 nodes. Do not change ComfyUI core, CUDA, PyTorch, drivers, models,
-or unrelated packages during this gate.
+free space. Reconcile the interrupted Workspace Control first-install against
+Manager inventory and the exact host directory before considering a retry.
+Compare CAUCE, Runtime Control, Workspace Control, ComfyUI, frontend, and
+Manager with `runtime/compatibility-lock.json`.
+
+The core readiness profile accepts the last verified ComfyUI baseline. The full
+profile requires ComfyUI 0.34.0 and a fresh frontend diagnostic because the
+official H3 AddGuide and per-token denoise-mask paths are release dependencies.
+Treat any core/frontend update as its own guarded action; do not combine it
+with custom-node, CUDA, PyTorch, driver, model, or unrelated-package changes.
+After every accepted change, restart only ComfyUI and recapture the manifest.
 
 Run the machine-readable core readiness profile and Workspace Control browser
 diagnostic before any mutation. The exact commits, stop conditions, and phase

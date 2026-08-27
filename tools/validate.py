@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 OPERATION_ID = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 GIT_SHA = re.compile(r"^[0-9a-f]{40}$")
+SEMVER = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
 EVIDENCE = {
     "planned",
     "schema-validated",
@@ -87,6 +88,180 @@ def validate_operation_lock(value: Any, path: Path) -> tuple[list[str], dict[str
     if list(registry) != sorted(registry):
         errors.append(f"{path}: operation entries must be sorted by id")
     return errors, registry
+
+
+def validate_archetype_lock(
+    value: Any,
+    path: Path,
+    materialization_catalog: dict[str, Any],
+    cauce_commit: str,
+) -> list[str]:
+    if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.cauce-archetype-lock/1":
+        return [f"{path}: invalid archetype lock"]
+    if set(value) != {"schema", "source", "archetypes"}:
+        return [f"{path}: archetype lock fields are incomplete or unexpected"]
+    errors: list[str] = []
+    source = value.get("source")
+    if not isinstance(source, dict) or set(source) != {"repository", "commit", "catalog_hash"}:
+        errors.append(f"{path}: archetype source lock is incomplete")
+    else:
+        if source.get("commit") != cauce_commit:
+            errors.append(f"{path}: archetype and operation locks require different CAUCE commits")
+        if not isinstance(source.get("catalog_hash"), str) or not SHA256.fullmatch(
+            source["catalog_hash"]
+        ):
+            errors.append(f"{path}: archetype catalog_hash must be lowercase SHA-256")
+        if not isinstance(source.get("repository"), str) or not source["repository"]:
+            errors.append(f"{path}: archetype source repository is required")
+
+    entries = value.get("archetypes")
+    if not isinstance(entries, list) or not entries:
+        return errors + [f"{path}: archetype lock needs entries"]
+    archetype_ids: set[str] = set()
+    signatures: set[str] = set()
+    topology_keys: list[str] = []
+    for entry in entries:
+        if not isinstance(entry, dict) or set(entry) != {
+            "id", "topology_signature", "topology_keys"
+        }:
+            errors.append(f"{path}: malformed archetype entry {entry!r}")
+            continue
+        archetype_id = entry["id"]
+        signature = entry["topology_signature"]
+        keys = entry["topology_keys"]
+        if (
+            not isinstance(archetype_id, str)
+            or not re.fullmatch(r"[a-z][a-z0-9-]*", archetype_id)
+            or archetype_id in archetype_ids
+        ):
+            errors.append(f"{path}: invalid or duplicate archetype id {archetype_id!r}")
+        else:
+            archetype_ids.add(archetype_id)
+        if not isinstance(signature, str) or not SHA256.fullmatch(signature):
+            errors.append(f"{path}: invalid or duplicate topology signature {signature!r}")
+        elif signature in signatures:
+            errors.append(f"{path}: invalid or duplicate topology signature {signature!r}")
+        else:
+            signatures.add(signature)
+        if (
+            not isinstance(keys, list)
+            or not keys
+            or any(not isinstance(key, str) for key in keys)
+            or keys != sorted(set(keys))
+        ):
+            errors.append(f"{path}: archetype {archetype_id!r} needs sorted unique topology keys")
+        else:
+            topology_keys.extend(keys)
+    planned = [entry["topology_key"] for entry in materialization_catalog.get("plans", [])]
+    if len(topology_keys) != len(set(topology_keys)):
+        errors.append(f"{path}: each topology may belong to only one archetype")
+    if set(topology_keys) != set(planned):
+        errors.append(f"{path}: archetypes must cover every materialization topology exactly once")
+    return errors
+
+
+def validate_compatibility_lock(
+    value: Any,
+    path: Path,
+    *,
+    cauce_commit: str,
+    runtime_commit: str,
+    workspace_commit: str,
+) -> list[str]:
+    if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.compatibility-lock/1":
+        return [f"{path}: invalid compatibility lock"]
+    if set(value) != {"schema", "captured_at", "components", "platform"}:
+        return [f"{path}: compatibility lock fields are incomplete or unexpected"]
+    errors: list[str] = []
+    if not isinstance(value.get("captured_at"), str) or not value["captured_at"]:
+        errors.append(f"{path}: captured_at is required")
+    components = value.get("components")
+    expected_commits = {
+        "cauce": cauce_commit,
+        "runtime_control": runtime_commit,
+        "workspace_control": workspace_commit,
+    }
+    if not isinstance(components, dict) or set(components) != set(expected_commits):
+        errors.append(f"{path}: compatibility components must be cauce, runtime_control, workspace_control")
+    else:
+        expected_fields = {
+            "repository", "version", "commit", "tree", "metadata_sha256",
+            "distribution", "registry_node_id",
+        }
+        for component_id, expected_commit in expected_commits.items():
+            component = components[component_id]
+            if not isinstance(component, dict) or set(component) != expected_fields:
+                errors.append(f"{path}: malformed component {component_id!r}")
+                continue
+            if not isinstance(component["repository"], str) or not component["repository"].startswith(
+                "https://github.com/"
+            ):
+                errors.append(f"{path}: {component_id} repository must be an HTTPS GitHub URL")
+            if not isinstance(component["version"], str) or not SEMVER.fullmatch(component["version"]):
+                errors.append(f"{path}: {component_id} version must be semantic")
+            if component["commit"] != expected_commit:
+                errors.append(f"{path}: {component_id} commit disagrees with the live gate")
+            if not isinstance(component["tree"], str) or not GIT_SHA.fullmatch(component["tree"]):
+                errors.append(f"{path}: {component_id} tree must be a full Git object id")
+            if not isinstance(component["metadata_sha256"], str) or not SHA256.fullmatch(
+                component["metadata_sha256"]
+            ):
+                errors.append(f"{path}: {component_id} metadata hash must be SHA-256")
+            if component["distribution"] not in {
+                "registry-prepared-unpublished", "registry-published", "source-package"
+            }:
+                errors.append(f"{path}: invalid distribution state for {component_id}")
+            registry_id = component["registry_node_id"]
+            if registry_id is not None and (
+                not isinstance(registry_id, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", registry_id)
+            ):
+                errors.append(f"{path}: invalid registry node id for {component_id}")
+
+    platform = value.get("platform")
+    if not isinstance(platform, dict) or set(platform) != {
+        "core_profile", "full_profile", "frontend", "manager"
+    }:
+        return errors + [f"{path}: compatibility platform fields are incomplete"]
+    for profile_id in ("core_profile", "full_profile"):
+        profile = platform[profile_id]
+        if not isinstance(profile, dict) or set(profile) != {"minimum_comfyui", "basis"}:
+            errors.append(f"{path}: malformed {profile_id}")
+        elif not isinstance(profile["minimum_comfyui"], str) or not SEMVER.fullmatch(
+            profile["minimum_comfyui"]
+        ):
+            errors.append(f"{path}: {profile_id} minimum_comfyui must be semantic")
+    frontend = platform["frontend"]
+    if not isinstance(frontend, dict) or set(frontend) != {
+        "last_live_tested", "next_compatibility_target", "target_state"
+    }:
+        errors.append(f"{path}: malformed frontend compatibility record")
+    else:
+        for name in ("last_live_tested", "next_compatibility_target"):
+            if not isinstance(frontend[name], str) or not SEMVER.fullmatch(frontend[name]):
+                errors.append(f"{path}: frontend {name} must be semantic")
+        if frontend["target_state"] != "requires-live-diagnostic":
+            errors.append(f"{path}: frontend target must remain requires-live-diagnostic")
+    manager = platform["manager"]
+    if not isinstance(manager, dict) or set(manager) != {
+        "last_live_observed", "first_install_policy"
+    }:
+        errors.append(f"{path}: malformed Manager compatibility record")
+    elif manager["first_install_policy"] != "public-registry-or-journaled-public-git-only":
+        errors.append(f"{path}: Manager first-install policy is not fail-closed")
+    core = platform["core_profile"]
+    full = platform["full_profile"]
+    if (
+        isinstance(core, dict)
+        and isinstance(full, dict)
+        and isinstance(core.get("minimum_comfyui"), str)
+        and isinstance(full.get("minimum_comfyui"), str)
+        and SEMVER.fullmatch(core["minimum_comfyui"])
+        and SEMVER.fullmatch(full["minimum_comfyui"])
+        and tuple(map(int, full["minimum_comfyui"].split(".")))
+        < tuple(map(int, core["minimum_comfyui"].split(".")))
+    ):
+        errors.append(f"{path}: full profile cannot require an older ComfyUI than core")
+    return errors
 
 
 def _validate_operation_reference(
@@ -935,10 +1110,22 @@ def validate_live_gate(
     workspace = value.get("workspace_gate")
     if workspace != {
         "required_diagnostic_schema": "comfy.workspace-diagnostic/1",
+        "required_export_schema": "comfy.workspace-export/2",
+        "required_workspace_control_version": "0.4.0",
+        "required_methods": [
+            "inventory",
+            "planOpenExact",
+            "openExact",
+            "planCloseOwned",
+            "closeExact",
+            "loadUiGraph",
+            "loadApiGraph",
+            "exportActive",
+        ],
         "required_ready": True,
         "maximum_active_agent_graphs": 1,
     }:
-        errors.append(f"{path}: workspace gate must require one ready agent graph")
+        errors.append(f"{path}: workspace gate must require the locked browser contract")
     errors.extend(_unique_strings(value.get("stop_conditions"), path, "stop_conditions"))
     phases = value.get("phases")
     if not isinstance(phases, list) or not phases:
@@ -1443,6 +1630,15 @@ def validate_repository(root: Path = ROOT) -> list[str]:
             materialization_catalog, materialization_path, registry, root
         )
     )
+    archetype_lock_path = root / "archetypes.lock.json"
+    errors.extend(
+        validate_archetype_lock(
+            load_json(archetype_lock_path),
+            archetype_lock_path,
+            materialization_catalog,
+            lock.get("source", {}).get("commit"),
+        )
+    )
     runtime_requirements_path = root / "runtime" / "catalog.json"
     errors.extend(
         validate_runtime_requirements_catalog(
@@ -1458,6 +1654,16 @@ def validate_repository(root: Path = ROOT) -> list[str]:
             root,
             materialization_catalog,
             lock.get("source", {}).get("commit"),
+        )
+    )
+    compatibility_path = root / "runtime" / "compatibility-lock.json"
+    errors.extend(
+        validate_compatibility_lock(
+            load_json(compatibility_path),
+            compatibility_path,
+            cauce_commit=lock.get("source", {}).get("commit"),
+            runtime_commit=live_gate.get("source_locks", {}).get("runtime_commit"),
+            workspace_commit=live_gate.get("source_locks", {}).get("workspace_commit"),
         )
     )
     acceptance_path = root / "acceptance" / "catalog.json"
@@ -1513,8 +1719,9 @@ def main() -> int:
             print(error, file=sys.stderr)
         return 1
     print(
-        "validated: operation lock, project invocations, materialization plans, "
-        "runtime gates, acceptance evidence, storage, rolling plans, media, experiments, fixtures, and schemas"
+        "validated: operation/archetype/compatibility locks, project invocations, "
+        "materialization plans, runtime gates, acceptance evidence, storage, rolling "
+        "plans, media, experiments, fixtures, and schemas"
     )
     return 0
 

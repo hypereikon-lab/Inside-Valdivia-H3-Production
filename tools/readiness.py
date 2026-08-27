@@ -37,6 +37,8 @@ def build_readiness_report(root: Path = ROOT) -> dict[str, Any]:
     media = load_json(root / "media" / "catalog.json").get("media", [])
     invocations = _load_directory("invocations")
     live_gate = load_json(root / "materialization" / "live-gate.json")
+    archetypes = load_json(root / "archetypes.lock.json").get("archetypes", [])
+    compatibility = load_json(root / "runtime" / "compatibility-lock.json")
     materialized = [
         plan
         for plan in plans
@@ -53,6 +55,9 @@ def build_readiness_report(root: Path = ROOT) -> dict[str, Any]:
         "source_locks": live_gate.get("source_locks"),
         "counts": {
             "materialization_plans": len(plans),
+            "graph_archetypes": len(archetypes),
+            "binding_profiles": len(plans),
+            "locked_control_components": len(compatibility.get("components", {})),
             "paired_workflows": len(materialized),
             "schema_validated_workflows": len(schema_validated),
             "invocations": len(invocations),
@@ -72,7 +77,7 @@ def build_readiness_report(root: Path = ROOT) -> dict[str, Any]:
                 for invocation in invocations
             ),
         },
-        "next_gate": "capture-runtime-manifest-and-evaluate-h3-core",
+        "next_gate": "recover-origin-reconcile-manager-and-capture-runtime-manifest",
         "production_ready": bool(
             not errors
             and materialized

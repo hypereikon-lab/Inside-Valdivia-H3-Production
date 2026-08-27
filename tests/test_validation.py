@@ -9,6 +9,8 @@ from tools.validate import (
     load_json,
     validate_materialization_catalog,
     validate_materialization_plan,
+    validate_archetype_lock,
+    validate_compatibility_lock,
     validate_media_catalog,
     validate_operation_lock,
     validate_repository,
@@ -177,6 +179,51 @@ class RepositoryValidationTests(unittest.TestCase):
         )
         for entry in catalog["plans"]:
             self.assertEqual(entry["topology_key"], f"{entry['operation']}@{entry['variant']}")
+
+    def test_archetype_lock_resolves_every_binding_profile_once(self):
+        path = ROOT / "archetypes.lock.json"
+        lock = load_json(path)
+        operations = load_json(ROOT / "operations.lock.json")
+        materialization = load_json(ROOT / "materialization" / "catalog.json")
+        self.assertEqual(
+            validate_archetype_lock(
+                lock,
+                path,
+                materialization,
+                operations["source"]["commit"],
+            ),
+            [],
+        )
+        self.assertEqual(len(lock["archetypes"]), 25)
+        covered = [
+            key
+            for archetype in lock["archetypes"]
+            for key in archetype["topology_keys"]
+        ]
+        self.assertEqual(len(covered), 28)
+        references = next(value for value in lock["archetypes"] if value["id"] == "references-image")
+        self.assertEqual(len(references["topology_keys"]), 2)
+
+    def test_compatibility_lock_pins_all_control_layers(self):
+        path = ROOT / "runtime" / "compatibility-lock.json"
+        lock = load_json(path)
+        operation_lock = load_json(ROOT / "operations.lock.json")
+        live_gate = load_json(ROOT / "materialization" / "live-gate.json")
+        self.assertEqual(
+            validate_compatibility_lock(
+                lock,
+                path,
+                cauce_commit=operation_lock["source"]["commit"],
+                runtime_commit=live_gate["source_locks"]["runtime_commit"],
+                workspace_commit=live_gate["source_locks"]["workspace_commit"],
+            ),
+            [],
+        )
+        self.assertEqual(lock["platform"]["full_profile"]["minimum_comfyui"], "0.34.0")
+        self.assertEqual(
+            lock["components"]["workspace_control"]["distribution"],
+            "registry-prepared-unpublished",
+        )
 
     def test_offline_baselines_obey_h3_temporal_rules(self):
         reference = load_json(
@@ -496,6 +543,9 @@ class RepositoryValidationTests(unittest.TestCase):
         report = build_readiness_report()
         self.assertTrue(report["offline_valid"])
         self.assertEqual(report["counts"]["materialization_plans"], 28)
+        self.assertEqual(report["counts"]["graph_archetypes"], 25)
+        self.assertEqual(report["counts"]["binding_profiles"], 28)
+        self.assertEqual(report["counts"]["locked_control_components"], 3)
         self.assertEqual(report["counts"]["paired_workflows"], 0)
         self.assertEqual(report["counts"]["schema_validated_workflows"], 0)
         self.assertEqual(report["counts"]["visual_assessments"], 0)
@@ -503,7 +553,7 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertFalse(report["production_ready"])
         self.assertEqual(
             report["next_gate"],
-            "capture-runtime-manifest-and-evaluate-h3-core",
+            "recover-origin-reconcile-manager-and-capture-runtime-manifest",
         )
 
 

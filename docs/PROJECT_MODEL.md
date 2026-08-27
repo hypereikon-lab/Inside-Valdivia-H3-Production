@@ -83,6 +83,9 @@ official ComfyUI H3
 CAUCE
   low-level deterministic primitives and portable operation contracts
 
+CAUCE graph archetypes
+  content-addressed node/edge structures shared by compatible binding profiles
+
 Workspace Control
   guarded browser-workspace inventory and paired UI/API export
 
@@ -90,6 +93,7 @@ Runtime Control
   live schema validation, exact prompt execution, resume, artifacts, receipts
 
 Production
-  project plans, concrete bindings, native-state lineage, experiments,
+  archetype locks, project binding profiles, concrete invocations,
+  native-state lineage, experiments,
   editorial placement, and visual decisions
 ```

@@ -18,9 +18,11 @@ project-level scene entities.
 
 ## Materialization plan
 
-Selects one topology variant and records every invariant knowable before live
-ComfyUI construction. `offline-ready` means the static contract is consistent;
-it does not mean UI/API workflow JSON exists.
+Acts as a project binding profile: it selects one topology key, resolves that
+key through `archetypes.lock.json`, and records every invariant knowable before
+live ComfyUI construction. Multiple profiles may share one node/edge archetype.
+`offline-ready` means the static contract is consistent; it does not mean
+UI/API workflow JSON exists.
 
 ## Rolling plan
 
@@ -75,6 +77,9 @@ A receipt can prove execution but not visual quality.
 ## Content-addressed ownership
 
 `operations.lock.json` pins the CAUCE source commit, catalog hash, and every
-operation contract hash. `tools/verify_cauce_lock.py` additionally requires
-one-to-one coverage between all current CAUCE topology dossiers and project
-materialization plans.
+operation contract hash. `archetypes.lock.json` pins the structural signatures
+and exact topology membership. `runtime/compatibility-lock.json` pins the
+CAUCE, Runtime Control, and Workspace Control commit/tree/version/metadata
+tuple plus explicit platform gates. `tools/verify_cauce_lock.py` additionally
+requires exact archetype equality and one-to-one coverage between all current
+CAUCE topology dossiers and project materialization plans.

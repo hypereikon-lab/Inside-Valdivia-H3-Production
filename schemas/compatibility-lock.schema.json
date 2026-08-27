@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hypereikon.online/schemas/inside-valdivia-compatibility-lock-1.json",
+  "type": "object",
+  "required": ["schema", "captured_at", "components", "platform"],
+  "properties": {
+    "schema": { "const": "inside-valdivia.compatibility-lock/1" },
+    "captured_at": { "type": "string", "minLength": 1 },
+    "components": { "type": "object" },
+    "platform": { "type": "object" }
+  },
+  "additionalProperties": false
+}

@@ -66,7 +66,9 @@ snapshot-manifest handoff rather than extracting the browser cookie.
 
 ### 2. Build one active graph
 
-Use the selected CAUCE topology dossier only as a construction checklist.
+Resolve the selected topology key to its locked graph archetype first. Reuse an
+already paired archetype when only guarded binding values differ. Use the CAUCE
+topology dossier only as a construction checklist.
 Connect official H3, vanilla ComfyUI, and narrow CAUCE nodes explicitly. Keep
 optional topology branches absent; do not mute or bypass them inside one graph.
 

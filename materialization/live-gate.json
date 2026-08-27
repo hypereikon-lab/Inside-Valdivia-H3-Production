@@ -1,9 +1,9 @@
 {
   "schema": "inside-valdivia.live-materialization-gate/1",
   "source_locks": {
-    "cauce_commit": "dcb48570b362cbbdcb9d5b739c6b1c0ca278fa40",
-    "runtime_commit": "980e0100e3ef763426ac467763a7f8889cff8409",
-    "workspace_commit": "56c1687df1454da849f095973635d2b745083b3a"
+    "cauce_commit": "99731a39d4e69b09153e564408b7029e50e8b1bb",
+    "runtime_commit": "28dc00151912ecbd3ccf2093edf0c8259dce7473",
+    "workspace_commit": "2f9174e61ae911c1573a26b64e5ee4aa80527b0e"
   },
   "runtime_profiles": {
     "core": "runtime/requirements/h3-core.json",
@@ -11,6 +11,9 @@
   },
   "workspace_gate": {
     "required_diagnostic_schema": "comfy.workspace-diagnostic/1",
+    "required_export_schema": "comfy.workspace-export/2",
+    "required_workspace_control_version": "0.4.0",
+    "required_methods": ["inventory", "planOpenExact", "openExact", "planCloseOwned", "closeExact", "loadUiGraph", "loadApiGraph", "exportActive"],
     "required_ready": true,
     "maximum_active_agent_graphs": 1
   },
@@ -20,7 +23,8 @@
     "A required node or model is missing.",
     "Free storage is below the declared reserve.",
     "The active workflow identity or signature is ambiguous.",
-    "A submitted prompt id has an unknown outcome; resume or inspect it instead of resubmitting."
+    "A submitted prompt id has an unknown outcome; resume or inspect it instead of resubmitting.",
+    "A custom-node installation journal is outcome-unknown or still requires a host-side partial-directory check."
   ],
   "phases": [
     {
