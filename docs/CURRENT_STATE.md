@@ -40,10 +40,39 @@ reduced interpreter without NumPy is not release evidence. Across the four
 active repositories the complete offline suites currently contain 90 passing
 checks.
 
-The local source repositories are complete and content-addressed. The current
-laboratory process has not yet been re-probed against these commits, so the
-numbers above describe source state, not a claim that CAUCE 5.2 is presently
-loaded by the remote ComfyUI process.
+The local source repositories are complete and content-addressed. On 2026-08-26
+the authenticated laboratory runtime was updated through Manager to the exact
+CAUCE commit above, restarted at process level, and re-probed through the same
+Cloudflare tunnel.
+
+## Live runtime verification
+
+```text
+ComfyUI       0.33.0
+frontend      1.49.6
+PyTorch       2.13.0+cu130
+device        NVIDIA GeForce RTX 5090
+total VRAM    34,190,458,880 bytes
+total RAM     67,768,381,440 bytes
+CAUCE commit  dcb48570b362cbbdcb9d5b739c6b1c0ca278fa40
+CAUCE nodes   20 present / 0 missing / 0 legacy motion nodes
+queue         idle after restart and deterministic smokes
+```
+
+The process restart produced transient 502 responses and recovered through the
+unchanged tunnel after 8.8 seconds. No ComfyUI core, CUDA, PyTorch, driver,
+model, Manager, or unrelated custom-node update was requested.
+
+Two non-generative prompt-id smokes executed successfully on the live process:
+
+- `CauceH3ExpandAVCanvas`: 22-frame 64x64 native state placed at `(32,32)` in
+  a 128x128 canvas, with exact source and target latent shapes reported;
+- `CauceH3ApplyVideoDenoiseMask`: one static 0.5 mask projected over all seven
+  native visual tokens, reporting result minimum and maximum both equal to 0.5.
+
+The reports are tiny JSON artifacts under `output/cauce/live_smoke`. These
+smokes prove the deterministic node paths load and execute; they do not prove
+H3 sampling quality, useful outpaint, masked-edit locality, or refinement.
 
 ## What is implemented
 
@@ -90,9 +119,9 @@ must pass before tab or graph automation begins.
 | `generate.with_guides` | official H3/AddGuide contract + checked variants | not materialized at current lock |
 | `continue.native_av` | CAUCE layout/span/mask paths unit-validated | older keyframe mechanism executed synthetically; current variants uncharacterized |
 | `complete.native_av` | placement/mask/replacement layer unit-validated | not yet sampled live |
-| `edit.masked_video` | static/animated mask projection and composition unit-validated | not yet sampled live |
+| `edit.masked_video` | static/animated mask projection and composition unit-validated | static mask primitive executes live; H3 result unassessed |
 | `refine.video` | bounded native-state denoise contract unit-validated | useful strength range uncharacterized |
-| `reframe.outpaint_video` | aligned allocation, exact copy, and new-region mask unit-validated | not yet sampled live |
+| `reframe.outpaint_video` | aligned allocation, exact copy, and new-region mask unit-validated | expansion primitive executes live; H3 result unassessed |
 | `rollback.native_av` | synchronized split/branch layer unit-validated | not yet exercised in production |
 | `frames.assemble` | deterministic range layer unit-validated | no inference claim |
 
@@ -124,12 +153,11 @@ graphs and operation-reference files.
 
 ## Next live gate
 
-When the tunnel is available:
+With the tunnel and CAUCE 5.2 now available:
 
-1. capture `/features`, `/system_stats`, `/object_info`, queue state, Manager
-   inventory, installed revisions, model filenames, and free storage;
-2. update only CAUCE to the locked commit if required, restart only ComfyUI, and
-   verify all 20 node types;
+1. persist the full content-addressed runtime manifest and verify free storage;
+2. install and validate Workspace Control before any automated tab or graph
+   mutation; it is not present in the currently loaded browser page;
 3. materialize one graph at a time from the checked plans, beginning with a
    small operational core;
 4. run exact prompt-id technical smokes, retain receipts and native state, then
