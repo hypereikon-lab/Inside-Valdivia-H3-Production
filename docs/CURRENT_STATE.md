@@ -13,7 +13,7 @@ CAUCE
   local release tests  41 passing, zero skips
 
 Runtime Control
-  commit   28dc00151912ecbd3ccf2093edf0c8259dce7473
+  commit   37ac10f762dc6bcf229e0e26d21ef96a67a018dd
   version  0.5.0
   local tests  24 passing
 
