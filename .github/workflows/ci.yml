@@ -29,11 +29,25 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Read locked component revisions
+        id: locks
+        run: |
+          python - <<'PY'
+          import json
+          import os
+
+          with open("runtime/compatibility-lock.json", encoding="utf-8") as handle:
+              components = json.load(handle)["components"]
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              for name in ("cauce", "runtime_control", "workspace_control"):
+                  output.write(f"{name}={components[name]['commit']}\n")
+          PY
       - run: git clone https://github.com/hypereikon-lab/ComfyUI-Cauce "$RUNNER_TEMP/cauce"
-      - run: git -C "$RUNNER_TEMP/cauce" checkout 99731a39d4e69b09153e564408b7029e50e8b1bb
+      - run: git -C "$RUNNER_TEMP/cauce" checkout "${{ steps.locks.outputs.cauce }}"
       - run: git clone https://github.com/hypereikon-lab/ComfyUI-Runtime-Control "$RUNNER_TEMP/runtime-control"
-      - run: git -C "$RUNNER_TEMP/runtime-control" checkout 28dc00151912ecbd3ccf2093edf0c8259dce7473
+      - run: git -C "$RUNNER_TEMP/runtime-control" checkout "${{ steps.locks.outputs.runtime_control }}"
       - run: git clone https://github.com/hypereikon-lab/ComfyUI-Workspace-Control "$RUNNER_TEMP/workspace-control"
-      - run: git -C "$RUNNER_TEMP/workspace-control" checkout 2f9174e61ae911c1573a26b64e5ee4aa80527b0e
+      - run: git -C "$RUNNER_TEMP/workspace-control" checkout "${{ steps.locks.outputs.workspace_control }}"
       - run: python tools/verify_cauce_lock.py "$RUNNER_TEMP/cauce"
       - run: python tools/verify_component_locks.py "$RUNNER_TEMP/cauce" "$RUNNER_TEMP/runtime-control" "$RUNNER_TEMP/workspace-control"
