@@ -108,6 +108,45 @@
       "variable": { "video_denoise_strength": [0.1, 0.2, 0.35] },
       "measure": ["detail gain", "motion preservation", "identity drift", "temporal ghosting", "runtime_seconds"],
       "status": "planned"
+    },
+    {
+      "id": "decoded-interpolation-model",
+      "operations": [{ "id": "interpolate.frames", "version": 2 }],
+      "question": "For the same accepted 24 fps H3 shot, which 2x decoded interpolator best preserves source samples while synthesizing usable intermediate motion?",
+      "fixed": ["source video", "source frame count", "source fps=24", "multiplier=2", "output fps=48", "codec"],
+      "variable": { "variant": ["rife-2x", "film-2x"] },
+      "measure": ["exact output frame count", "source-frame preservation", "occlusion artifacts", "thin-detail stability", "zoom continuity", "runtime_seconds", "peak_vram"],
+      "status": "planned"
+    },
+    {
+      "id": "seedvr2-restoration-scale",
+      "operations": [{ "id": "restore.video", "version": 2 }],
+      "question": "At what conservative SeedVR2 scale does useful spatial detail appear before texture invention, temporal shimmer, or runtime becomes unacceptable?",
+      "fixed": ["source video", "source frame count", "source fps=24", "3B NVFP4 model", "VAE", "steps=1", "cfg=1", "euler/simple", "denoise=1", "auto chunking", "lab color correction", "seed"],
+      "variable": { "scale_multiplier": [1.25, 1.5, 2.0] },
+      "measure": ["unchanged frame count and fps", "detail gain", "texture invention", "temporal shimmer", "color drift", "chunk-boundary artifact", "runtime_seconds", "peak_vram"],
+      "status": "planned"
+    },
+    {
+      "id": "enhancement-order",
+      "operations": [
+        { "id": "restore.video", "version": 2 },
+        { "id": "interpolate.frames", "version": 2 }
+      ],
+      "question": "Does restoring at 24 fps before RIFE 2x give a better quality/compute tradeoff than interpolating first and restoring almost twice as many frames?",
+      "fixed": ["source video", "SeedVR2 accepted scale and model", "RIFE accepted settings", "final spatial geometry", "final fps=48", "codec"],
+      "variable": { "operation_order": ["restore.video -> interpolate.frames", "interpolate.frames -> restore.video"] },
+      "measure": ["exact final frame count and fps", "detail stability", "interpolation artifacts", "temporal shimmer", "runtime_seconds", "peak_vram", "output size"],
+      "status": "planned"
+    },
+    {
+      "id": "h3-sparse-guide-retime",
+      "operations": [{ "id": "generate.with_guides", "version": 2 }],
+      "question": "How densely must decoded source frames be placed as official H3 single-image guides to create a useful creative duration change at native 24 fps?",
+      "fixed": ["source video", "endpoint guides", "duration scale", "resolved 17k+5 target", "model", "prompt", "seed", "sampler", "scheduler", "steps"],
+      "variable": { "guide_stride_source_frames": [12, 24, 48] },
+      "measure": ["endpoint fidelity", "appearance drift", "motion coherence", "timing utility", "guide reconstruction artifact", "runtime_seconds"],
+      "status": "planned"
     }
   ]
 }

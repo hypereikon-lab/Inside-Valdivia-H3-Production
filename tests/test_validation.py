@@ -55,8 +55,10 @@ class RepositoryValidationTests(unittest.TestCase):
                 "generate.from_references",
                 "generate.keyframed",
                 "generate.with_guides",
+                "interpolate.frames",
                 "reframe.outpaint_video",
                 "refine.video",
+                "restore.video",
                 "rollback.native_av",
             },
         )
@@ -175,6 +177,9 @@ class RepositoryValidationTests(unittest.TestCase):
                 "reframe.outpaint_video@offset",
                 "refine.video@full-frame",
                 "refine.video@masked",
+                "interpolate.frames@rife-2x",
+                "interpolate.frames@film-2x",
+                "restore.video@seedvr2-3b-nvfp4",
             ],
         )
         for entry in catalog["plans"]:
@@ -194,13 +199,13 @@ class RepositoryValidationTests(unittest.TestCase):
             ),
             [],
         )
-        self.assertEqual(len(lock["archetypes"]), 25)
+        self.assertEqual(len(lock["archetypes"]), 27)
         covered = [
             key
             for archetype in lock["archetypes"]
             for key in archetype["topology_keys"]
         ]
-        self.assertEqual(len(covered), 28)
+        self.assertEqual(len(covered), 31)
         references = next(value for value in lock["archetypes"] if value["id"] == "references-image")
         self.assertEqual(len(references["topology_keys"]), 2)
 
@@ -252,22 +257,76 @@ class RepositoryValidationTests(unittest.TestCase):
             plan_path = ROOT / entry["plan"]
             plan = load_json(plan_path)
             artifact = plan["bindings"]["artifact"]
-            self.assertEqual(artifact["frame_rate"], 24)
+            expected_frame_rate = 24
+            if plan["operation"] == "interpolate.frames":
+                expected_frame_rate = (
+                    plan["bindings"]["source_fps"]
+                    * plan["bindings"]["multiplier"]
+                )
+            self.assertEqual(artifact["frame_rate"], expected_frame_rate)
             self.assertIsNone(artifact["filename_prefix"])
             self.assertEqual(artifact["format"], "auto")
             self.assertEqual(artifact["codec"], "auto")
             self.assertTrue(artifact["history_resolvable"])
             self.assertEqual(
                 artifact["retain_native_state"],
-                plan["operation"] != "frames.assemble",
+                plan["operation"]
+                not in {"frames.assemble", "interpolate.frames", "restore.video"},
             )
 
             broken = copy.deepcopy(plan)
             broken["bindings"]["artifact"]["frame_rate"] = 30
             self.assertIn(
-                f"{plan_path}: materialized artifacts must use 24 fps",
+                f"{plan_path}: materialized artifact frame_rate must be "
+                f"{expected_frame_rate} for {plan['operation']}",
                 validate_materialization_plan(broken, plan_path, registry),
             )
+
+    def test_enhancement_model_assets_are_content_addressed(self):
+        lock_path = ROOT / "operations.lock.json"
+        _, registry = validate_operation_lock(load_json(lock_path), lock_path)
+        cases = [
+            (
+                "29-interpolate-rife-2x.json",
+                "model_source",
+                "sha256",
+                "rife-2x model source must remain content-addressed",
+            ),
+            (
+                "30-interpolate-film-2x.json",
+                "model_source",
+                "sha256",
+                "film-2x model source must remain content-addressed",
+            ),
+            (
+                "31-restore-seedvr2-3b-nvfp4.json",
+                "model_source",
+                "diffusion_model.sha256",
+                "SeedVR2 model source must remain content-addressed",
+            ),
+        ]
+        for filename, source_key, digest_path, expected in cases:
+            plan_path = ROOT / "materialization" / "plans" / filename
+            plan = load_json(plan_path)
+            self.assertEqual(validate_materialization_plan(plan, plan_path, registry), [])
+            broken = copy.deepcopy(plan)
+            target = broken["bindings"][source_key]
+            parts = digest_path.split(".")
+            for part in parts[:-1]:
+                target = target[part]
+            target[parts[-1]] = "0" * 64
+            self.assertTrue(
+                any(expected in error for error in validate_materialization_plan(
+                    broken, plan_path, registry
+                )),
+                f"{filename} accepted a tampered model digest",
+            )
+
+        runtime = load_json(ROOT / "runtime" / "requirements" / "video-interpolation.json")
+        self.assertIn("FrameInterpolationModelLoader", runtime["required_node_types"])
+        self.assertIn("FrameInterpolate", runtime["required_node_types"])
+        self.assertNotIn("RIFE VFI", runtime["required_node_types"])
+        self.assertNotIn("FILM VFI", runtime["required_node_types"])
 
     def test_native_completion_plans_have_exact_token_aligned_ranges(self):
         plans = [
@@ -393,7 +452,7 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertTrue(set(core["required_models"]) <= set(full["required_models"]))
         self.assertEqual(
             len([name for name in core["required_node_types"] if name.startswith("Cauce")]),
-            20,
+            23,
         )
         self.assertIn("CreateVideo", core["required_node_types"])
         self.assertIn("SaveVideo", core["required_node_types"])
@@ -416,9 +475,9 @@ class RepositoryValidationTests(unittest.TestCase):
         )
         ordered = [key for phase in gate["phases"] for key in phase["topology_keys"]]
         self.assertEqual(ordered[0], "generate.keyframed@text-only")
-        self.assertEqual(len(ordered), 28)
-        self.assertEqual(len(set(ordered)), 28)
-        self.assertEqual(len(gate["phases"]), 6)
+        self.assertEqual(len(ordered), 31)
+        self.assertEqual(len(set(ordered)), 31)
+        self.assertEqual(len(gate["phases"]), 8)
         self.assertEqual(gate["phases"][0]["runtime_profile"], "core")
         self.assertTrue(
             all(
@@ -426,9 +485,8 @@ class RepositoryValidationTests(unittest.TestCase):
                 for key in gate["phases"][0]["topology_keys"]
             )
         )
-        self.assertTrue(
-            all(phase["runtime_profile"] == "full" for phase in gate["phases"][1:])
-        )
+        self.assertEqual(gate["phases"][-2]["runtime_profile"], "video-interpolation")
+        self.assertEqual(gate["phases"][-1]["runtime_profile"], "seedvr2-restoration")
 
         broken = copy.deepcopy(gate)
         broken["phases"][2]["topology_keys"][0] = ordered[0]
@@ -542,14 +600,14 @@ class RepositoryValidationTests(unittest.TestCase):
     def test_readiness_report_does_not_promote_offline_plans(self):
         report = build_readiness_report()
         self.assertTrue(report["offline_valid"])
-        self.assertEqual(report["counts"]["materialization_plans"], 28)
-        self.assertEqual(report["counts"]["graph_archetypes"], 25)
-        self.assertEqual(report["counts"]["binding_profiles"], 28)
+        self.assertEqual(report["counts"]["materialization_plans"], 31)
+        self.assertEqual(report["counts"]["graph_archetypes"], 27)
+        self.assertEqual(report["counts"]["binding_profiles"], 31)
         self.assertEqual(report["counts"]["locked_control_components"], 3)
         self.assertEqual(report["counts"]["paired_workflows"], 0)
         self.assertEqual(report["counts"]["schema_validated_workflows"], 0)
         self.assertEqual(report["counts"]["visual_assessments"], 0)
-        self.assertEqual(report["evidence"]["offline_ready_topologies"], 28)
+        self.assertEqual(report["evidence"]["offline_ready_topologies"], 31)
         self.assertFalse(report["production_ready"])
         self.assertEqual(
             report["next_gate"],

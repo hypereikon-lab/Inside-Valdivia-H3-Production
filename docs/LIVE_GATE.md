@@ -4,8 +4,8 @@ This is the exact boundary between offline preparation and claims about the
 laboratory runtime. It is intentionally read-only until all compatibility gates
 pass.
 
-The source commits required by the gate, the two runtime profiles, every stop
-condition, and the complete 28-topology evidence order are machine-readable in
+The source commits required by the gate, the four runtime profiles, every stop
+condition, and the complete 31-topology evidence order are machine-readable in
 `materialization/live-gate.json`.
 
 ## 1. Establish reachability without diagnosis by guess
@@ -67,7 +67,7 @@ comfy-runtime check-requirements runtime/requirements/h3-core.json \
 The automated gate checks:
 
 - required routes;
-- all 20 locked CAUCE nodes;
+- all 23 locked CAUCE nodes;
 - official FL2VA, sampler, decode, `CreateVideo`, and `SaveVideo` nodes;
 - exact expected FL2VA, Qwen, and video-VAE filenames;
 - at least 60 GB total RAM and 30 GB total VRAM;

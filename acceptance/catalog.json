@@ -71,6 +71,25 @@
       "promotion": {"minimum_successful_runs": 1, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
     },
     {
+      "operation": "interpolate.frames",
+      "operation_version": 2,
+      "variants": ["film-2x", "rife-2x"],
+      "technical_checks": [
+        {"id": "source-clock", "description": "The decoded source count and frame rate are measured and match the CAUCE interpolation plan."},
+        {"id": "output-clock", "description": "The output contains exactly `(N - 1) * multiplier + 1` frames and is wrapped at `source_fps * multiplier`."},
+        {"id": "source-anchor-preservation", "description": "Every original source frame occupies output index `source_index * multiplier` without substitution."},
+        {"id": "dependency-lock", "description": "The run uses the locked native ComfyUI implementation and exact model weight, hash, and license record."},
+        {"id": "artifact-lineage", "description": "The receipt resolves source hash, interpolation plan, graph, parameters, output artifact, and runtime manifest."}
+      ],
+      "visual_checks": [
+        {"id": "motion-continuity", "description": "Inserted frames form coherent motion without objectionable stalls, reversals, or acceleration pulses."},
+        {"id": "occlusion-quality", "description": "Revealed or hidden regions do not contain unacceptable tearing, doubling, or flow smears."},
+        {"id": "detail-stability", "description": "Thin structures and high-frequency textures remain acceptably stable between source frames."},
+        {"id": "source-integrity", "description": "Direct inspection confirms that original source samples have not been visibly altered."}
+      ],
+      "promotion": {"minimum_successful_runs": 2, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
+    },
+    {
       "operation": "generate.from_references",
       "operation_version": 3,
       "variants": ["image-reference-match", "image-reference-max", "video-reference", "video-reference-with-guide"],
@@ -172,6 +191,25 @@
         {"id": "decoded-round-trip", "description": "The reconstructed state's decoded result is visually identical to the source within the chosen deterministic comparison."}
       ],
       "promotion": {"minimum_successful_runs": 1, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
+    },
+    {
+      "operation": "restore.video",
+      "operation_version": 2,
+      "variants": ["seedvr2-3b-nvfp4"],
+      "technical_checks": [
+        {"id": "native-source-lock", "description": "The graph uses the locked official ComfyUI SeedVR2 node contracts and declared 3B NVFP4/VAE files."},
+        {"id": "clock-preservation", "description": "Restored frame count and frame rate are exactly identical to the decoded source."},
+        {"id": "geometry", "description": "Requested scale and resulting even output geometry are recorded without an implicit crop."},
+        {"id": "chunk-lineage", "description": "Temporal chunk mode, effective overlap, runtime, and peak VRAM are retained with the run."},
+        {"id": "artifact-lineage", "description": "The receipt resolves source hash, model files, graph, parameters, runtime manifest, and saved restored video."}
+      ],
+      "visual_checks": [
+        {"id": "detail-gain", "description": "The restoration produces useful spatial definition beyond the resized control."},
+        {"id": "temporal-stability", "description": "Restored texture does not shimmer, boil, or change discontinuously across frames."},
+        {"id": "texture-honesty", "description": "Invented detail remains acceptable and does not materially alter important forms."},
+        {"id": "color-and-boundaries", "description": "Color correction and temporal chunk joins introduce no objectionable shift or seam."}
+      ],
+      "promotion": {"minimum_successful_runs": 2, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
     }
   ]
 }

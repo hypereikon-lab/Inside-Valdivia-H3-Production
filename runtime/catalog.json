@@ -9,7 +9,17 @@
     {
       "id": "h3-full",
       "path": "runtime/requirements/h3-full.json",
-      "purpose": "Materialize the complete 28-variant surface including Ref2VA, AddGuide, masked editing, outpainting, refinement, decoded video persistence, and native-state operations."
+      "purpose": "Materialize the complete H3 and CAUCE-native surface including Ref2VA, AddGuide, masked editing, outpainting, refinement, decoded video persistence, and native-state operations."
+    },
+    {
+      "id": "video-interpolation",
+      "path": "runtime/requirements/video-interpolation.json",
+      "purpose": "Materialize and characterize exact 2x decoded-frame interpolation with ComfyUI 0.34.0's native RIFE/FILM nodes."
+    },
+    {
+      "id": "seedvr2-restoration",
+      "path": "runtime/requirements/seedvr2-restoration.json",
+      "purpose": "Materialize and characterize native SeedVR2 3B NVFP4 video restoration on the 32 GB RTX 5090."
     }
   ]
 }

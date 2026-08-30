@@ -17,9 +17,9 @@ official ComfyUI H3 nodes
   model conditioning, sampling, decoding
 
 ComfyUI-Cauce
-  20 deterministic low-level nodes
-  10 typed operation contracts
-  28 checked topology dossiers grouped into 25 graph archetypes
+  23 deterministic low-level nodes
+  12 typed operation contracts
+  31 checked topology dossiers grouped into 27 graph archetypes
 
 ComfyUI-Runtime-Control
   HTTP/runtime validation, prompt execution, receipts, durable serial resume
@@ -28,7 +28,7 @@ ComfyUI-Workspace-Control
   paired UI/API export and guarded browser-workspace operations
 
 this repository
-  exact operation/archetype/component locks, 28 offline binding profiles, project data,
+  exact operation/archetype/component locks, 31 offline binding profiles, project data,
   runtime readiness profiles, acceptance criteria, storage policy,
   experiments, rolling dependency/checkpoint plans
 ```
@@ -41,6 +41,7 @@ The catalog is a capability grammar, not a production pipeline:
 H3 conditioning grammar     keyframed / references / guides
 native H3 AV state algebra  continue / complete / masked edit / refine / outpaint / rollback
 decoded media algebra       exact frame assembly
+decoded video enhancement   RIFE/FILM interpolation / SeedVR2 restoration
 ```
 
 ```text
@@ -54,10 +55,12 @@ refine.video
 reframe.outpaint_video
 rollback.native_av
 frames.assemble
+interpolate.frames
+restore.video
 ```
 
-Operations are independent typed functions, not workflow stages. Their 28
-variants resolve through [`archetypes.lock.json`](archetypes.lock.json) to 25
+Operations are independent typed functions, not workflow stages. Their 31
+variants resolve through [`archetypes.lock.json`](archetypes.lock.json) to 27
 structurally distinct graphs, then to project binding profiles cataloged in
 [`materialization/catalog.json`](materialization/catalog.json). A topology
 dossier is a checked design, not executable workflow JSON. Each variant becomes
@@ -83,6 +86,7 @@ next required compatibility target.
 - [Project model](docs/PROJECT_MODEL.md)
 - [Current state](docs/CURRENT_STATE.md)
 - [Current H3 capability map and workflow rebuild](docs/H3_CAPABILITY_MAP.md)
+- [Temporal and spatial video enhancement](docs/VIDEO_ENHANCEMENT.md)
 - [Operations](docs/OPERATIONS.md)
 - [Materialization](docs/MATERIALIZATION.md)
 - [Data model](docs/DATA_MODEL.md)

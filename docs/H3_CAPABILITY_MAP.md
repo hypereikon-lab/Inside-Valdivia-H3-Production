@@ -13,7 +13,7 @@ Checked on 2026-08-30 against:
 - ComfyUI `master`, commit
   `8a33128f2f8c5585c57486c07de481241e70a39c`, for observation only;
 - official workflow templates commit
-  `d3b4a9e89573162b005961865164c18c8ae2206b`;
+  `d11b69157009227ad2a7d3a927a1eb68a3d5f281` for the relevant enhancement templates;
 - the MiniMax H3 model card and official prompt guides;
 - merged and open ComfyUI H3 pull requests listed below.
 

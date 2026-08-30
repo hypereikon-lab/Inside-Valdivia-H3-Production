@@ -1,6 +1,6 @@
 # Production roadmap
 
-The next deliverable is a rebuilt native-first workflow suite. Historical
+The next deliverable is a rebuilt native-first workflow and decoded-enhancement suite. Historical
 example graphs are evidence and source material, not restoration targets. The
 remaining gates convert the current official H3 surface plus the smallest
 necessary CAUCE state primitives into live, reproducible and visually assessed
@@ -83,8 +83,16 @@ After those mechanisms execute, establish the new native editing surface:
 5. `refine.video@full-frame` as a one-variable strength ladder, followed by
    `refine.video@masked` only if the full-frame pass shows useful behavior.
 
+Then materialize decoded enhancement independently of native H3 state:
+
+1. `interpolate.frames@rife-2x` as the exact 24 to 48 fps default;
+2. `interpolate.frames@film-2x` as the same-source large-motion comparison;
+3. `restore.video@seedvr2-3b-nvfp4` with automatic chunking and a short source;
+4. only after separate acceptance, characterize SeedVR2 to RIFE against the
+   reverse order.
+
 The remaining variants are retained and materialized after their underlying
-mechanism earns baseline evidence. All 28 offline plans already exist; this
+mechanism earns baseline evidence. All 31 offline plans already exist; this
 order controls evidence dependencies, not catalog importance or permanence.
 It is duplicated as machine-validated phase data in the live gate so catalog
 priority cannot be mistaken for execution order.
@@ -101,11 +109,12 @@ timeline origins and independent native video/audio masks.
 
 ## 3. Characterize behavior
 
-Run the twelve declared controlled comparisons one variable at a time. Prioritize
+Run the sixteen declared controlled comparisons one variable at a time. Prioritize
 endpoint behavior, reference-video correspondence, AddGuide placement,
 keyframe versus native-mask overlap, mask boundary/fade behavior, and
 future-guide interaction, then masked-edit edge profiles, exact outpaint
-placement, and native refinement strength.
+placement, native refinement strength, RIFE/FILM interpolation, SeedVR2 scale,
+enhancement order, and sparse-guide H3 retiming.
 
 For temporal completion, verify technical preservation before judging the
 image: confirm exact unknown range, unchanged tokens outside it, independent

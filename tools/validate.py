@@ -459,15 +459,33 @@ def _validate_canonical_bindings(value: dict[str, Any], path: Path) -> list[str]
     if not isinstance(artifact, dict) or set(artifact) != expected_artifact_fields:
         errors.append(f"{path}: canonical bindings require the exact artifact contract")
     else:
-        if artifact.get("frame_rate") != 24:
-            errors.append(f"{path}: materialized artifacts must use 24 fps")
+        expected_frame_rate: int | float = 24
+        if operation == "interpolate.frames":
+            source_fps = bindings.get("source_fps")
+            multiplier = bindings.get("multiplier")
+            if (
+                isinstance(source_fps, (int, float))
+                and not isinstance(source_fps, bool)
+                and isinstance(multiplier, int)
+                and not isinstance(multiplier, bool)
+            ):
+                expected_frame_rate = source_fps * multiplier
+        if artifact.get("frame_rate") != expected_frame_rate:
+            errors.append(
+                f"{path}: materialized artifact frame_rate must be "
+                f"{expected_frame_rate} for {operation}"
+            )
         if artifact.get("filename_prefix") is not None:
             errors.append(f"{path}: filename_prefix must remain null before live pairing")
         if artifact.get("format") != "auto" or artifact.get("codec") != "auto":
             errors.append(f"{path}: format and codec must remain auto before live pairing")
         if artifact.get("history_resolvable") is not True:
             errors.append(f"{path}: artifacts must be resolvable from prompt history")
-        expected_native_state = operation != "frames.assemble"
+        expected_native_state = operation not in {
+            "frames.assemble",
+            "interpolate.frames",
+            "restore.video",
+        }
         if artifact.get("retain_native_state") is not expected_native_state:
             errors.append(
                 f"{path}: retain_native_state must be {expected_native_state} "
@@ -744,6 +762,111 @@ def _validate_canonical_bindings(value: dict[str, Any], path: Path) -> list[str]
             errors.append(f"{path}: frame assembly must use 24 fps")
         if not isinstance(sources, list) or len(sources) < 2:
             errors.append(f"{path}: ordered concatenation requires at least two source ranges")
+    elif operation == "interpolate.frames":
+        source_frame_count = bindings.get("source_frame_count")
+        source_fps = bindings.get("source_fps")
+        multiplier = bindings.get("multiplier")
+        native_implementation = bindings.get("native_implementation")
+        model_source = bindings.get("model_source")
+        if source_frame_count is not None and (
+            not isinstance(source_frame_count, int)
+            or isinstance(source_frame_count, bool)
+            or source_frame_count < 2
+        ):
+            errors.append(f"{path}: source_frame_count must be null or an integer >= 2")
+        if (
+            not isinstance(source_fps, (int, float))
+            or isinstance(source_fps, bool)
+            or source_fps <= 0
+        ):
+            errors.append(f"{path}: source_fps must be positive")
+        if (
+            not isinstance(multiplier, int)
+            or isinstance(multiplier, bool)
+            or multiplier < 2
+        ):
+            errors.append(f"{path}: interpolation multiplier must be an integer >= 2")
+        expected_native_implementation = {
+            "repository": "https://github.com/Comfy-Org/ComfyUI",
+            "release": "v0.34.0",
+            "commit": "12d5279438bfefc058a269eae805ceab6047777f",
+        }
+        if native_implementation != expected_native_implementation:
+            errors.append(f"{path}: native interpolation implementation must remain locked")
+        if set(inputs) != {"source_video"}:
+            errors.append(f"{path}: frame interpolation requires exactly one source video")
+        expected_models = {
+            "rife-2x": {
+                "repository": "https://huggingface.co/Comfy-Org/frame_interpolation",
+                "revision": "9bca6366a22473ccee25602fa82b224d78413960",
+                "path": "frame_interpolation/rife_v4.26.safetensors",
+                "sha256": "151874592c877740e5db11522f4514df569eeafb0a0fcb2696f16e9e8d317c94",
+                "size_bytes": 22674688,
+                "license": "MIT",
+            },
+            "film-2x": {
+                "repository": "https://huggingface.co/Comfy-Org/frame_interpolation",
+                "revision": "9bca6366a22473ccee25602fa82b224d78413960",
+                "path": "frame_interpolation/film_net_fp16.safetensors",
+                "sha256": "f226e51375dc839d4b40e5c3d63da560dd1ea1c962364ec78f5adf2d05db05c0",
+                "size_bytes": 68882302,
+                "license": "Apache-2.0",
+            },
+        }
+        expected_model_names = {
+            "rife-2x": "rife_v4.26.safetensors",
+            "film-2x": "film_net_fp16.safetensors",
+        }.get(variant)
+        if variant in expected_models and model_source != expected_models[variant]:
+            errors.append(f"{path}: {variant} model source must remain content-addressed")
+        if expected_model_names is not None and bindings.get("model_name") != expected_model_names:
+            errors.append(f"{path}: {variant} must use the locked native model name")
+        if variant in {"rife-2x", "film-2x"} and multiplier != 2:
+            errors.append(f"{path}: {variant} must use multiplier=2")
+    elif operation == "restore.video" and variant == "seedvr2-3b-nvfp4":
+        model_files = bindings.get("model_files")
+        if model_files != {
+            "diffusion_model": "diffusion_models/seedvr2_3b_nvfp4.safetensors",
+            "vae": "vae/ema_vae_fp16.safetensors",
+        }:
+            errors.append(f"{path}: SeedVR2 model filenames must match the locked baseline")
+        if bindings.get("source_template") != {
+            "repository": "https://github.com/Comfy-Org/workflow_templates",
+            "commit": "d11b69157009227ad2a7d3a927a1eb68a3d5f281",
+            "path": "templates/utility_seedvr2_3b_int8_upscale_video.json",
+        }:
+            errors.append(f"{path}: SeedVR2 source template must remain version-locked")
+        if bindings.get("model_source") != {
+            "repository": "https://huggingface.co/Comfy-Org/SeedVR2",
+            "revision": "673340c8a66db62b84e4099def7d01d337ae12dc",
+            "license": "Apache-2.0",
+            "diffusion_model": {
+                "path": "diffusion_models/seedvr2_3b_nvfp4.safetensors",
+                "sha256": "c8dea38b04d43295621726e2cd371c0d2d001006169c113aea17950f2cb2e295",
+                "size_bytes": 1996687726,
+            },
+            "vae": {
+                "path": "vae/ema_vae_fp16.safetensors",
+                "sha256": "20678548f420d98d26f11442d3528f8b8c94e57ee046ef93dbb7633da8612ca1",
+                "size_bytes": 501324814,
+            },
+        }:
+            errors.append(f"{path}: SeedVR2 model source must remain content-addressed")
+        scale_multiplier = bindings.get("scale_multiplier")
+        if (
+            not isinstance(scale_multiplier, (int, float))
+            or isinstance(scale_multiplier, bool)
+            or scale_multiplier <= 1
+        ):
+            errors.append(f"{path}: restoration scale_multiplier must be greater than 1")
+        if bindings.get("chunking_mode") != "auto":
+            errors.append(f"{path}: initial SeedVR2 chunking must remain automatic")
+        if bindings.get("steps") != 1 or bindings.get("denoise") != 1.0:
+            errors.append(f"{path}: SeedVR2 baseline must use its native one-step schedule")
+        if bindings.get("color_correction_method") != "lab":
+            errors.append(f"{path}: SeedVR2 baseline must use lab color correction")
+        if set(inputs) != {"source_video"}:
+            errors.append(f"{path}: restoration requires exactly one source video")
     return errors
 
 
@@ -1060,8 +1183,14 @@ def validate_runtime_requirements_catalog(value: Any, path: Path, root: Path) ->
     expected_paths = {item.resolve() for item in (root / "runtime" / "requirements").glob("*.json")}
     if paths != expected_paths:
         errors.append(f"{path}: runtime requirements catalog and directory differ")
-    if set(loaded) != {"h3-core", "h3-full"}:
-        errors.append(f"{path}: h3-core and h3-full profiles are both required")
+    expected_profiles = {
+        "h3-core",
+        "h3-full",
+        "video-interpolation",
+        "seedvr2-restoration",
+    }
+    if set(loaded) != expected_profiles:
+        errors.append(f"{path}: runtime profile set is incomplete")
         return errors
     core = loaded["h3-core"]
     full = loaded["h3-full"]
@@ -1069,8 +1198,8 @@ def validate_runtime_requirements_catalog(value: Any, path: Path, root: Path) ->
         if not set(core.get(field, [])).issubset(set(full.get(field, []))):
             errors.append(f"{path}: h3-full must include every h3-core {field}")
     cauce_nodes = {name for name in core.get("required_node_types", []) if name.startswith("Cauce")}
-    if len(cauce_nodes) != 20:
-        errors.append(f"{path}: h3-core must require all 20 locked CAUCE nodes")
+    if len(cauce_nodes) != 23:
+        errors.append(f"{path}: h3-core must require all 23 locked CAUCE nodes")
     return errors
 
 
@@ -1098,13 +1227,18 @@ def validate_live_gate(
             if not isinstance(source_locks[name], str) or not GIT_SHA.fullmatch(source_locks[name]):
                 errors.append(f"{path}: {name} must be a full Git SHA")
     runtime_profiles = value.get("runtime_profiles")
-    if not isinstance(runtime_profiles, dict) or set(runtime_profiles) != {"core", "full"}:
-        errors.append(f"{path}: live gate must name core and full runtime profiles")
+    expected_runtime_profiles = {
+        "core": "runtime/requirements/h3-core.json",
+        "full": "runtime/requirements/h3-full.json",
+        "video-interpolation": "runtime/requirements/video-interpolation.json",
+        "seedvr2-restoration": "runtime/requirements/seedvr2-restoration.json",
+    }
+    if not isinstance(runtime_profiles, dict) or set(runtime_profiles) != set(
+        expected_runtime_profiles
+    ):
+        errors.append(f"{path}: live gate runtime profile set is incomplete")
     else:
-        for name, expected in {
-            "core": "runtime/requirements/h3-core.json",
-            "full": "runtime/requirements/h3-full.json",
-        }.items():
+        for name, expected in expected_runtime_profiles.items():
             if runtime_profiles.get(name) != expected:
                 errors.append(f"{path}: {name} runtime profile path is not canonical")
     workspace = value.get("workspace_gate")
@@ -1139,6 +1273,8 @@ def validate_live_gate(
         "dependent-variants": "full",
         "native-masked-editing-and-outpaint": "full",
         "bounded-refinement-characterization": "full",
+        "decoded-frame-interpolation": "video-interpolation",
+        "spatial-temporal-restoration": "seedvr2-restoration",
     }
     for phase in phases:
         if not isinstance(phase, dict) or set(phase) != {"id", "runtime_profile", "topology_keys"}:
@@ -1148,7 +1284,7 @@ def validate_live_gate(
         if not isinstance(phase_id, str) or not phase_id or phase_id in phase_ids:
             errors.append(f"{path}: duplicate or invalid phase id {phase_id!r}")
         phase_ids.add(phase_id)
-        if phase["runtime_profile"] not in {"core", "full"}:
+        if phase["runtime_profile"] not in set(expected_runtime_profiles):
             errors.append(f"{path}: invalid runtime profile in phase {phase_id!r}")
         if expected_phase_profiles.get(phase_id) != phase["runtime_profile"]:
             errors.append(f"{path}: phase {phase_id!r} has the wrong runtime profile")
@@ -1160,7 +1296,7 @@ def validate_live_gate(
     if set(ordered_keys) != set(expected_keys):
         errors.append(f"{path}: live phases must cover every materialization topology exactly once")
     if phase_ids != set(expected_phase_profiles):
-        errors.append(f"{path}: live gate must use the six canonical evidence phases")
+        errors.append(f"{path}: live gate must use the eight canonical evidence phases")
     return errors
 
 

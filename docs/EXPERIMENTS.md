@@ -1,10 +1,17 @@
 # Controlled H3 experiments
 
-`experiments/catalog.json` contains twelve planned, one-variable comparisons:
+`experiments/catalog.json` contains sixteen planned, one-variable comparisons:
 endpoint mode, reference-image sizing, reference duration, guide length, guide
 placement, continuation prompt relation, native mask boundary, overlap
-transport, future guide, masked-edit edge profile, outpaint placement, and
-native refinement strength.
+transport, future guide, masked-edit edge profile, outpaint placement, native
+refinement strength, decoded interpolation model, SeedVR2 scale, enhancement
+order, and sparse-guide H3 retiming.
+
+Decoded enhancement keeps the clocks explicit. RIFE/FILM comparisons assert
+the exact `(N - 1) * 2 + 1` output and original-frame positions before visual
+judgment. SeedVR2 comparisons assert unchanged frame count/fps. The operation-
+order experiment starts only after one interpolation and one restoration
+setting have independent evidence.
 
 Every run records source hashes/order, operation and materialized graph hashes,
 model files, geometry, frame count, exact prompt/seed, sampler/scheduler/steps,

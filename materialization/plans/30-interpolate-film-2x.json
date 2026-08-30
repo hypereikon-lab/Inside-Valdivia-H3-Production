@@ -1,0 +1,43 @@
+{
+  "schema": "inside-valdivia.materialization-plan/1",
+  "operation": "interpolate.frames",
+  "operation_version": 2,
+  "operation_contract_hash": "11df77eab2aba167b7707e202b48a23658722036c0ac25c355a74078a0206f22",
+  "variant": "film-2x",
+  "topology_key": "interpolate.frames@film-2x",
+  "priority": 30,
+  "status": "offline-ready",
+  "runtime_manifest_hash": null,
+  "sources": { "workspace_export": null, "parameterization": null, "runtime_manifest": null, "operation_ref": null },
+  "bindings": {
+    "native_implementation": {
+      "repository": "https://github.com/Comfy-Org/ComfyUI",
+      "release": "v0.34.0",
+      "commit": "12d5279438bfefc058a269eae805ceab6047777f"
+    },
+    "model_source": {
+      "repository": "https://huggingface.co/Comfy-Org/frame_interpolation",
+      "revision": "9bca6366a22473ccee25602fa82b224d78413960",
+      "path": "frame_interpolation/film_net_fp16.safetensors",
+      "sha256": "f226e51375dc839d4b40e5c3d63da560dd1ea1c962364ec78f5adf2d05db05c0",
+      "size_bytes": 68882302,
+      "license": "Apache-2.0"
+    },
+    "source_frame_count": null,
+    "source_fps": 24,
+    "multiplier": 2,
+    "model_name": "film_net_fp16.safetensors",
+    "artifact": { "frame_rate": 48, "filename_prefix": null, "format": "auto", "codec": "auto", "history_resolvable": true, "retain_native_state": false },
+    "inputs": { "source_video": null }
+  },
+  "outputs": { "ui_graph": null, "api_template": null, "bindings": null, "materialization_manifest": null, "ui_graph_hash": null, "api_template_hash": null, "bindings_hash": null },
+  "validation": {
+    "schema_status": "pending",
+    "missing_node_types": [],
+    "notes": [
+      "Requires the same two native ComfyUI nodes as RIFE; only the 68.9 MB model selection changes.",
+      "Verify the declared model SHA-256 before queueing.",
+      "Use this as a large-motion comparison path after the RIFE default, with the same exact count and source-frame assertions."
+    ]
+  }
+}

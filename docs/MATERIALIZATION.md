@@ -1,6 +1,6 @@
 # Materialization and execution
 
-`materialization/catalog.json` is the complete 28-variant offline queue. Every
+`materialization/catalog.json` is the complete 31-variant offline queue. Every
 entry selects one exact CAUCE `operation@variant` topology and one checked plan
 in `materialization/plans/`.
 
@@ -46,6 +46,8 @@ The queue covers:
 - 2 native outpaint placements;
 - 2 bounded-refinement layouts;
 - 1 rollback and 1 deterministic assembly.
+- 2 decoded 2x interpolation paths;
+- 1 native SeedVR2 restoration path.
 
 ## Live materialization gates
 
@@ -61,7 +63,9 @@ types, model files, revisions, and storage before constructing graphs.
 
 First evaluate `runtime/requirements/h3-core.json`; evaluate `h3-full.json`
 before Ref2VA, AddGuide, video-loading, assembly, or the complete native-state
-surface. When authentication exists only in the browser, use Runtime Control's
+surface. Evaluate `video-interpolation.json` before RIFE/FILM and
+`seedvr2-restoration.json` before the restoration graph. When authentication
+exists only in the browser, use Runtime Control's
 snapshot-manifest handoff rather than extracting the browser cookie.
 
 ### 2. Build one active graph

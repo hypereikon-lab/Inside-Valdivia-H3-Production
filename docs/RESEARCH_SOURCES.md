@@ -14,6 +14,15 @@ changes, not inferred from workflow screenshots:
 - [ComfyUI PR #15860: proposed H3 Fun ControlNet support](https://github.com/Comfy-Org/ComfyUI/pull/15860)
 - [ComfyUI PR #15975: proposed H3 ControlNet model-patch path](https://github.com/Comfy-Org/ComfyUI/pull/15975)
 - [Official ComfyUI H3 workflow templates](https://github.com/Comfy-Org/workflow_templates/tree/main/templates)
+- [Official native ComfyUI SeedVR2 video template](https://github.com/Comfy-Org/workflow_templates/blob/main/templates/utility_seedvr2_3b_int8_upscale_video.json)
+- [Official ComfyUI SeedVR2 core nodes](https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_seedvr.py)
+- [SeedVR2 paper](https://arxiv.org/abs/2506.05301)
+- [RIFE official implementation](https://github.com/Soooda/RIFE)
+- [RIFE paper](https://arxiv.org/abs/2011.06294)
+- [FILM official implementation](https://github.com/google-research/frame-interpolation)
+- [ComfyUI native frame-interpolation nodes](https://github.com/Comfy-Org/ComfyUI/blob/v0.34.0/comfy_extras/nodes_frame_interpolation.py)
+- [Official Comfy-Org RIFE/FILM model repository](https://huggingface.co/Comfy-Org/frame_interpolation)
+- [Official native frame-interpolation workflow](https://github.com/Comfy-Org/workflow_templates/blob/main/templates/utility_video_frame_interpolation.json)
 - [MiniMax H3 community-maintained integration index](https://github.com/MiniMax-AI/awesome-minimax-h3-integration)
 - [Alibaba PAI MiniMax H3 Fun ControlNet Union](https://huggingface.co/alibaba-pai/MiniMax-H3-Fun-Controlnet-Union)
 - [ComfyUI v0.34.0 release](https://github.com/Comfy-Org/ComfyUI/releases/tag/v0.34.0)
@@ -43,7 +52,7 @@ primitives. Community techniques become production capabilities only after
 their mechanism is reproduced transparently and live evidence is retained.
 
 The learned latent upscaler and local high-resolution in-context regeneration
-remain isolated experiments, not dependencies of the current 20-node CAUCE
+remain isolated experiments, not dependencies of the current 23-node CAUCE
 surface. The still-draft H3 Fun ControlNet integration is likewise deferred;
 neither is represented as an implemented production operation.
 

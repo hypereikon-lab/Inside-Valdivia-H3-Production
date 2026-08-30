@@ -5,7 +5,7 @@ operations. It does not add an image ontology or interpret media content.
 
 ## Capability families
 
-The ten locked operations form three non-sequential families:
+The twelve locked operations form four non-sequential families:
 
 ```text
 H3 conditioning grammar
@@ -23,13 +23,19 @@ native H3 AV state algebra
 
 decoded media algebra
   frames.assemble
+
+decoded video enhancement
+  interpolate.frames
+  restore.video
 ```
 
 The conditioning family describes supported official ways to present prompt,
 endpoint, reference, and exact-frame guide information to H3. The native-state
 family extends, completes, locally edits, refines, reframes, splits,
-reconstructs, and branches synchronized packed H3 state. The decoded family
-performs exact post-decode assembly.
+reconstructs, and branches synchronized packed H3 state. The decoded-media
+family performs exact post-decode assembly. The decoded-enhancement family
+changes temporal sample rate or restores spatial-temporal detail without
+claiming recoverable native H3 state.
 
 Family membership does not define execution order. Operations connect only
 through explicit typed media or native-state references.

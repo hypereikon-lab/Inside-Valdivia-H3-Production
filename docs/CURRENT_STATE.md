@@ -6,11 +6,11 @@ This is the authority for present capability claims.
 
 ```text
 CAUCE
-  commit   99731a39d4e69b09153e564408b7029e50e8b1bb
-  version  5.3.0
-  nodes    20
-  operations / topology dossiers / graph archetypes  10 / 28 / 25
-  local release tests  41 passing, zero skips
+  commit   fc64df6c13f9de17abc44637453bd2c0629f755f
+  version  5.4.2
+  nodes    23
+  operations / topology dossiers / graph archetypes  12 / 31 / 27
+  local release tests  46 passing, zero skips
 
 Runtime Control
   commit   37ac10f762dc6bcf229e0e26d21ef96a67a018dd
@@ -25,20 +25,20 @@ Workspace Control
 Production data
   exact component commit/tree/version/metadata locks
   exact CAUCE operation and graph-archetype locks
-  28 offline binding/materialization profiles over 25 graph archetypes
-  12 controlled experiment definitions
+  31 offline binding/materialization profiles over 27 graph archetypes
+  16 controlled experiment definitions
   1 offline rolling-chain plan
-  2 runtime requirements profiles
-  10 acceptance profiles covering all 28 variants
+  4 runtime requirements profiles
+  12 acceptance profiles covering all 31 variants
   0 visual assessment records until live artifacts exist
-  1 six-phase live materialization gate
+  1 eight-phase live materialization gate
   1 fail-closed storage policy
-  local tests  25 passing
+  local tests  26 passing
 ```
 
-All 41 CAUCE tests pass under the bundled local Python runtime with NumPy. A
+All 46 CAUCE tests pass under the bundled local Python runtime with NumPy. A
 reduced interpreter without NumPy is not release evidence. Across the four
-active repositories the complete offline suites currently contain 99 passing
+active repositories the complete offline suites currently contain 105 passing
 checks.
 
 The local source repositories are complete, public, pushed, and
@@ -75,15 +75,17 @@ CAUCE provides deterministic primitives for:
 - exact 32-pixel-aligned native canvas expansion for outpainting;
 - exact native AV interval replacement;
 - native span guides, synchronized append, split/rollback, save, and load;
-- H3 target/reference/guide preflight and conditioning inspection.
+- H3 target/reference/guide preflight and conditioning inspection;
+- exact decoded-frame interpolation clocks and source-anchor positions;
+- H3 interleave-mask projection diagnostics and sparse-guide retime planning.
 
 Official ComfyUI owns H3 first/last frames, Ref2VA references, arbitrary-frame
 AddGuide conditioning, model loading, prompting, sampling, and decoding. CAUCE
 composes those official mechanisms; it does not replace the model or sampler.
 
-The ten operations are grouped as H3 conditioning grammar, native H3 AV state
-algebra, and decoded media algebra. They are orthogonal functions, not workflow
-stages. See [Project model](PROJECT_MODEL.md).
+The twelve operations are grouped as H3 conditioning grammar, native H3 AV
+state algebra, decoded media algebra, and decoded video enhancement. They are
+orthogonal functions, not workflow stages. See [Project model](PROJECT_MODEL.md).
 
 Runtime Control implements guarded materialization plus `comfy.run-series/1`:
 all concrete graphs are validated against one fresh `/object_info`, each prompt
@@ -115,27 +117,29 @@ diagnostic must pass before tab or graph automation begins.
 | `reframe.outpaint_video` | aligned allocation, exact copy, and new-region mask unit-validated | expansion primitive executes live; H3 result unassessed |
 | `rollback.native_av` | synchronized split/branch layer unit-validated | not yet exercised in production |
 | `frames.assemble` | deterministic range layer unit-validated | no inference claim |
+| `interpolate.frames` | exact output clock plus native ComfyUI 0.34.0 RIFE/FILM topology schema-validated | model files, pairing, and visuals unconfirmed at current lock |
+| `restore.video` | official SeedVR2 3B native topology schema-validated | model/runtime unconfirmed and visuals unassessed |
 
 `implemented`, `materialized`, `executes`, and `visually accepted` are separate
 states. No current-lock topology yet has a retained paired UI/API graph. The
-repository therefore makes no claim that any of the 28 variants is presently
+repository therefore makes no claim that any of the 31 variants is presently
 production-ready or visually accepted.
 
 ## Offline-ready assets
 
-The 28 materialization plans cover the entire CAUCE topology catalog and map
-through the locked archetype catalog to 25 distinct node/edge structures. Their
+The 31 materialization plans cover the entire CAUCE topology catalog and map
+through the locked archetype catalog to 27 distinct node/edge structures. Their
 static operation hashes, variants, model filenames, geometry, frame arithmetic,
 input cardinality, mask semantics, and output slots are checked. Live-owned
 values remain null: actual media ids, sampler, scheduler, steps, flow shifts,
 seed, graph node ids, `/object_info` manifest, and paired graph hashes.
 
 Stable catalog priority no longer doubles as empirical execution order. The
-six phases in `materialization/live-gate.json` cover every topology once and
+eight phases in `materialization/live-gate.json` cover every topology once and
 put core FL2VA controls before full Ref2VA/AddGuide and native-state mechanisms.
-The runtime core and full profiles verify expected H3/CAUCE nodes, models,
-hardware, and queue; free storage and physical recovery remain explicit manual
-checks.
+The runtime core/full, interpolation, and SeedVR2 profiles verify the relevant
+nodes, models, hardware, and queue; free storage and physical recovery remain
+explicit manual checks.
 
 The rolling chain is also offline-ready. It specifies strict dependencies,
 native-state identities, exact source commits, per-step checkpoints, and a

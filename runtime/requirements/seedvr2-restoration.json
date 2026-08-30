@@ -1,0 +1,38 @@
+{
+  "schema": "comfy.runtime-requirements/1",
+  "id": "inside-valdivia-seedvr2-restoration",
+  "required_endpoints": ["features", "system_stats", "object_info", "queue"],
+  "required_node_types": [
+    "GetVideoComponents",
+    "KSampler",
+    "LoadVideo",
+    "ResizeImageMaskNode",
+    "SaveVideo",
+    "SeedVR2Conditioning",
+    "SeedVR2PostProcessing",
+    "SeedVR2Preprocess",
+    "SeedVR2TemporalChunk",
+    "SeedVR2TemporalMerge",
+    "UNETLoader",
+    "VAEDecodeTiled",
+    "VAEEncodeTiled",
+    "VAELoader"
+  ],
+  "node_type_groups": [],
+  "required_models": [
+    "ema_vae_fp16.safetensors",
+    "seedvr2_3b_nvfp4.safetensors"
+  ],
+  "hardware": {
+    "minimum_total_ram_bytes": 60000000000,
+    "minimum_total_vram_bytes": 30000000000,
+    "device_name_contains": "5090"
+  },
+  "require_queue_idle": true,
+  "manual_checks": [
+    "Confirm native SeedVR2 nodes match the locked official ComfyUI source before downloading models.",
+    "Confirm at least 30 GB of free local storage; the locked 3B NVFP4 plus VAE payload is exactly 2,498,012,540 bytes before outputs.",
+    "Begin with automatic temporal chunking and record actual peak VRAM and chunk boundaries on the RTX 5090.",
+    "Assert restored frame count and fps are identical to the source before visual assessment."
+  ]
+}
