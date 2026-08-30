@@ -14,15 +14,10 @@ changes, not inferred from workflow screenshots:
 - [ComfyUI PR #15860: proposed H3 Fun ControlNet support](https://github.com/Comfy-Org/ComfyUI/pull/15860)
 - [ComfyUI PR #15975: proposed H3 ControlNet model-patch path](https://github.com/Comfy-Org/ComfyUI/pull/15975)
 - [Official ComfyUI H3 workflow templates](https://github.com/Comfy-Org/workflow_templates/tree/main/templates)
-- [Official native ComfyUI SeedVR2 video template](https://github.com/Comfy-Org/workflow_templates/blob/main/templates/utility_seedvr2_3b_int8_upscale_video.json)
-- [Official ComfyUI SeedVR2 core nodes](https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_seedvr.py)
-- [SeedVR2 paper](https://arxiv.org/abs/2506.05301)
-- [RIFE official implementation](https://github.com/Soooda/RIFE)
-- [RIFE paper](https://arxiv.org/abs/2011.06294)
-- [FILM official implementation](https://github.com/google-research/frame-interpolation)
-- [ComfyUI native frame-interpolation nodes](https://github.com/Comfy-Org/ComfyUI/blob/v0.34.0/comfy_extras/nodes_frame_interpolation.py)
-- [Official Comfy-Org RIFE/FILM model repository](https://huggingface.co/Comfy-Org/frame_interpolation)
-- [Official native frame-interpolation workflow](https://github.com/Comfy-Org/workflow_templates/blob/main/templates/utility_video_frame_interpolation.json)
+- [DiffSynth-Studio H3 training documentation](https://github.com/modelscope/DiffSynth-Studio/blob/main/docs/en/Model_Details/MiniMax-H3.md)
+- [FrescoDiffusion tiled regeneration](https://arxiv.org/abs/2603.17555)
+- [STCDiT anchor-frame video super-resolution](https://arxiv.org/abs/2511.18786)
+- [Warped Diffusion for video inverse problems](https://arxiv.org/abs/2410.16152)
 - [MiniMax H3 community-maintained integration index](https://github.com/MiniMax-AI/awesome-minimax-h3-integration)
 - [Alibaba PAI MiniMax H3 Fun ControlNet Union](https://huggingface.co/alibaba-pai/MiniMax-H3-Fun-Controlnet-Union)
 - [ComfyUI v0.34.0 release](https://github.com/Comfy-Org/ComfyUI/releases/tag/v0.34.0)
@@ -42,6 +37,8 @@ dependencies or behavioral proof:
 - [H3 Continuum](https://github.com/ukr8b3g-cmyk/ComfyUI-H3-Continuum)
 - [Community H3 V2V refinement workflows](https://github.com/mdkberry/comfyui_workflows/tree/main/workflows_by_model/Minimax-H3)
 - [Community MiniMax H3 latent upscaler](https://github.com/LBH-123-AI/Comfyui_Minimax_h3_latent_Upscaler)
+- [ComfyUI-Continuity H3 native latent second pass](https://github.com/roadmaus/ComfyUI-Continuity)
+- [H3 latent upscaler experiments](https://github.com/rockerBOO/h3-latent-upscaler)
 
 The checked official surface establishes optional first/last images, ordered
 Ref2VA references, arbitrary-frame AddGuide composition, packed visual and
@@ -51,9 +48,8 @@ placement, mask-construction, replacement, persistence, and rollback
 primitives. Community techniques become production capabilities only after
 their mechanism is reproduced transparently and live evidence is retained.
 
-The learned latent upscaler and local high-resolution in-context regeneration
-remain isolated experiments, not dependencies of the current 23-node CAUCE
-surface. The still-draft H3 Fun ControlNet integration is likewise deferred;
+Learned latent upscalers remain research references, not dependencies of the
+current 24-node CAUCE surface. The still-draft H3 Fun ControlNet integration is likewise deferred;
 neither is represented as an implemented production operation.
 
 The official source was rechecked on 2026-08-30. The released H3 surface exposes

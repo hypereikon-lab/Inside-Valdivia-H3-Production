@@ -4,14 +4,14 @@
 endpoint mode, reference-image sizing, reference duration, guide length, guide
 placement, continuation prompt relation, native mask boundary, overlap
 transport, future guide, masked-edit edge profile, outpaint placement, native
-refinement strength, decoded interpolation model, SeedVR2 scale, enhancement
-order, and sparse-guide H3 retiming.
+refinement strength, native H3 temporal densification, native H3 spatial
+regeneration, enhancement order, and sparse-guide H3 retiming.
 
-Decoded enhancement keeps the clocks explicit. RIFE/FILM comparisons assert
-the exact `(N - 1) * 2 + 1` output and original-frame positions before visual
-judgment. SeedVR2 comparisons assert unchanged frame count/fps. The operation-
-order experiment starts only after one interpolation and one restoration
-setting have independent evidence.
+Temporal densification asserts the exact `(N - 1) * factor + 1` delivery count,
+legal H3 target padding, and `24 * factor` delivery clock before visual
+judgment. Spatial regeneration asserts unchanged frame count/fps and exact
+target geometry. The operation-order experiment starts only after each native
+operation has independent evidence.
 
 Every run records source hashes/order, operation and materialized graph hashes,
 model files, geometry, frame count, exact prompt/seed, sampler/scheduler/steps,
@@ -31,6 +31,7 @@ Metrics such as pixel difference, optical-flow magnitude, or queue completion
 are diagnostic only. They cannot establish useful motion correspondence,
 identity preservation, temporal boundary quality, or visual acceptance.
 
-The scope excludes generative audio, soundtrack encoding, training, LoRA,
-acceleration, streaming, and arbitrary sampler patches. The fixed soundtrack
+The scope excludes generative audio, soundtrack encoding, acceleration,
+streaming, and arbitrary sampler patches. Training/LoRA has a separate recipe
+and evidence boundary. The fixed soundtrack
 is used only when assigning accepted outputs to the edit.

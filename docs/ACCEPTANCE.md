@@ -1,7 +1,7 @@
 # Technical and visual acceptance
 
 `acceptance/catalog.json` defines one fail-closed profile for every locked
-operation and covers all 31 materialization variants exactly once.
+operation and covers all 32 materialization variants exactly once.
 
 ## Two independent judgments
 

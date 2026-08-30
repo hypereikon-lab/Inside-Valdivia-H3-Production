@@ -4,10 +4,10 @@
   "components": {
     "cauce": {
       "repository": "https://github.com/hypereikon-lab/ComfyUI-Cauce",
-      "version": "5.4.2",
-      "commit": "fc64df6c13f9de17abc44637453bd2c0629f755f",
-      "tree": "f64189fa6581770ff182a123da4046e9eed81d58",
-      "metadata_sha256": "855c351cb6de8c8babf02dda27c4f3b189800c743be7c8f99cef7ddfe7da11a8",
+      "version": "5.5.0",
+      "commit": "3aa28eb070d63520a5d6ef0a3c662229e708c90e",
+      "tree": "36c7e1af47dec5f1a7d5bfa39d51e55d22511866",
+      "metadata_sha256": "f7d293de4cb0c5a5e413f2fd961f39f2b67af24ccd80f99cebb1dd189b00635d",
       "distribution": "registry-prepared-unpublished",
       "registry_node_id": "cauce"
     },

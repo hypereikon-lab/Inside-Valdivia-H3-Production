@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hypereikon.online/schemas/h3-training-catalog-1.json",
+  "type": "object",
+  "required": ["schema", "source", "hardware_target", "recipes"],
+  "properties": {
+    "schema": { "const": "inside-valdivia.h3-training-catalog/1" },
+    "source": {
+      "type": "object",
+      "required": ["repository", "commit", "observed_at"],
+      "additionalProperties": false
+    },
+    "hardware_target": {
+      "type": "object",
+      "required": ["gpu", "vram_gb", "ram_gb", "maximum_free_disk_gb"],
+      "additionalProperties": false
+    },
+    "recipes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "path", "status"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

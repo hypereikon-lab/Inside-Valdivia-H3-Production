@@ -71,21 +71,21 @@
       "promotion": {"minimum_successful_runs": 1, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
     },
     {
-      "operation": "interpolate.frames",
-      "operation_version": 2,
-      "variants": ["film-2x", "rife-2x"],
+      "operation": "densify.temporal",
+      "operation_version": 1,
+      "variants": ["token-inpaint"],
       "technical_checks": [
-        {"id": "source-clock", "description": "The decoded source count and frame rate are measured and match the CAUCE interpolation plan."},
-        {"id": "output-clock", "description": "The output contains exactly `(N - 1) * multiplier + 1` frames and is wrapped at `source_fps * multiplier`."},
-        {"id": "source-anchor-preservation", "description": "Every original source frame occupies output index `source_index * multiplier` without substitution."},
-        {"id": "dependency-lock", "description": "The run uses the locked native ComfyUI implementation and exact model weight, hash, and license record."},
-        {"id": "artifact-lineage", "description": "The receipt resolves source hash, interpolation plan, graph, parameters, output artifact, and runtime manifest."}
+        {"id": "native-source", "description": "The source is a validated packed H3 AV state, not only a decoded video."},
+        {"id": "token-layout", "description": "Source tokens map monotonically to the checked legal target lattice and missing tokens carry the declared native denoise mask."},
+        {"id": "delivery-clock", "description": "The accepted output contains exactly `(N - 1) * factor + 1` frames and is delivered at `24 * factor` fps after cropping only H3 tail padding."},
+        {"id": "trained-window", "description": "The sampled H3 target window remains inside the declared 124-362-frame trained range."},
+        {"id": "artifact-lineage", "description": "The receipt resolves source native state, target lattice, prompt, graph, generated native state, and decoded artifact."}
       ],
       "visual_checks": [
-        {"id": "motion-continuity", "description": "Inserted frames form coherent motion without objectionable stalls, reversals, or acceleration pulses."},
-        {"id": "occlusion-quality", "description": "Revealed or hidden regions do not contain unacceptable tearing, doubling, or flow smears."},
-        {"id": "detail-stability", "description": "Thin structures and high-frequency textures remain acceptably stable between source frames."},
-        {"id": "source-integrity", "description": "Direct inspection confirms that original source samples have not been visibly altered."}
+        {"id": "new-motion", "description": "The additional samples contain coherent newly generated motion rather than duplicate-frame cadence."},
+        {"id": "anchor-drift", "description": "Appearance and geometry remain acceptably stable near preserved source-token anchors."},
+        {"id": "motion-continuity", "description": "Velocity and acceleration do not show objectionable pulses, reversals, stalls, or ghost trails."},
+        {"id": "occlusion-quality", "description": "Revealed and hidden regions remain coherent across generated token intervals."}
       ],
       "promotion": {"minimum_successful_runs": 2, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
     },
@@ -193,21 +193,21 @@
       "promotion": {"minimum_successful_runs": 1, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
     },
     {
-      "operation": "restore.video",
-      "operation_version": 2,
-      "variants": ["seedvr2-3b-nvfp4"],
+      "operation": "regenerate.spatial",
+      "operation_version": 1,
+      "variants": ["latent-second-pass", "pixel-vae-second-pass", "tiled-pixel-vae"],
       "technical_checks": [
-        {"id": "native-source-lock", "description": "The graph uses the locked official ComfyUI SeedVR2 node contracts and declared 3B NVFP4/VAE files."},
-        {"id": "clock-preservation", "description": "Restored frame count and frame rate are exactly identical to the decoded source."},
-        {"id": "geometry", "description": "Requested scale and resulting even output geometry are recorded without an implicit crop."},
-        {"id": "chunk-lineage", "description": "Temporal chunk mode, effective overlap, runtime, and peak VRAM are retained with the run."},
-        {"id": "artifact-lineage", "description": "The receipt resolves source hash, model files, graph, parameters, runtime manifest, and saved restored video."}
+        {"id": "same-h3", "description": "The second pass uses the same locked H3 checkpoint and H3 VAE without an auxiliary learned upscaler."},
+        {"id": "clock-preservation", "description": "Frame count and 24 fps clock are exactly unchanged."},
+        {"id": "geometry", "description": "Target width and height match the declared 32-pixel-aligned geometry."},
+        {"id": "audio-pin", "description": "Structural-audio denoise remains zero throughout spatial regeneration."},
+        {"id": "artifact-lineage", "description": "The receipt resolves source native state, initial-state method, denoise, graph, output video, and retained native state."}
       ],
       "visual_checks": [
-        {"id": "detail-gain", "description": "The restoration produces useful spatial definition beyond the resized control."},
-        {"id": "temporal-stability", "description": "Restored texture does not shimmer, boil, or change discontinuously across frames."},
-        {"id": "texture-honesty", "description": "Invented detail remains acceptable and does not materially alter important forms."},
-        {"id": "color-and-boundaries", "description": "Color correction and temporal chunk joins introduce no objectionable shift or seam."}
+        {"id": "detail-gain", "description": "The H3 pass creates useful definition beyond a deterministic resize control."},
+        {"id": "temporal-stability", "description": "New texture does not shimmer, boil, crawl, or change discontinuously across frames."},
+        {"id": "identity-drift", "description": "Important forms, composition, appearance, and gesture timing remain acceptable."},
+        {"id": "tile-seams", "description": "The tiled variant contains no unacceptable overlap seam; this check is not applicable to full-frame variants."}
       ],
       "promotion": {"minimum_successful_runs": 2, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
     }

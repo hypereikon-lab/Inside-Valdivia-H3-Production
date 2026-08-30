@@ -34,6 +34,12 @@ def is_h3_frame_count(value: Any) -> bool:
     return isinstance(value, int) and value >= 5 and (value - 5) % 17 == 0
 
 
+def ceil_h3_frame_count(value: int) -> int:
+    resolved = max(5, int(value))
+    remainder = (resolved - 5) % 17
+    return resolved if remainder == 0 else resolved + 17 - remainder
+
+
 def is_h3_visual_boundary(value: Any) -> bool:
     """Return whether a local pixel-frame boundary maps to whole H3 tokens."""
 
@@ -390,6 +396,126 @@ def validate_experiment_catalog(
     return errors
 
 
+def validate_training_catalog(value: Any, path: Path, root: Path) -> list[str]:
+    if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.h3-training-catalog/1":
+        return [f"{path}: invalid H3 training catalog"]
+    errors: list[str] = []
+    source = value.get("source")
+    if not isinstance(source, dict):
+        errors.append(f"{path}: training source must be an object")
+    else:
+        if not isinstance(source.get("repository"), str) or not source["repository"]:
+            errors.append(f"{path}: training source repository is required")
+        if not isinstance(source.get("commit"), str) or not GIT_SHA.fullmatch(source["commit"]):
+            errors.append(f"{path}: training source commit must be a full Git SHA")
+        if not isinstance(source.get("observed_at"), str) or not source["observed_at"]:
+            errors.append(f"{path}: training source observation date is required")
+
+    hardware = value.get("hardware_target")
+    if not isinstance(hardware, dict):
+        errors.append(f"{path}: training hardware target must be an object")
+    else:
+        for key in ("vram_gb", "ram_gb", "maximum_free_disk_gb"):
+            if not isinstance(hardware.get(key), int) or hardware[key] <= 0:
+                errors.append(f"{path}: hardware {key} must be a positive integer")
+
+    entries = value.get("recipes")
+    if not isinstance(entries, list) or not entries:
+        return errors + [f"{path}: training recipes must be a non-empty list"]
+    ids: set[str] = set()
+    paths: set[Path] = set()
+    allowed_status = {"lab-gated", "requires-task-adapter", "validated", "rejected"}
+    required_recipe_fields = {
+        "schema",
+        "id",
+        "objective",
+        "status",
+        "model",
+        "adapter",
+        "upstream_baseline",
+        "dataset",
+        "hardware_gate",
+        "evaluation",
+        "promotion",
+    }
+    for entry in entries:
+        if not isinstance(entry, dict) or set(entry) != {"id", "path", "status"}:
+            errors.append(f"{path}: malformed training recipe entry {entry!r}")
+            continue
+        recipe_id = entry.get("id")
+        if not isinstance(recipe_id, str) or not recipe_id:
+            errors.append(f"{path}: training recipe id is required")
+            continue
+        if recipe_id in ids:
+            errors.append(f"{path}: duplicate training recipe id {recipe_id!r}")
+        ids.add(recipe_id)
+        if entry.get("status") not in allowed_status:
+            errors.append(f"{path}: invalid training recipe status {entry.get('status')!r}")
+        raw_recipe_path = entry.get("path")
+        if not isinstance(raw_recipe_path, str) or not raw_recipe_path:
+            errors.append(f"{path}: recipe {recipe_id!r} needs a path")
+            continue
+        posix_path = PurePosixPath(raw_recipe_path)
+        if posix_path.is_absolute() or ".." in posix_path.parts:
+            errors.append(f"{path}: unsafe training recipe path {raw_recipe_path!r}")
+            continue
+        recipe_path = root.joinpath(*posix_path.parts).resolve()
+        if recipe_path in paths:
+            errors.append(f"{path}: duplicate training recipe path {raw_recipe_path!r}")
+        paths.add(recipe_path)
+        if not recipe_path.is_file():
+            errors.append(f"{path}: missing training recipe {raw_recipe_path!r}")
+            continue
+        recipe = load_json(recipe_path)
+        if not isinstance(recipe, dict) or recipe.get("schema") != "inside-valdivia.h3-training-recipe/1":
+            errors.append(f"{recipe_path}: invalid H3 training recipe")
+            continue
+        if set(recipe) != required_recipe_fields:
+            errors.append(f"{recipe_path}: training recipe fields do not match the schema")
+        if recipe.get("id") != recipe_id or recipe.get("status") != entry.get("status"):
+            errors.append(f"{recipe_path}: recipe id/status does not match the catalog")
+        model = recipe.get("model")
+        if not isinstance(model, dict) or model.get("full_finetune") is not False:
+            errors.append(f"{recipe_path}: full fine-tuning must remain disabled for the lab target")
+        adapter = recipe.get("adapter")
+        if not isinstance(adapter, dict) or adapter.get("method") != "LoRA":
+            errors.append(f"{recipe_path}: current training recipes must use LoRA")
+        else:
+            if adapter.get("rank") != 32:
+                errors.append(f"{recipe_path}: LoRA rank must match the pinned upstream baseline")
+            expected_modules = {
+                "attn.qkv_proj",
+                "attn.out_proj",
+                "mlp.fc1",
+                "mlp.fc2",
+            }
+            if set(adapter.get("target_modules", [])) != expected_modules:
+                errors.append(f"{recipe_path}: LoRA target modules differ from pinned upstream NF4 example")
+        baseline = recipe.get("upstream_baseline")
+        if not isinstance(baseline, dict):
+            errors.append(f"{recipe_path}: upstream baseline must be an object")
+        else:
+            if not is_h3_frame_count(baseline.get("frames")):
+                errors.append(f"{recipe_path}: training frame count must be legal for H3")
+            for dimension in ("height", "width"):
+                size = baseline.get(dimension)
+                if not isinstance(size, int) or size <= 0 or size % 32:
+                    errors.append(f"{recipe_path}: training {dimension} must be a positive multiple of 32")
+        gate = recipe.get("hardware_gate")
+        if not isinstance(gate, dict) or gate.get("full_finetune_allowed") is not False:
+            errors.append(f"{recipe_path}: hardware gate must reject full fine-tuning")
+        evaluation = recipe.get("evaluation")
+        if not isinstance(evaluation, dict) or not evaluation.get("controls") or not evaluation.get("measures"):
+            errors.append(f"{recipe_path}: training evaluation needs controls and measures")
+        promotion = recipe.get("promotion")
+        if not isinstance(promotion, dict) or not promotion.get("requires"):
+            errors.append(f"{recipe_path}: training promotion requirements are missing")
+    expected_paths = {item.resolve() for item in (root / "training" / "recipes").glob("*.json")}
+    if paths != expected_paths:
+        errors.append(f"{path}: training catalog and recipe directory differ")
+    return errors
+
+
 def validate_materialization_plan(
     value: Any, path: Path, registry: dict[str, dict[str, Any]]
 ) -> list[str]:
@@ -460,16 +586,8 @@ def _validate_canonical_bindings(value: dict[str, Any], path: Path) -> list[str]
         errors.append(f"{path}: canonical bindings require the exact artifact contract")
     else:
         expected_frame_rate: int | float = 24
-        if operation == "interpolate.frames":
-            source_fps = bindings.get("source_fps")
-            multiplier = bindings.get("multiplier")
-            if (
-                isinstance(source_fps, (int, float))
-                and not isinstance(source_fps, bool)
-                and isinstance(multiplier, int)
-                and not isinstance(multiplier, bool)
-            ):
-                expected_frame_rate = source_fps * multiplier
+        if operation == "densify.temporal":
+            expected_frame_rate = bindings.get("delivery_fps")
         if artifact.get("frame_rate") != expected_frame_rate:
             errors.append(
                 f"{path}: materialized artifact frame_rate must be "
@@ -481,11 +599,7 @@ def _validate_canonical_bindings(value: dict[str, Any], path: Path) -> list[str]
             errors.append(f"{path}: format and codec must remain auto before live pairing")
         if artifact.get("history_resolvable") is not True:
             errors.append(f"{path}: artifacts must be resolvable from prompt history")
-        expected_native_state = operation not in {
-            "frames.assemble",
-            "interpolate.frames",
-            "restore.video",
-        }
+        expected_native_state = operation != "frames.assemble"
         if artifact.get("retain_native_state") is not expected_native_state:
             errors.append(
                 f"{path}: retain_native_state must be {expected_native_state} "
@@ -762,111 +876,79 @@ def _validate_canonical_bindings(value: dict[str, Any], path: Path) -> list[str]
             errors.append(f"{path}: frame assembly must use 24 fps")
         if not isinstance(sources, list) or len(sources) < 2:
             errors.append(f"{path}: ordered concatenation requires at least two source ranges")
-    elif operation == "interpolate.frames":
-        source_frame_count = bindings.get("source_frame_count")
-        source_fps = bindings.get("source_fps")
-        multiplier = bindings.get("multiplier")
-        native_implementation = bindings.get("native_implementation")
-        model_source = bindings.get("model_source")
-        if source_frame_count is not None and (
-            not isinstance(source_frame_count, int)
-            or isinstance(source_frame_count, bool)
-            or source_frame_count < 2
-        ):
-            errors.append(f"{path}: source_frame_count must be null or an integer >= 2")
+    elif operation == "densify.temporal":
+        source_frames = bindings.get("source_frame_count")
+        factor = bindings.get("factor")
+        if not is_h3_frame_count(source_frames):
+            errors.append(f"{path}: temporal densification source must use a legal H3 length")
+        if not isinstance(factor, int) or isinstance(factor, bool) or factor not in {2, 3, 4}:
+            errors.append(f"{path}: temporal densification factor must be 2, 3, or 4")
+        if is_h3_frame_count(source_frames) and isinstance(factor, int):
+            delivery = (source_frames - 1) * factor + 1
+            target = ceil_h3_frame_count(delivery)
+            if bindings.get("delivery_frame_count") != delivery:
+                errors.append(f"{path}: delivery_frame_count does not match native token dilation")
+            if bindings.get("h3_target_frame_count") != target:
+                errors.append(f"{path}: H3 target must be the legal ceiling of delivery frames")
+            if bindings.get("delivery_fps") != 24 * factor:
+                errors.append(f"{path}: delivery_fps must equal 24*factor")
+            if not 124 <= target <= 362:
+                errors.append(f"{path}: first densification baseline must stay in H3's trained range")
+        if bindings.get("anchor_denoise") != 0.0 or bindings.get("gap_denoise") != 1.0:
+            errors.append(f"{path}: first densification baseline must preserve anchors and fully generate gaps")
+        if bindings.get("audio_denoise") != 1.0:
+            errors.append(f"{path}: structural audio must be regenerated for the joint target state")
+        if set(inputs) != {"source_native_av_latent"}:
+            errors.append(f"{path}: temporal densification requires one native AV source")
+    elif operation == "regenerate.spatial":
+        source_resolution = bindings.get("source_resolution")
+        target_resolution = bindings.get("target_resolution")
+        valid_resolutions = (
+            isinstance(source_resolution, list)
+            and isinstance(target_resolution, list)
+            and len(source_resolution) == len(target_resolution) == 2
+            and all(isinstance(item, int) and item > 0 for item in source_resolution + target_resolution)
+            and all(item % 32 == 0 for item in target_resolution)
+            and all(target >= source for target, source in zip(target_resolution, source_resolution))
+        )
+        if not valid_resolutions:
+            errors.append(f"{path}: spatial regeneration resolutions must enlarge on a 32-pixel target grid")
+        if not is_h3_frame_count(bindings.get("target_frames")):
+            errors.append(f"{path}: spatial regeneration must preserve a legal H3 duration")
+        values = bindings.get("characterization_values")
         if (
-            not isinstance(source_fps, (int, float))
-            or isinstance(source_fps, bool)
-            or source_fps <= 0
+            not isinstance(values, list)
+            or not values
+            or values != sorted(set(values))
+            or any(not isinstance(value, (int, float)) or not 0 < value <= 1 for value in values)
         ):
-            errors.append(f"{path}: source_fps must be positive")
-        if (
-            not isinstance(multiplier, int)
-            or isinstance(multiplier, bool)
-            or multiplier < 2
-        ):
-            errors.append(f"{path}: interpolation multiplier must be an integer >= 2")
-        expected_native_implementation = {
-            "repository": "https://github.com/Comfy-Org/ComfyUI",
-            "release": "v0.34.0",
-            "commit": "12d5279438bfefc058a269eae805ceab6047777f",
-        }
-        if native_implementation != expected_native_implementation:
-            errors.append(f"{path}: native interpolation implementation must remain locked")
-        if set(inputs) != {"source_video"}:
-            errors.append(f"{path}: frame interpolation requires exactly one source video")
-        expected_models = {
-            "rife-2x": {
-                "repository": "https://huggingface.co/Comfy-Org/frame_interpolation",
-                "revision": "9bca6366a22473ccee25602fa82b224d78413960",
-                "path": "frame_interpolation/rife_v4.26.safetensors",
-                "sha256": "151874592c877740e5db11522f4514df569eeafb0a0fcb2696f16e9e8d317c94",
-                "size_bytes": 22674688,
-                "license": "MIT",
-            },
-            "film-2x": {
-                "repository": "https://huggingface.co/Comfy-Org/frame_interpolation",
-                "revision": "9bca6366a22473ccee25602fa82b224d78413960",
-                "path": "frame_interpolation/film_net_fp16.safetensors",
-                "sha256": "f226e51375dc839d4b40e5c3d63da560dd1ea1c962364ec78f5adf2d05db05c0",
-                "size_bytes": 68882302,
-                "license": "Apache-2.0",
-            },
-        }
-        expected_model_names = {
-            "rife-2x": "rife_v4.26.safetensors",
-            "film-2x": "film_net_fp16.safetensors",
-        }.get(variant)
-        if variant in expected_models and model_source != expected_models[variant]:
-            errors.append(f"{path}: {variant} model source must remain content-addressed")
-        if expected_model_names is not None and bindings.get("model_name") != expected_model_names:
-            errors.append(f"{path}: {variant} must use the locked native model name")
-        if variant in {"rife-2x", "film-2x"} and multiplier != 2:
-            errors.append(f"{path}: {variant} must use multiplier=2")
-    elif operation == "restore.video" and variant == "seedvr2-3b-nvfp4":
-        model_files = bindings.get("model_files")
-        if model_files != {
-            "diffusion_model": "diffusion_models/seedvr2_3b_nvfp4.safetensors",
-            "vae": "vae/ema_vae_fp16.safetensors",
-        }:
-            errors.append(f"{path}: SeedVR2 model filenames must match the locked baseline")
-        if bindings.get("source_template") != {
-            "repository": "https://github.com/Comfy-Org/workflow_templates",
-            "commit": "d11b69157009227ad2a7d3a927a1eb68a3d5f281",
-            "path": "templates/utility_seedvr2_3b_int8_upscale_video.json",
-        }:
-            errors.append(f"{path}: SeedVR2 source template must remain version-locked")
-        if bindings.get("model_source") != {
-            "repository": "https://huggingface.co/Comfy-Org/SeedVR2",
-            "revision": "673340c8a66db62b84e4099def7d01d337ae12dc",
-            "license": "Apache-2.0",
-            "diffusion_model": {
-                "path": "diffusion_models/seedvr2_3b_nvfp4.safetensors",
-                "sha256": "c8dea38b04d43295621726e2cd371c0d2d001006169c113aea17950f2cb2e295",
-                "size_bytes": 1996687726,
-            },
-            "vae": {
-                "path": "vae/ema_vae_fp16.safetensors",
-                "sha256": "20678548f420d98d26f11442d3528f8b8c94e57ee046ef93dbb7633da8612ca1",
-                "size_bytes": 501324814,
-            },
-        }:
-            errors.append(f"{path}: SeedVR2 model source must remain content-addressed")
-        scale_multiplier = bindings.get("scale_multiplier")
-        if (
-            not isinstance(scale_multiplier, (int, float))
-            or isinstance(scale_multiplier, bool)
-            or scale_multiplier <= 1
-        ):
-            errors.append(f"{path}: restoration scale_multiplier must be greater than 1")
-        if bindings.get("chunking_mode") != "auto":
-            errors.append(f"{path}: initial SeedVR2 chunking must remain automatic")
-        if bindings.get("steps") != 1 or bindings.get("denoise") != 1.0:
-            errors.append(f"{path}: SeedVR2 baseline must use its native one-step schedule")
-        if bindings.get("color_correction_method") != "lab":
-            errors.append(f"{path}: SeedVR2 baseline must use lab color correction")
-        if set(inputs) != {"source_video"}:
-            errors.append(f"{path}: restoration requires exactly one source video")
+            errors.append(f"{path}: spatial denoise ladder must be unique, ordered, and inside (0,1]")
+        if bindings.get("video_denoise") is not None:
+            errors.append(f"{path}: spatial denoise must remain unbound before characterization")
+        if bindings.get("audio_denoise") != 0.0:
+            errors.append(f"{path}: spatial regeneration baseline must pin structural audio")
+        if set(inputs) != {"source_native_av_latent"}:
+            errors.append(f"{path}: spatial regeneration requires one native AV source")
+        if variant == "latent-second-pass" and bindings.get("resize_method") != "bicubic":
+            errors.append(f"{path}: latent baseline must start with bicubic spatial resize")
+        if variant in {"pixel-vae-second-pass", "tiled-pixel-vae"} and bindings.get(
+            "pixel_resize_method"
+        ) != "lanczos":
+            errors.append(f"{path}: pixel/VAE baseline must use the locked deterministic resize")
+        if variant == "tiled-pixel-vae":
+            tile = bindings.get("tile_resolution")
+            overlap = bindings.get("tile_overlap")
+            if (
+                not isinstance(tile, list)
+                or len(tile) != 2
+                or any(not isinstance(item, int) or item <= 0 or item % 32 for item in tile)
+                or not isinstance(overlap, int)
+                or overlap <= 0
+                or overlap >= min(tile)
+            ):
+                errors.append(f"{path}: tiled regeneration needs aligned tiles and bounded overlap")
+            if bindings.get("fusion_curve") != "smootherstep":
+                errors.append(f"{path}: tiled baseline must use smootherstep overlap fusion")
     return errors
 
 
@@ -1186,8 +1268,6 @@ def validate_runtime_requirements_catalog(value: Any, path: Path, root: Path) ->
     expected_profiles = {
         "h3-core",
         "h3-full",
-        "video-interpolation",
-        "seedvr2-restoration",
     }
     if set(loaded) != expected_profiles:
         errors.append(f"{path}: runtime profile set is incomplete")
@@ -1198,8 +1278,8 @@ def validate_runtime_requirements_catalog(value: Any, path: Path, root: Path) ->
         if not set(core.get(field, [])).issubset(set(full.get(field, []))):
             errors.append(f"{path}: h3-full must include every h3-core {field}")
     cauce_nodes = {name for name in core.get("required_node_types", []) if name.startswith("Cauce")}
-    if len(cauce_nodes) != 23:
-        errors.append(f"{path}: h3-core must require all 23 locked CAUCE nodes")
+    if len(cauce_nodes) != 24:
+        errors.append(f"{path}: h3-core must require all 24 locked CAUCE nodes")
     return errors
 
 
@@ -1230,8 +1310,6 @@ def validate_live_gate(
     expected_runtime_profiles = {
         "core": "runtime/requirements/h3-core.json",
         "full": "runtime/requirements/h3-full.json",
-        "video-interpolation": "runtime/requirements/video-interpolation.json",
-        "seedvr2-restoration": "runtime/requirements/seedvr2-restoration.json",
     }
     if not isinstance(runtime_profiles, dict) or set(runtime_profiles) != set(
         expected_runtime_profiles
@@ -1273,8 +1351,8 @@ def validate_live_gate(
         "dependent-variants": "full",
         "native-masked-editing-and-outpaint": "full",
         "bounded-refinement-characterization": "full",
-        "decoded-frame-interpolation": "video-interpolation",
-        "spatial-temporal-restoration": "seedvr2-restoration",
+        "native-temporal-densification": "full",
+        "native-spatial-regeneration": "full",
     }
     for phase in phases:
         if not isinstance(phase, dict) or set(phase) != {"id", "runtime_profile", "topology_keys"}:
@@ -1759,6 +1837,8 @@ def validate_repository(root: Path = ROOT) -> list[str]:
         errors.extend(validate_segment(load_json(path), path, invocation_ids))
     catalog_path = root / "experiments" / "catalog.json"
     errors.extend(validate_experiment_catalog(load_json(catalog_path), catalog_path, registry))
+    training_path = root / "training" / "catalog.json"
+    errors.extend(validate_training_catalog(load_json(training_path), training_path, root))
     materialization_path = root / "materialization" / "catalog.json"
     materialization_catalog = load_json(materialization_path)
     errors.extend(
@@ -1857,7 +1937,7 @@ def main() -> int:
     print(
         "validated: operation/archetype/compatibility locks, project invocations, "
         "materialization plans, runtime gates, acceptance evidence, storage, rolling "
-        "plans, media, experiments, fixtures, and schemas"
+        "plans, media, experiments, H3 training recipes, fixtures, and schemas"
     )
     return 0
 

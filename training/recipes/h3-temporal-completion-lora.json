@@ -1,0 +1,88 @@
+{
+  "schema": "inside-valdivia.h3-training-recipe/1",
+  "id": "h3-temporal-completion-lora",
+  "objective": "Adapt H3 to reconstruct dense motion from the same sparse native temporal distributions used by densify.temporal while preserving known visual anchors on both sides of every gap.",
+  "status": "requires-task-adapter",
+  "model": {
+    "family": "MiniMax H3",
+    "partition": "FL2VA",
+    "base": "DiffSynth-Studio/MiniMax-H3-NF4",
+    "trainable_component": "dit",
+    "full_finetune": false
+  },
+  "adapter": {
+    "method": "LoRA",
+    "rank": 32,
+    "target_modules": [
+      "attn.qkv_proj",
+      "attn.out_proj",
+      "mlp.fc1",
+      "mlp.fc2"
+    ],
+    "gradient_checkpointing": true,
+    "required_task_code": [
+      "derive a sparse retake video or native visual state from each dense target",
+      "inject retake_video and exact frame_regions_to_retake or equivalent native denoise masks into training inputs",
+      "preserve H3 17n+5 temporal legality and causal-VAE clip grouping",
+      "verify that known-token state is conditioned rather than included as a second noisy target",
+      "record the generated mask distribution in every sample manifest"
+    ]
+  },
+  "upstream_baseline": {
+    "script": "examples/minimax_h3/model_training/train.py",
+    "learning_rate": 0.0001,
+    "epochs": 5,
+    "height": 480,
+    "width": 832,
+    "frames": 124,
+    "note": "DiffSynth exposes H3 Retake for inference and LoRA SFT separately, but does not publish a Retake training recipe; this project recipe is therefore not executable until its task adapter is implemented and tested."
+  },
+  "dataset": {
+    "target": "dense clean 24 fps video on a legal 17n+5 H3 frame count",
+    "conditioning": "a deterministic sparse version whose retained anchors exactly reproduce a declared CAUCE temporal-dilation profile",
+    "mask_families": [
+      "factor-2 alternating native-token gaps",
+      "bounded contiguous interior gaps",
+      "one-sided prefix and suffix gaps"
+    ],
+    "split_policy": "split by source scene before producing sparse variants",
+    "audio_policy": "do not optimize a production audio objective; keep the structural audio branch controlled and discard generated audio"
+  },
+  "hardware_gate": {
+    "required_before_training": [
+      "unit-test the task adapter against current DiffSynth packed H3 shapes",
+      "overfit a two-sample fixture without anchor drift",
+      "measure one NF4 forward and backward pass at 480x832x124",
+      "record peak VRAM, host RAM, caches, checkpoints, and free disk",
+      "retain at least 25 GB free disk after the projected run"
+    ],
+    "full_finetune_allowed": false
+  },
+  "evaluation": {
+    "controls": [
+      "base H3 densify.temporal without the adapter",
+      "decoded frame duplication at the same delivery fps",
+      "base H3 bounded temporal retake"
+    ],
+    "measures": [
+      "known-anchor drift",
+      "motion interpolation quality",
+      "occlusion and disocclusion quality",
+      "jerk discontinuity",
+      "temporal ghosting",
+      "runtime",
+      "peak VRAM",
+      "disk delta"
+    ]
+  },
+  "promotion": {
+    "requires": [
+      "reviewed task-adapter code",
+      "reproducible dataset and mask manifests",
+      "pinned training commit and command receipt",
+      "held-out comparison against every control",
+      "ComfyUI adapter loading confirmed on the locked H3 runtime",
+      "explicit visual acceptance"
+    ]
+  }
+}

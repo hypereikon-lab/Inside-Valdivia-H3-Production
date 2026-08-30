@@ -1,15 +1,13 @@
 {
   "schema": "inside-valdivia.live-materialization-gate/1",
   "source_locks": {
-    "cauce_commit": "fc64df6c13f9de17abc44637453bd2c0629f755f",
+    "cauce_commit": "3aa28eb070d63520a5d6ef0a3c662229e708c90e",
     "runtime_commit": "37ac10f762dc6bcf229e0e26d21ef96a67a018dd",
     "workspace_commit": "2f9174e61ae911c1573a26b64e5ee4aa80527b0e"
   },
   "runtime_profiles": {
     "core": "runtime/requirements/h3-core.json",
-    "full": "runtime/requirements/h3-full.json",
-    "video-interpolation": "runtime/requirements/video-interpolation.json",
-    "seedvr2-restoration": "runtime/requirements/seedvr2-restoration.json"
+    "full": "runtime/requirements/h3-full.json"
   },
   "workspace_gate": {
     "required_diagnostic_schema": "comfy.workspace-diagnostic/1",
@@ -94,18 +92,19 @@
       ]
     },
     {
-      "id": "decoded-frame-interpolation",
-      "runtime_profile": "video-interpolation",
+      "id": "native-temporal-densification",
+      "runtime_profile": "full",
       "topology_keys": [
-        "interpolate.frames@rife-2x",
-        "interpolate.frames@film-2x"
+        "densify.temporal@token-inpaint"
       ]
     },
     {
-      "id": "spatial-temporal-restoration",
-      "runtime_profile": "seedvr2-restoration",
+      "id": "native-spatial-regeneration",
+      "runtime_profile": "full",
       "topology_keys": [
-        "restore.video@seedvr2-3b-nvfp4"
+        "regenerate.spatial@latent-second-pass",
+        "regenerate.spatial@pixel-vae-second-pass",
+        "regenerate.spatial@tiled-pixel-vae"
       ]
     }
   ]

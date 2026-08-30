@@ -17,9 +17,9 @@ official ComfyUI H3 nodes
   model conditioning, sampling, decoding
 
 ComfyUI-Cauce
-  23 deterministic low-level nodes
+  24 deterministic low-level nodes
   12 typed operation contracts
-  31 checked topology dossiers grouped into 27 graph archetypes
+  32 checked topology dossiers grouped into 29 graph archetypes
 
 ComfyUI-Runtime-Control
   HTTP/runtime validation, prompt execution, receipts, durable serial resume
@@ -28,7 +28,7 @@ ComfyUI-Workspace-Control
   paired UI/API export and guarded browser-workspace operations
 
 this repository
-  exact operation/archetype/component locks, 31 offline binding profiles, project data,
+  exact operation/archetype/component locks, 32 offline binding profiles, project data,
   runtime readiness profiles, acceptance criteria, storage policy,
   experiments, rolling dependency/checkpoint plans
 ```
@@ -39,9 +39,8 @@ The catalog is a capability grammar, not a production pipeline:
 
 ```text
 H3 conditioning grammar     keyframed / references / guides
-native H3 AV state algebra  continue / complete / masked edit / refine / outpaint / rollback
+native H3 AV state algebra  continue / complete / densify / edit / refine / regenerate / outpaint / rollback
 decoded media algebra       exact frame assembly
-decoded video enhancement   RIFE/FILM interpolation / SeedVR2 restoration
 ```
 
 ```text
@@ -50,17 +49,17 @@ generate.from_references
 generate.with_guides
 continue.native_av
 complete.native_av
+densify.temporal
 edit.masked_video
 refine.video
+regenerate.spatial
 reframe.outpaint_video
 rollback.native_av
 frames.assemble
-interpolate.frames
-restore.video
 ```
 
-Operations are independent typed functions, not workflow stages. Their 31
-variants resolve through [`archetypes.lock.json`](archetypes.lock.json) to 27
+Operations are independent typed functions, not workflow stages. Their 32
+variants resolve through [`archetypes.lock.json`](archetypes.lock.json) to 29
 structurally distinct graphs, then to project binding profiles cataloged in
 [`materialization/catalog.json`](materialization/catalog.json). A topology
 dossier is a checked design, not executable workflow JSON. Each variant becomes
@@ -91,6 +90,7 @@ next required compatibility target.
 - [Materialization](docs/MATERIALIZATION.md)
 - [Data model](docs/DATA_MODEL.md)
 - [Experiments](docs/EXPERIMENTS.md)
+- [H3 LoRA and fine-tuning boundary](docs/TRAINING.md)
 - [Live laboratory gate](docs/LIVE_GATE.md)
 - [Acceptance](docs/ACCEPTANCE.md)
 - [Storage safety](docs/STORAGE.md)

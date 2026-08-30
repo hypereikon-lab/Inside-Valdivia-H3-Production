@@ -1,0 +1,42 @@
+{
+  "schema": "inside-valdivia.materialization-plan/1",
+  "operation": "densify.temporal",
+  "operation_version": 1,
+  "operation_contract_hash": "3e2caf680c4ba5f2b422c6b17174b917f2843027e788ebcf90df591358aa1346",
+  "variant": "token-inpaint",
+  "topology_key": "densify.temporal@token-inpaint",
+  "priority": 29,
+  "status": "offline-ready",
+  "runtime_manifest_hash": null,
+  "sources": { "workspace_export": null, "parameterization": null, "runtime_manifest": null, "operation_ref": null },
+  "bindings": {
+    "model_variant": "FL2VA",
+    "model_files": {
+      "diffusion_model": "diffusion_models/minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+      "text_encoder": "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "video_vae": "vae/minimax_h3_video_vae_fp16.safetensors"
+    },
+    "resolution": [768, 1344],
+    "source_frame_count": 124,
+    "factor": 2,
+    "delivery_frame_count": 247,
+    "h3_target_frame_count": 260,
+    "delivery_fps": 48,
+    "anchor_denoise": 0.0,
+    "gap_denoise": 1.0,
+    "feather_tokens": 1,
+    "curve": "smootherstep",
+    "audio_denoise": 1.0,
+    "prompt": null,
+    "seed": null,
+    "sampler": null,
+    "scheduler": null,
+    "steps": null,
+    "video_shift": null,
+    "audio_shift": null,
+    "artifact": { "frame_rate": 48, "filename_prefix": null, "format": "auto", "codec": "auto", "history_resolvable": true, "retain_native_state": true },
+    "inputs": { "source_native_av_latent": null }
+  },
+  "outputs": { "ui_graph": null, "api_template": null, "bindings": null, "materialization_manifest": null, "ui_graph_hash": null, "api_template_hash": null, "bindings_hash": null },
+  "validation": { "schema_status": "pending", "missing_node_types": [], "notes": ["Generate missing native H3 visual tokens bidirectionally; crop 13 legal-lattice padding frames and deliver the 247 accepted frames at 48 fps."] }
+}

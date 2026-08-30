@@ -1,0 +1,26 @@
+{
+  "schema": "inside-valdivia.h3-training-catalog/1",
+  "source": {
+    "repository": "https://github.com/modelscope/DiffSynth-Studio",
+    "commit": "102fe9980b9375ecb6436d360297a00327472535",
+    "observed_at": "2026-08-30"
+  },
+  "hardware_target": {
+    "gpu": "NVIDIA RTX 5090",
+    "vram_gb": 32,
+    "ram_gb": 64,
+    "maximum_free_disk_gb": 120
+  },
+  "recipes": [
+    {
+      "id": "h3-spatial-regeneration-lora",
+      "path": "training/recipes/h3-spatial-regeneration-lora.json",
+      "status": "lab-gated"
+    },
+    {
+      "id": "h3-temporal-completion-lora",
+      "path": "training/recipes/h3-temporal-completion-lora.json",
+      "status": "requires-task-adapter"
+    }
+  ]
+}

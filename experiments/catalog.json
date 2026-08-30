@@ -110,33 +110,33 @@
       "status": "planned"
     },
     {
-      "id": "decoded-interpolation-model",
-      "operations": [{ "id": "interpolate.frames", "version": 2 }],
-      "question": "For the same accepted 24 fps H3 shot, which 2x decoded interpolator best preserves source samples while synthesizing usable intermediate motion?",
-      "fixed": ["source video", "source frame count", "source fps=24", "multiplier=2", "output fps=48", "codec"],
-      "variable": { "variant": ["rife-2x", "film-2x"] },
-      "measure": ["exact output frame count", "source-frame preservation", "occlusion artifacts", "thin-detail stability", "zoom continuity", "runtime_seconds", "peak_vram"],
+      "id": "h3-native-temporal-densification",
+      "operations": [{ "id": "densify.temporal", "version": 1 }],
+      "question": "Can native H3 visual-token inpainting create useful additional motion samples while the multiplied delivery clock preserves editorial duration?",
+      "fixed": ["source native AV state", "factor=2", "resolution", "prompt", "seed", "sampler", "scheduler", "steps", "anchor_denoise=0", "gap_denoise=1"],
+      "variable": { "feather_tokens": [1, 2, 3] },
+      "measure": ["exact output frame count and fps", "new-motion evidence", "anchor drift", "jerk discontinuity", "occlusion quality", "runtime_seconds", "peak_vram"],
       "status": "planned"
     },
     {
-      "id": "seedvr2-restoration-scale",
-      "operations": [{ "id": "restore.video", "version": 2 }],
-      "question": "At what conservative SeedVR2 scale does useful spatial detail appear before texture invention, temporal shimmer, or runtime becomes unacceptable?",
-      "fixed": ["source video", "source frame count", "source fps=24", "3B NVFP4 model", "VAE", "steps=1", "cfg=1", "euler/simple", "denoise=1", "auto chunking", "lab color correction", "seed"],
-      "variable": { "scale_multiplier": [1.25, 1.5, 2.0] },
-      "measure": ["unchanged frame count and fps", "detail gain", "texture invention", "temporal shimmer", "color drift", "chunk-boundary artifact", "runtime_seconds", "peak_vram"],
+      "id": "h3-native-spatial-regeneration",
+      "operations": [{ "id": "regenerate.spatial", "version": 1 }],
+      "question": "Which H3-native initial state yields useful spatial detail with the lowest temporal and semantic drift?",
+      "fixed": ["source native AV state", "target geometry", "same H3 checkpoint", "same H3 VAE", "prompt", "seed", "sampler", "scheduler", "steps", "audio_denoise=0"],
+      "variable": { "variant_and_denoise": ["latent:0.15", "latent:0.25", "latent:0.35", "pixel-vae:0.15", "pixel-vae:0.25", "pixel-vae:0.35"] },
+      "measure": ["unchanged frame count and fps", "detail gain over resize control", "temporal shimmer", "identity drift", "runtime_seconds", "peak_vram"],
       "status": "planned"
     },
     {
-      "id": "enhancement-order",
+      "id": "h3-native-enhancement-order",
       "operations": [
-        { "id": "restore.video", "version": 2 },
-        { "id": "interpolate.frames", "version": 2 }
+        { "id": "regenerate.spatial", "version": 1 },
+        { "id": "densify.temporal", "version": 1 }
       ],
-      "question": "Does restoring at 24 fps before RIFE 2x give a better quality/compute tradeoff than interpolating first and restoring almost twice as many frames?",
-      "fixed": ["source video", "SeedVR2 accepted scale and model", "RIFE accepted settings", "final spatial geometry", "final fps=48", "codec"],
-      "variable": { "operation_order": ["restore.video -> interpolate.frames", "interpolate.frames -> restore.video"] },
-      "measure": ["exact final frame count and fps", "detail stability", "interpolation artifacts", "temporal shimmer", "runtime_seconds", "peak_vram", "output size"],
+      "question": "Should H3 create additional motion before or after its same-model spatial regeneration pass?",
+      "fixed": ["source native AV state", "factor=2", "accepted spatial variant and denoise", "final geometry", "final fps=48", "prompt", "seed", "sampler", "scheduler", "steps"],
+      "variable": { "operation_order": ["densify.temporal -> regenerate.spatial", "regenerate.spatial -> densify.temporal"] },
+      "measure": ["exact final frame count and fps", "detail stability", "new-motion quality", "anchor drift", "temporal shimmer", "runtime_seconds", "peak_vram"],
       "status": "planned"
     },
     {

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hypereikon.online/schemas/h3-training-recipe-1.json",
+  "type": "object",
+  "required": ["schema", "id", "objective", "status", "model", "adapter", "upstream_baseline", "dataset", "hardware_gate", "evaluation", "promotion"],
+  "properties": {
+    "schema": { "const": "inside-valdivia.h3-training-recipe/1" },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]+$" },
+    "objective": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["lab-gated", "requires-task-adapter", "validated", "rejected"] },
+    "model": { "type": "object" },
+    "adapter": { "type": "object" },
+    "upstream_baseline": { "type": "object" },
+    "dataset": { "type": "object" },
+    "hardware_gate": { "type": "object" },
+    "evaluation": { "type": "object" },
+    "promotion": { "type": "object" }
+  },
+  "additionalProperties": false
+}

@@ -261,7 +261,9 @@ because it exists.
 The canonical suite does not include:
 
 - generated-audio design, audio prompting or audio delivery;
-- training, style LoRAs or identity LoRAs;
+- trained adapters, style LoRAs, identity LoRAs, or full fine-tuning as present
+  production capabilities; two explicitly gated H3 enhancement-LoRA research
+  recipes are retained separately in [`TRAINING.md`](TRAINING.md);
 - acceleration, streaming or step-skipping as production goals;
 - procedural latent warps, sigma transport, depth advection or other failed
   sampler-forcing experiments;

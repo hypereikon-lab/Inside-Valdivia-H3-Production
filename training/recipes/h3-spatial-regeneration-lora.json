@@ -1,0 +1,79 @@
+{
+  "schema": "inside-valdivia.h3-training-recipe/1",
+  "id": "h3-spatial-regeneration-lora",
+  "objective": "Adapt the H3 Ref2VA partition to regenerate a high-quality target video from a deterministically degraded and resized copy of that same video supplied as an ordered video reference.",
+  "status": "lab-gated",
+  "model": {
+    "family": "MiniMax H3",
+    "partition": "Ref2VA",
+    "base": "DiffSynth-Studio/MiniMax-H3-NF4",
+    "trainable_component": "dit",
+    "full_finetune": false
+  },
+  "adapter": {
+    "method": "LoRA",
+    "rank": 32,
+    "target_modules": [
+      "attn.qkv_proj",
+      "attn.out_proj",
+      "mlp.fc1",
+      "mlp.fc2"
+    ],
+    "gradient_checkpointing": true
+  },
+  "upstream_baseline": {
+    "script": "examples/minimax_h3/model_training/lora/MiniMax-H3-NF4-Ref2VA.sh",
+    "learning_rate": 0.0001,
+    "epochs": 5,
+    "height": 480,
+    "width": 832,
+    "frames": 124,
+    "note": "These are upstream smoke-test defaults, not accepted project hyperparameters."
+  },
+  "dataset": {
+    "target": "clean high-quality 24 fps video on a legal 17n+5 H3 frame count",
+    "conditioning": "the same clip after deterministic spatial degradation, resized to the target canvas and supplied as a Ref2VA video reference",
+    "degradation_families": [
+      "downsample-resample",
+      "compression",
+      "blur",
+      "sensor-noise"
+    ],
+    "split_policy": "split by source scene before generating degradation variants",
+    "audio_policy": "no generated audio is a project deliverable; use a controlled silent training track only when the upstream joint-AV loader requires one"
+  },
+  "hardware_gate": {
+    "required_before_training": [
+      "measure one NF4 forward and backward pass at 480x832x124",
+      "record peak VRAM and host RAM",
+      "measure model, optimizer, cache, and checkpoint disk deltas",
+      "retain at least 25 GB free disk after the projected run"
+    ],
+    "full_finetune_allowed": false
+  },
+  "evaluation": {
+    "controls": [
+      "deterministic Lanczos resize",
+      "base H3 Ref2VA without the adapter",
+      "base H3 latent second pass"
+    ],
+    "measures": [
+      "recoverable high-frequency detail",
+      "temporal shimmer",
+      "identity and geometry drift",
+      "motion timing drift",
+      "runtime",
+      "peak VRAM",
+      "disk delta"
+    ]
+  },
+  "promotion": {
+    "requires": [
+      "reproducible dataset manifest",
+      "pinned training commit and command receipt",
+      "held-out comparison against every control",
+      "ComfyUI adapter loading confirmed on the locked H3 runtime",
+      "explicit visual acceptance"
+    ]
+  }
+}

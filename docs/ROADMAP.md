@@ -83,16 +83,18 @@ After those mechanisms execute, establish the new native editing surface:
 5. `refine.video@full-frame` as a one-variable strength ladder, followed by
    `refine.video@masked` only if the full-frame pass shows useful behavior.
 
-Then materialize decoded enhancement independently of native H3 state:
+Then materialize H3-native enhancement over retained native state:
 
-1. `interpolate.frames@rife-2x` as the exact 24 to 48 fps default;
-2. `interpolate.frames@film-2x` as the same-source large-motion comparison;
-3. `restore.video@seedvr2-3b-nvfp4` with automatic chunking and a short source;
-4. only after separate acceptance, characterize SeedVR2 to RIFE against the
-   reverse order.
+1. `densify.temporal@token-inpaint` at 2x on one 124-frame native source;
+2. `regenerate.spatial@latent-second-pass` as a fixed-seed denoise ladder;
+3. `regenerate.spatial@pixel-vae-second-pass` on the same source and geometry;
+4. tiled regeneration only if the full-frame target exceeds the measured VRAM
+   envelope and after overlap fusion is materialized from live node contracts;
+5. only after separate acceptance, compare temporal→spatial with the reverse
+   operation order.
 
 The remaining variants are retained and materialized after their underlying
-mechanism earns baseline evidence. All 31 offline plans already exist; this
+mechanism earns baseline evidence. All 32 offline plans already exist; this
 order controls evidence dependencies, not catalog importance or permanence.
 It is duplicated as machine-validated phase data in the live gate so catalog
 priority cannot be mistaken for execution order.
@@ -113,8 +115,8 @@ Run the sixteen declared controlled comparisons one variable at a time. Prioriti
 endpoint behavior, reference-video correspondence, AddGuide placement,
 keyframe versus native-mask overlap, mask boundary/fade behavior, and
 future-guide interaction, then masked-edit edge profiles, exact outpaint
-placement, native refinement strength, RIFE/FILM interpolation, SeedVR2 scale,
-enhancement order, and sparse-guide H3 retiming.
+placement, native refinement strength, native token densification, H3 spatial
+regeneration method/strength, enhancement order, and sparse-guide H3 retiming.
 
 For temporal completion, verify technical preservation before judging the
 image: confirm exact unknown range, unchanged tokens outside it, independent
