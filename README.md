@@ -82,6 +82,7 @@ next required compatibility target.
 
 - [Project model](docs/PROJECT_MODEL.md)
 - [Current state](docs/CURRENT_STATE.md)
+- [Current H3 capability map and workflow rebuild](docs/H3_CAPABILITY_MAP.md)
 - [Operations](docs/OPERATIONS.md)
 - [Materialization](docs/MATERIALIZATION.md)
 - [Data model](docs/DATA_MODEL.md)

@@ -8,6 +8,14 @@ changes, not inferred from workflow screenshots:
 - [Official ComfyUI video load/create/save nodes](https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_video.py)
 - [ComfyUI PR #15439: MiniMax H3 AddGuide](https://github.com/Comfy-Org/ComfyUI/pull/15439)
 - [ComfyUI PR #15375: continuous per-token denoise masks](https://github.com/Comfy-Org/ComfyUI/pull/15375)
+- [ComfyUI PR #15697: MiniMax H3 prompt embeddings](https://github.com/Comfy-Org/ComfyUI/pull/15697)
+- [ComfyUI PR #15908: MiniMax H3 PDD LoRA support](https://github.com/Comfy-Org/ComfyUI/pull/15908)
+- [ComfyUI PR #15735: proposed native H3 AV latent builder](https://github.com/Comfy-Org/ComfyUI/pull/15735)
+- [ComfyUI PR #15860: proposed H3 Fun ControlNet support](https://github.com/Comfy-Org/ComfyUI/pull/15860)
+- [ComfyUI PR #15975: proposed H3 ControlNet model-patch path](https://github.com/Comfy-Org/ComfyUI/pull/15975)
+- [Official ComfyUI H3 workflow templates](https://github.com/Comfy-Org/workflow_templates/tree/main/templates)
+- [MiniMax H3 community-maintained integration index](https://github.com/MiniMax-AI/awesome-minimax-h3-integration)
+- [Alibaba PAI MiniMax H3 Fun ControlNet Union](https://huggingface.co/alibaba-pai/MiniMax-H3-Fun-Controlnet-Union)
 - [ComfyUI v0.34.0 release](https://github.com/Comfy-Org/ComfyUI/releases/tag/v0.34.0)
 - [ComfyUI frontend v1.53.2 release](https://github.com/Comfy-Org/ComfyUI_frontend/releases/tag/v1.53.2)
 - [Official H3 mask projection and preserved-state injection](https://github.com/Comfy-Org/ComfyUI/blob/master/comfy/model_base.py)
@@ -39,9 +47,14 @@ remain isolated experiments, not dependencies of the current 20-node CAUCE
 surface. The still-draft H3 Fun ControlNet integration is likewise deferred;
 neither is represented as an implemented production operation.
 
-The official source was rechecked on 2026-08-26. The current H3 surface exposes
+The official source was rechecked on 2026-08-30. The released H3 surface exposes
 `MiniMaxH3ImageToVideo`, `MiniMaxH3ReferenceToVideo`, `MiniMaxH3AddGuide`, and
 `MiniMaxH3SigmaShift`; the core video path exposes `LoadVideo`, `CreateVideo`,
-and `SaveVideo`. These upstream observations inform readiness requirements but
-do not prove that the laboratory is on the same commit. Live `/object_info`
-remains authoritative.
+and `SaveVideo`. ComfyUI `v0.34.0` is pinned at commit
+`12d5279438bfefc058a269eae805ceab6047777f`; the 2026-08-30 source observation
+used master commit `8a33128f2f8c5585c57486c07de481241e70a39c` only to watch unreleased work.
+These upstream observations inform readiness requirements but do not prove
+that the laboratory is on the same commit. Live `/object_info` remains
+authoritative. See [H3 capability map](H3_CAPABILITY_MAP.md) for the native-first
+workflow rebuild and the exact boundary between released, project, pending and
+excluded mechanisms.

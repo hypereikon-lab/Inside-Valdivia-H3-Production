@@ -1,8 +1,10 @@
 # Production roadmap
 
-The offline implementation surface is complete for the present scope. The
-remaining gates convert checked contracts into live, reproducible and visually
-assessed workflows.
+The next deliverable is a rebuilt native-first workflow suite. Historical
+example graphs are evidence and source material, not restoration targets. The
+remaining gates convert the current official H3 surface plus the smallest
+necessary CAUCE state primitives into live, reproducible and visually assessed
+workflows. See [H3 capability map](H3_CAPABILITY_MAP.md).
 
 ## Completion rule
 
@@ -39,8 +41,9 @@ ordering live in `materialization/live-gate.json`; see [Live gate](LIVE_GATE.md)
 
 ## 1. Materialize the operational core
 
-Construct and export one active graph at a time. Establish the official
-conditioning baselines first:
+Construct and export one active graph at a time. Begin from released official
+templates or the smallest live official graph; do not begin from a historical
+CAUCE example. Establish the official conditioning baselines first:
 
 1. `generate.keyframed@text-only` as the prompt-only control;
 2. `generate.keyframed@first-frame`;
@@ -50,6 +53,16 @@ conditioning baselines first:
 6. `generate.from_references@video-reference`;
 7. `generate.with_guides@single-anchor`;
 8. `generate.with_guides@guide-clip`.
+
+Add two compositions that are now clearly native-first:
+
+1. Ref2VA image/video references followed by an official interior AddGuide;
+2. two official guide clips around a newly generated bridge window.
+
+Only after those execute should an exact native-state counterpart be built.
+This produces a controlled comparison between simple released conditioning and
+CAUCE state transport instead of assuming that the more elaborate graph is
+better.
 
 Then establish the native-state and deterministic baselines:
 
