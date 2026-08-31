@@ -3,7 +3,7 @@
   "profiles": [
     {
       "operation": "complete.native_av",
-      "operation_version": 1,
+      "operation_version": 2,
       "variants": ["backward-prefix", "local-replacement", "two-sided-infill", "two-source-connection"],
       "technical_checks": [
         {"id": "target-layout", "description": "The target frame count, video-token layout, audio-token layout, and absolute origin match the checked plan."},
@@ -22,7 +22,7 @@
     },
     {
       "operation": "continue.native_av",
-      "operation_version": 2,
+      "operation_version": 3,
       "variants": ["keyframe-overlap", "masked-overlap", "masked-overlap-future-guide"],
       "technical_checks": [
         {"id": "absolute-window", "description": "The overlap and suffix use one globally aligned H3 AV timeline."},
@@ -39,7 +39,7 @@
     },
     {
       "operation": "edit.masked_video",
-      "operation_version": 1,
+      "operation_version": 2,
       "variants": ["animated-spatiotemporal", "local-retake", "static-spatial"],
       "technical_checks": [
         {"id": "mask-cardinality", "description": "The mask is either one static image or exactly one continuous mask per selected decoded frame, as declared by the variant."},
@@ -72,7 +72,7 @@
     },
     {
       "operation": "densify.temporal",
-      "operation_version": 1,
+      "operation_version": 2,
       "variants": ["token-inpaint"],
       "technical_checks": [
         {"id": "native-source", "description": "The source is a validated packed H3 AV state, not only a decoded video."},
@@ -91,7 +91,7 @@
     },
     {
       "operation": "generate.from_references",
-      "operation_version": 3,
+      "operation_version": 4,
       "variants": ["image-reference-match", "image-reference-max", "video-reference", "video-reference-with-guide"],
       "technical_checks": [
         {"id": "reference-order", "description": "Reference images and clips enter conditioning in the exact declared order."},
@@ -108,7 +108,7 @@
     },
     {
       "operation": "generate.keyframed",
-      "operation_version": 1,
+      "operation_version": 2,
       "variants": ["first-frame", "first-last", "last-frame", "text-only"],
       "technical_checks": [
         {"id": "endpoint-cardinality", "description": "Only the endpoint inputs declared by the selected variant are connected."},
@@ -126,7 +126,7 @@
     },
     {
       "operation": "generate.with_guides",
-      "operation_version": 2,
+      "operation_version": 3,
       "variants": ["first-last-interior", "guide-clip", "multi-anchor", "single-anchor"],
       "technical_checks": [
         {"id": "guide-placement", "description": "Every guide resolves to an exact valid target-frame position and accepted clip length."},
@@ -143,7 +143,7 @@
     },
     {
       "operation": "reframe.outpaint_video",
-      "operation_version": 1,
+      "operation_version": 2,
       "variants": ["centered", "offset"],
       "technical_checks": [
         {"id": "canvas-layout", "description": "Source and target canvases plus offsets use exact 32-pixel alignment and the source fits entirely in the target."},
@@ -161,7 +161,7 @@
     },
     {
       "operation": "refine.video",
-      "operation_version": 1,
+      "operation_version": 2,
       "variants": ["full-frame", "masked"],
       "technical_checks": [
         {"id": "controlled-ladder", "description": "Every comparison holds source, prompt, seed, sampler, scheduler, steps, and shifts fixed while changing only denoise strength."},
@@ -194,7 +194,7 @@
     },
     {
       "operation": "regenerate.spatial",
-      "operation_version": 1,
+      "operation_version": 2,
       "variants": ["latent-second-pass", "pixel-vae-second-pass", "tiled-pixel-vae"],
       "technical_checks": [
         {"id": "same-h3", "description": "The second pass uses the same locked H3 checkpoint and H3 VAE without an auxiliary learned upscaler."},

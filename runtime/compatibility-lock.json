@@ -1,33 +1,42 @@
 {
   "schema": "inside-valdivia.compatibility-lock/1",
-  "captured_at": "2026-08-28T21:11:57Z",
+  "captured_at": "2026-08-31T22:48:31Z",
   "components": {
     "cauce": {
       "repository": "https://github.com/hypereikon-lab/ComfyUI-Cauce",
-      "version": "5.5.0",
-      "commit": "3aa28eb070d63520a5d6ef0a3c662229e708c90e",
-      "tree": "36c7e1af47dec5f1a7d5bfa39d51e55d22511866",
-      "metadata_sha256": "f7d293de4cb0c5a5e413f2fd961f39f2b67af24ccd80f99cebb1dd189b00635d",
+      "version": "5.6.0",
+      "commit": "9172c30b37fc43272473409e6f42eaacc0a10e60",
+      "tree": "fdf0a29bbafeeb63cfafa007f833fa84cc4c8af7",
+      "metadata_sha256": "3c819ba0e602d45656d5fd3edabe1f127b2281accf544eca017ba5f8489af0d9",
       "distribution": "registry-prepared-unpublished",
       "registry_node_id": "cauce"
     },
     "runtime_control": {
       "repository": "https://github.com/hypereikon-lab/ComfyUI-Runtime-Control",
-      "version": "0.5.0",
-      "commit": "37ac10f762dc6bcf229e0e26d21ef96a67a018dd",
-      "tree": "1583166f2069fa7d58bcb50928f4ed845204f1f9",
-      "metadata_sha256": "39ba9f46d5b5d2e9caac3696d54e09f85fd55dee40839923108aea60ca9abc7c",
+      "version": "0.5.2",
+      "commit": "6e1f6817d46d02282279c24cb84338e568ae9aea",
+      "tree": "9d76b727500ec0f9f48f0e6423de965fbac16037",
+      "metadata_sha256": "227d0de0e53d38b18e4891ba57fde210b35fdcbc42599e92f4f2b918f9747d9e",
       "distribution": "source-package",
       "registry_node_id": null
     },
     "workspace_control": {
       "repository": "https://github.com/hypereikon-lab/ComfyUI-Workspace-Control",
-      "version": "0.4.0",
-      "commit": "2f9174e61ae911c1573a26b64e5ee4aa80527b0e",
-      "tree": "c66864a9c27349ace2a195e8dd2318d5fc837427",
-      "metadata_sha256": "ed3184a28a581eaaed5df13ca08eeb3b342ce4d6de481606a16ca6ae70ce1d98",
+      "version": "0.4.2",
+      "commit": "65d6612d1cbeae3e35c664873a2aa1088ac3e7d2",
+      "tree": "ae95414fec8d86bd344ad9fd38ab6c95e76213bf",
+      "metadata_sha256": "17c1a7bfcd640987269841ceb8737da3923735336b0a310a8068452356cf5ea2",
       "distribution": "registry-prepared-unpublished",
       "registry_node_id": "workspace-control"
+    },
+    "repository_control": {
+      "repository": "https://github.com/hypereikon-lab/ComfyUI-Repository-Control",
+      "version": "1.0.1",
+      "commit": "49d50644173c62d74b799099fee2a2eddbfdf642",
+      "tree": "3dd79d6b08025c036de1ed37cf35daffe7a1c736",
+      "metadata_sha256": "d34880b767b711457229c3ab1b2325fee4fae6ca6437107ae780509833374dfd",
+      "distribution": "public-git-extension",
+      "registry_node_id": null
     }
   },
   "platform": {
@@ -36,8 +45,8 @@
       "basis": "last-live-schema"
     },
     "full_profile": {
-      "minimum_comfyui": "0.34.0",
-      "basis": "official-addguide-and-per-token-h3-mask-release"
+      "minimum_comfyui": "0.33.0",
+      "basis": "2026-08-31-live-schema-and-requirements-evaluation"
     },
     "frontend": {
       "last_live_tested": "1.49.6",

@@ -1,8 +1,8 @@
 {
   "schema": "inside-valdivia.materialization-plan/1",
   "operation": "continue.native_av",
-  "operation_version": 2,
-  "operation_contract_hash": "2776bb1db0e844648bcb2b4d98a1ef84b36a2488449ef7bdc77d7e44ceb6a8b5",
+  "operation_version": 3,
+  "operation_contract_hash": "7990464810ab00136edadb5e3b5f624521fc70681c2fb4b803232ea5496be4cd",
   "variant": "masked-overlap",
   "topology_key": "continue.native_av@masked-overlap",
   "priority": 14,
@@ -39,8 +39,6 @@
     "sampler": null,
     "scheduler": null,
     "steps": null,
-    "video_shift": null,
-    "audio_shift": null,
     "artifact": {
       "frame_rate": 24,
       "filename_prefix": null,

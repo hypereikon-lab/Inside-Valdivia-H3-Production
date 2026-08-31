@@ -16,7 +16,7 @@
     "variant": { "type": "string", "minLength": 1 },
     "topology_key": { "type": "string", "minLength": 3 },
     "priority": { "type": "integer", "minimum": 1 },
-    "status": { "const": "offline-ready" },
+    "status": { "enum": ["offline-ready", "schema-validated-draft"] },
     "runtime_manifest_hash": {
       "oneOf": [
         { "type": "null" },

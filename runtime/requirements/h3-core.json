@@ -34,7 +34,6 @@
     "KSamplerSelect",
     "LoadImage",
     "MiniMaxH3ImageToVideo",
-    "MiniMaxH3SigmaShift",
     "RandomNoise",
     "SamplerCustomAdvanced",
     "SaveVideo",

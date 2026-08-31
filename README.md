@@ -27,8 +27,12 @@ ComfyUI-Runtime-Control
 ComfyUI-Workspace-Control
   paired UI/API export and guarded browser-workspace operations
 
+ComfyUI-Repository-Control
+  inventory and exact clean fast-forward of approved public custom-node repos
+
 this repository
-  exact operation/archetype/component locks, 32 offline binding profiles, project data,
+  exact operation/archetype/component locks, 31 offline binding profiles,
+  1 schema-validated paired draft, project data,
   runtime readiness profiles, acceptance criteria, storage policy,
   experiments, rolling dependency/checkpoint plans
 ```
@@ -65,6 +69,9 @@ structurally distinct graphs, then to project binding profiles cataloged in
 dossier is a checked design, not executable workflow JSON. Each variant becomes
 executable only after one live ComfyUI graph is exported in paired UI/API form,
 validated against the same `/object_info` capture, and bound to concrete data.
+The first `generate.keyframed@text-only` pair now satisfies the export and
+schema-validation boundary; it has deliberately not been queued or visually
+promoted.
 
 The rolling plan in [`rolling/catalog.json`](rolling/catalog.json) records a
 strict serial native-state chain, immutable checkpoints, and branch rules. It
@@ -77,7 +84,7 @@ core and full runtime profiles fail closed on missing nodes, models, hardware,
 or queue availability. [`acceptance/catalog.json`](acceptance/catalog.json)
 requires technical checks and a separate visual verdict before promotion.
 [`runtime/compatibility-lock.json`](runtime/compatibility-lock.json) pins all
-three control components and separates last-observed platform versions from the
+four control components and separates last-observed platform versions from the
 next required compatibility target.
 
 ## Documentation
@@ -85,6 +92,8 @@ next required compatibility target.
 - [Project model](docs/PROJECT_MODEL.md)
 - [Current state](docs/CURRENT_STATE.md)
 - [Current H3 capability map and workflow rebuild](docs/H3_CAPABILITY_MAP.md)
+- [Native H3/Seedance movement-control research](docs/MOVEMENT_CONTROL_RESEARCH.md)
+- [H3 intent routing and latent operator space](docs/H3_INTENT_ROUTING.md)
 - [Temporal and spatial video enhancement](docs/VIDEO_ENHANCEMENT.md)
 - [Operations](docs/OPERATIONS.md)
 - [Materialization](docs/MATERIALIZATION.md)
@@ -105,6 +114,7 @@ python3 tools/readiness.py
 python3 -m unittest discover -s tests -v
 python3 tools/verify_cauce_lock.py ../ComfyUI-Cauce
 python3 tools/verify_component_locks.py \
-  ../ComfyUI-Cauce ../ComfyUI-Runtime-Control ../ComfyUI-Workspace-Control
+  ../ComfyUI-Cauce ../ComfyUI-Runtime-Control ../ComfyUI-Workspace-Control \
+  ../ComfyUI-Repository-Control
 git diff --check
 ```

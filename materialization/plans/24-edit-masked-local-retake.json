@@ -1,8 +1,8 @@
 {
   "schema": "inside-valdivia.materialization-plan/1",
   "operation": "edit.masked_video",
-  "operation_version": 1,
-  "operation_contract_hash": "d4efeb87b8e651427cf230989a9359dab0d3791fd062ae22e5fed19c5696361c",
+  "operation_version": 2,
+  "operation_contract_hash": "755fcd6a413a84420d7980f600beec6b7a310419f5b922dc58f5cbd4c3064d1f",
   "variant": "local-retake",
   "topology_key": "edit.masked_video@local-retake",
   "priority": 24,
@@ -28,8 +28,6 @@
     "sampler": null,
     "scheduler": null,
     "steps": null,
-    "video_shift": null,
-    "audio_shift": null,
     "artifact": { "frame_rate": 24, "filename_prefix": null, "format": "auto", "codec": "auto", "history_resolvable": true, "retain_native_state": true },
     "inputs": { "source_native_av_latent": null, "video_mask_sequence": null }
   },

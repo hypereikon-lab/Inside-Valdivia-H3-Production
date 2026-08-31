@@ -1,8 +1,8 @@
 {
   "schema": "inside-valdivia.materialization-plan/1",
   "operation": "generate.keyframed",
-  "operation_version": 1,
-  "operation_contract_hash": "293c342e54d66ac4b8f5147636e9aa0617635abba5d2d4acc2919999104208b1",
+  "operation_version": 2,
+  "operation_contract_hash": "3d9f3d24a99ac78161ea7b7bd2c4e976795b94c37bc890613873bf70d9ce05df",
   "variant": "first-frame",
   "topology_key": "generate.keyframed@first-frame",
   "priority": 1,
@@ -23,8 +23,6 @@
     "sampler": null,
     "scheduler": null,
     "steps": null,
-    "video_shift": null,
-    "audio_shift": null,
     "artifact": {
       "frame_rate": 24,
       "filename_prefix": null,

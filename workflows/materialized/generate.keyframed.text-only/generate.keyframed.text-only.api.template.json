@@ -1,0 +1,211 @@
+{
+  "1": {
+    "_meta": {
+      "title": "Load H3 Qwen encoder"
+    },
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "device": "default",
+      "type": "minimax"
+    }
+  },
+  "10": {
+    "_meta": {
+      "title": "Retain native H3 state"
+    },
+    "class_type": "CauceSaveAVLatent",
+    "inputs": {
+      "artifact_index": {
+        "$binding": "native_state_index"
+      },
+      "filename_prefix": {
+        "$binding": "native_state_prefix"
+      },
+      "latent": [
+        "9",
+        0
+      ]
+    }
+  },
+  "11": {
+    "_meta": {
+      "title": "Decode video only"
+    },
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "9",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ]
+    }
+  },
+  "12": {
+    "_meta": {
+      "title": "Create silent 24 fps video"
+    },
+    "class_type": "CreateVideo",
+    "inputs": {
+      "bit_depth": 8,
+      "fps": 24,
+      "images": [
+        "11",
+        0
+      ]
+    }
+  },
+  "13": {
+    "_meta": {
+      "title": "Save silent video"
+    },
+    "class_type": "SaveVideo",
+    "inputs": {
+      "codec": "auto",
+      "filename_prefix": {
+        "$binding": "video_filename_prefix"
+      },
+      "format": "auto",
+      "format.codec": "auto",
+      "video": [
+        "12",
+        0
+      ]
+    }
+  },
+  "2": {
+    "_meta": {
+      "title": "Load H3 video VAE"
+    },
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "3": {
+    "_meta": {
+      "title": "Load H3 FL2VA"
+    },
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "4": {
+    "_meta": {
+      "title": "H3 text-only conditioning"
+    },
+    "class_type": "MiniMaxH3ImageToVideo",
+    "inputs": {
+      "clip": [
+        "1",
+        0
+      ],
+      "height": {
+        "$binding": "height"
+      },
+      "length": {
+        "$binding": "target_frames"
+      },
+      "prompt": {
+        "$binding": "prompt"
+      },
+      "vae": [
+        "2",
+        0
+      ],
+      "width": {
+        "$binding": "width"
+      }
+    }
+  },
+  "5": {
+    "_meta": {
+      "title": "Seed"
+    },
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": {
+        "$binding": "seed"
+      }
+    }
+  },
+  "6": {
+    "_meta": {
+      "title": "Basic guider"
+    },
+    "class_type": "BasicGuider",
+    "inputs": {
+      "conditioning": [
+        "4",
+        0
+      ],
+      "model": [
+        "3",
+        0
+      ]
+    }
+  },
+  "7": {
+    "_meta": {
+      "title": "H3 scheduler"
+    },
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "denoise": 1,
+      "model": [
+        "3",
+        0
+      ],
+      "scheduler": {
+        "$binding": "scheduler"
+      },
+      "steps": {
+        "$binding": "steps"
+      }
+    }
+  },
+  "8": {
+    "_meta": {
+      "title": "H3 sampler"
+    },
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": {
+        "$binding": "sampler"
+      }
+    }
+  },
+  "9": {
+    "_meta": {
+      "title": "Sample H3"
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "guider": [
+        "6",
+        0
+      ],
+      "latent_image": [
+        "4",
+        1
+      ],
+      "noise": [
+        "5",
+        0
+      ],
+      "sampler": [
+        "8",
+        0
+      ],
+      "sigmas": [
+        "7",
+        0
+      ]
+    }
+  }
+}

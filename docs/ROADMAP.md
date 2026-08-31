@@ -28,12 +28,14 @@ Manager inventory and the exact host directory before considering a retry.
 Compare CAUCE, Runtime Control, Workspace Control, ComfyUI, frontend, and
 Manager with `runtime/compatibility-lock.json`.
 
-The core readiness profile accepts the last verified ComfyUI baseline. The full
-profile requires ComfyUI 0.34.0 and a fresh frontend diagnostic because the
-official H3 AddGuide and per-token denoise-mask paths are release dependencies.
-Treat any core/frontend update as its own guarded action; do not combine it
+Both readiness profiles accept the captured laboratory ComfyUI 0.33.0 because
+its live `/object_info` already exposes the required H3 AddGuide and continuous
+per-token denoise-mask paths. That exact schema evidence supersedes a guessed
+version threshold; it does not authorize an upstream core update. Treat any
+future core/frontend update as its own guarded action and do not combine it
 with custom-node, CUDA, PyTorch, driver, model, or unrelated-package changes.
-After every accepted change, restart only ComfyUI and recapture the manifest.
+After every accepted imported-Python change, restart only ComfyUI and recapture
+the manifest.
 
 Run the machine-readable core readiness profile and Workspace Control browser
 diagnostic before any mutation. The exact commits, stop conditions, and phase
@@ -41,7 +43,8 @@ ordering live in `materialization/live-gate.json`; see [Live gate](LIVE_GATE.md)
 
 ## 1. Materialize the operational core
 
-Construct and export one active graph at a time. Begin from released official
+Construct and export one active graph at a time. The first prompt-only control
+is now paired and schema-validated; it remains unexecuted. Begin from released official
 templates or the smallest live official graph; do not begin from a historical
 CAUCE example. Establish the official conditioning baselines first:
 
@@ -94,7 +97,8 @@ Then materialize H3-native enhancement over retained native state:
    operation order.
 
 The remaining variants are retained and materialized after their underlying
-mechanism earns baseline evidence. All 32 offline plans already exist; this
+mechanism earns baseline evidence. Thirty-one offline plans plus the first
+schema-validated paired draft now exist; this
 order controls evidence dependencies, not catalog importance or permanence.
 It is duplicated as machine-validated phase data in the live gate so catalog
 priority cannot be mistaken for execution order.

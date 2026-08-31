@@ -1,6 +1,6 @@
 # Materialization and execution
 
-`materialization/catalog.json` is the complete 31-variant offline queue. Every
+`materialization/catalog.json` is the complete 32-variant lifecycle queue. Every
 entry selects one exact CAUCE `operation@variant` topology and one checked plan
 in `materialization/plans/`.
 
@@ -19,7 +19,7 @@ empirical claim about which mechanism should run first. The authoritative live
 order is the complete, nonduplicating phase list in
 `materialization/live-gate.json`.
 
-## What the offline plans establish
+## What the lifecycle plans establish
 
 ```text
 CAUCE commit, operation version, contract hash
@@ -28,12 +28,16 @@ known laboratory model filenames
 canonical geometry and 24 fps frame arithmetic
 input cardinality and temporal placement
 native-state/mask/rollback invariants
-status = offline-ready
+status = offline-ready | schema-validated-draft
 ```
 
-They intentionally do not invent graph node ids, API pointers, sampler,
-scheduler, steps, shifts, seed, media ids, or runtime schema evidence. Null
-live-owned fields are unresolved work, not defaults.
+An `offline-ready` plan intentionally does not invent graph node ids, API
+pointers, sampler, scheduler, steps, seed, media ids, or runtime schema
+evidence. Null live-owned fields are unresolved work, not defaults. A
+`schema-validated-draft` must instead name one paired export, parameterization,
+runtime manifest, operation reference, all materialized products and their
+hashes, with zero missing node types. That state still says nothing about
+execution or visual quality.
 
 The queue covers:
 
@@ -108,7 +112,10 @@ comfy-runtime materialize-export workspace-export.json parameterization.json \
 ```
 
 The result is still `requires-live-review` until reconstructed graph validation,
-submission, receipt, and visual assessment are complete.
+submission, receipt, and visual assessment are complete. The current
+`generate.keyframed@text-only` pair is the first `schema-validated-draft`: it
+was exported from the saved live graph and validated with zero errors and zero
+warnings, but was not submitted.
 
 ### 4. Execute and record evidence
 

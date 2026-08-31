@@ -3,7 +3,7 @@
   "experiments": [
     {
       "id": "keyframe-mode",
-      "operations": [{ "id": "generate.keyframed", "version": 1 }],
+      "operations": [{ "id": "generate.keyframed", "version": 2 }],
       "question": "How does each documented keyframe mode constrain geometry and motion for the same prompt and target?",
       "fixed": ["model", "quantization", "resolution", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps"],
       "variable": { "variant": ["text-only", "first-frame", "last-frame", "first-last"] },
@@ -12,7 +12,7 @@
     },
     {
       "id": "reference-image-size",
-      "operations": [{ "id": "generate.from_references", "version": 3 }],
+      "operations": [{ "id": "generate.from_references", "version": 4 }],
       "question": "What quality and runtime difference does the official reference-image size mode produce?",
       "fixed": ["model", "resolution", "target_frames", "reference_image", "prompt", "seed", "sampler", "scheduler", "steps"],
       "variable": { "ref_image_size": ["match", "max"] },
@@ -21,7 +21,7 @@
     },
     {
       "id": "reference-clip-duration",
-      "operations": [{ "id": "generate.from_references", "version": 3 }],
+      "operations": [{ "id": "generate.from_references", "version": 4 }],
       "question": "How much reference motion is retained as a documented-range 24 fps clip changes across valid H3 lengths?",
       "fixed": ["model", "resolution", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps", "reference motion source"],
       "variable": { "reference_clip_frames": [56, 73, 90, 107, 124] },
@@ -30,7 +30,7 @@
     },
     {
       "id": "guide-length",
-      "operations": [{ "id": "generate.with_guides", "version": 2 }],
+      "operations": [{ "id": "generate.with_guides", "version": 3 }],
       "question": "How does official AddGuide clip length trade contextual motion against free generated range?",
       "fixed": ["model", "resolution", "target_frames", "prompt", "seed", "guide start index", "sampler", "scheduler", "steps"],
       "variable": { "guide_frames": [5, 22, 39, 56, 73, 90, 107] },
@@ -39,7 +39,7 @@
     },
     {
       "id": "guide-placement",
-      "operations": [{ "id": "generate.with_guides", "version": 2 }],
+      "operations": [{ "id": "generate.with_guides", "version": 3 }],
       "question": "How does placement of the same official temporal guide affect the generated range around it?",
       "fixed": ["model", "resolution", "target_frames", "prompt", "seed", "guide clip", "sampler", "scheduler", "steps"],
       "variable": { "frame_idx": [0, 51, 102] },
@@ -48,7 +48,7 @@
     },
     {
       "id": "native-continuation-prompt-relation",
-      "operations": [{ "id": "continue.native_av", "version": 2 }],
+      "operations": [{ "id": "continue.native_av", "version": 3 }],
       "question": "Does the characterized 22-frame native latent tail preserve motion and appearance across one continuation?",
       "fixed": ["model", "resolution", "overlap_frames=22", "sampler", "scheduler", "steps", "continuation target length"],
       "variable": { "prompt_relation": ["same prompt", "controlled prompt continuation"] },
@@ -57,7 +57,7 @@
     },
     {
       "id": "native-mask-boundary",
-      "operations": [{ "id": "complete.native_av", "version": 1 }],
+      "operations": [{ "id": "complete.native_av", "version": 2 }],
       "question": "How does an official continuous H3 per-token AV mask change preservation and transition quality around the same native completion interval?",
       "fixed": ["native target", "unknown interval", "model", "resolution", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps", "mask strengths"],
       "variable": { "mask_boundary": ["hard", "17-frame smoothstep", "17-frame smootherstep"] },
@@ -66,7 +66,7 @@
     },
     {
       "id": "native-overlap-transport",
-      "operations": [{ "id": "continue.native_av", "version": 2 }],
+      "operations": [{ "id": "continue.native_av", "version": 3 }],
       "question": "For the same source and suffix request, how does native keyframe overlap compare with official per-token masked overlap?",
       "fixed": ["source native state", "overlap_frames", "extension_frames", "model", "resolution", "prompt", "seed", "sampler", "scheduler", "steps"],
       "variable": { "overlap_transport": ["minimax_keyframes", "noise_mask"] },
@@ -75,7 +75,7 @@
     },
     {
       "id": "native-future-guide",
-      "operations": [{ "id": "continue.native_av", "version": 2 }],
+      "operations": [{ "id": "continue.native_av", "version": 3 }],
       "question": "Does one official future guide improve arrival fidelity without degrading native overlap continuity?",
       "fixed": ["source native state", "overlap mask", "model", "resolution", "prompt", "seed", "sampler", "scheduler", "steps"],
       "variable": { "future_guide": ["absent", "present at frame 119"] },
@@ -84,7 +84,7 @@
     },
     {
       "id": "masked-edit-edge-profile",
-      "operations": [{ "id": "edit.masked_video", "version": 1 }],
+      "operations": [{ "id": "edit.masked_video", "version": 2 }],
       "question": "How does continuous spatial feathering change edit locality and boundary quality for the same static H3 mask?",
       "fixed": ["source native state", "mask geometry", "model", "resolution", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps", "denoise strengths"],
       "variable": { "spatial_edge_profile": ["hard", "16-pixel smoothstep", "32-pixel smoothstep"] },
@@ -93,7 +93,7 @@
     },
     {
       "id": "outpaint-placement",
-      "operations": [{ "id": "reframe.outpaint_video", "version": 1 }],
+      "operations": [{ "id": "reframe.outpaint_video", "version": 2 }],
       "question": "At fixed source and target canvases, how does exact aligned source placement affect H3 outpaint continuity?",
       "fixed": ["source native state", "target canvas", "model", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps", "mask strengths"],
       "variable": { "source_offset": [[0, 32], [32, 32], [64, 32]] },
@@ -102,7 +102,7 @@
     },
     {
       "id": "native-refinement-strength",
-      "operations": [{ "id": "refine.video", "version": 1 }],
+      "operations": [{ "id": "refine.video", "version": 2 }],
       "question": "Does bounded native-state V2V produce useful detail gain before motion or identity drift becomes objectionable?",
       "fixed": ["source native state", "model", "resolution", "target_frames", "prompt", "seed", "sampler", "scheduler", "steps", "video/audio shifts"],
       "variable": { "video_denoise_strength": [0.1, 0.2, 0.35] },
@@ -111,7 +111,7 @@
     },
     {
       "id": "h3-native-temporal-densification",
-      "operations": [{ "id": "densify.temporal", "version": 1 }],
+      "operations": [{ "id": "densify.temporal", "version": 2 }],
       "question": "Can native H3 visual-token inpainting create useful additional motion samples while the multiplied delivery clock preserves editorial duration?",
       "fixed": ["source native AV state", "factor=2", "resolution", "prompt", "seed", "sampler", "scheduler", "steps", "anchor_denoise=0", "gap_denoise=1"],
       "variable": { "feather_tokens": [1, 2, 3] },
@@ -120,7 +120,7 @@
     },
     {
       "id": "h3-native-spatial-regeneration",
-      "operations": [{ "id": "regenerate.spatial", "version": 1 }],
+      "operations": [{ "id": "regenerate.spatial", "version": 2 }],
       "question": "Which H3-native initial state yields useful spatial detail with the lowest temporal and semantic drift?",
       "fixed": ["source native AV state", "target geometry", "same H3 checkpoint", "same H3 VAE", "prompt", "seed", "sampler", "scheduler", "steps", "audio_denoise=0"],
       "variable": { "variant_and_denoise": ["latent:0.15", "latent:0.25", "latent:0.35", "pixel-vae:0.15", "pixel-vae:0.25", "pixel-vae:0.35"] },
@@ -130,8 +130,8 @@
     {
       "id": "h3-native-enhancement-order",
       "operations": [
-        { "id": "regenerate.spatial", "version": 1 },
-        { "id": "densify.temporal", "version": 1 }
+        { "id": "regenerate.spatial", "version": 2 },
+        { "id": "densify.temporal", "version": 2 }
       ],
       "question": "Should H3 create additional motion before or after its same-model spatial regeneration pass?",
       "fixed": ["source native AV state", "factor=2", "accepted spatial variant and denoise", "final geometry", "final fps=48", "prompt", "seed", "sampler", "scheduler", "steps"],
@@ -141,7 +141,7 @@
     },
     {
       "id": "h3-sparse-guide-retime",
-      "operations": [{ "id": "generate.with_guides", "version": 2 }],
+      "operations": [{ "id": "generate.with_guides", "version": 3 }],
       "question": "How densely must decoded source frames be placed as official H3 single-image guides to create a useful creative duration change at native 24 fps?",
       "fixed": ["source video", "endpoint guides", "duration scale", "resolved 17k+5 target", "model", "prompt", "seed", "sampler", "scheduler", "steps"],
       "variable": { "guide_stride_source_frames": [12, 24, 48] },

@@ -173,6 +173,7 @@ def validate_compatibility_lock(
     cauce_commit: str,
     runtime_commit: str,
     workspace_commit: str,
+    repository_control_commit: str,
 ) -> list[str]:
     if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.compatibility-lock/1":
         return [f"{path}: invalid compatibility lock"]
@@ -186,9 +187,13 @@ def validate_compatibility_lock(
         "cauce": cauce_commit,
         "runtime_control": runtime_commit,
         "workspace_control": workspace_commit,
+        "repository_control": repository_control_commit,
     }
     if not isinstance(components, dict) or set(components) != set(expected_commits):
-        errors.append(f"{path}: compatibility components must be cauce, runtime_control, workspace_control")
+        errors.append(
+            f"{path}: compatibility components must be cauce, runtime_control, "
+            "workspace_control, repository_control"
+        )
     else:
         expected_fields = {
             "repository", "version", "commit", "tree", "metadata_sha256",
@@ -214,7 +219,10 @@ def validate_compatibility_lock(
             ):
                 errors.append(f"{path}: {component_id} metadata hash must be SHA-256")
             if component["distribution"] not in {
-                "registry-prepared-unpublished", "registry-published", "source-package"
+                "registry-prepared-unpublished",
+                "registry-published",
+                "source-package",
+                "public-git-extension",
             }:
                 errors.append(f"{path}: invalid distribution state for {component_id}")
             registry_id = component["registry_node_id"]
@@ -530,8 +538,12 @@ def validate_materialization_plan(
         errors.append(f"{path}: topology_key must match operation@variant")
     if not isinstance(value.get("priority"), int) or value["priority"] < 1:
         errors.append(f"{path}: priority must be a positive integer")
-    if value.get("status") != "offline-ready":
-        errors.append(f"{path}: materialization plan must remain offline-ready")
+    status = value.get("status")
+    if status not in {"offline-ready", "schema-validated-draft"}:
+        errors.append(
+            f"{path}: materialization plan status must be offline-ready or "
+            "schema-validated-draft"
+        )
     if not isinstance(value.get("bindings"), dict):
         errors.append(f"{path}: bindings must be an object")
     sources = value.get("sources")
@@ -555,6 +567,44 @@ def validate_materialization_plan(
         "bindings_hash",
     }:
         errors.append(f"{path}: outputs must name the complete materialized draft")
+    validation = value.get("validation")
+    if not isinstance(validation, dict):
+        errors.append(f"{path}: validation must be an object")
+    else:
+        schema_status = validation.get("schema_status")
+        has_all_outputs = isinstance(outputs, dict) and all(
+            isinstance(outputs.get(field), str) and outputs[field]
+            for field in (
+                "ui_graph",
+                "api_template",
+                "bindings",
+                "materialization_manifest",
+                "ui_graph_hash",
+                "api_template_hash",
+                "bindings_hash",
+            )
+        )
+        has_all_sources = isinstance(sources, dict) and all(
+            isinstance(sources.get(field), str) and sources[field]
+            for field in (
+                "workspace_export",
+                "parameterization",
+                "runtime_manifest",
+                "operation_ref",
+            )
+        )
+        if status == "schema-validated-draft" and (
+            schema_status != "validated"
+            or not has_all_outputs
+            or not has_all_sources
+            or not isinstance(value.get("runtime_manifest_hash"), str)
+        ):
+            errors.append(
+                f"{path}: schema-validated-draft requires validated schema, "
+                "runtime manifest, sources, outputs, and hashes"
+            )
+        if status == "offline-ready" and schema_status != "pending":
+            errors.append(f"{path}: offline-ready plans must remain pending")
     manifest_hash = value.get("runtime_manifest_hash")
     if manifest_hash is not None and (
         not isinstance(manifest_hash, str) or not SHA256.fullmatch(manifest_hash)
@@ -1071,8 +1121,8 @@ def validate_materialization_catalog(
         if entry["topology_key"] != expected_key or expected_key in keys:
             errors.append(f"{path}: invalid or duplicate topology key {entry['topology_key']!r}")
         keys.add(expected_key)
-        if entry["state"] != "offline-ready":
-            errors.append(f"{path}: catalog plans must remain offline-ready")
+        if entry["state"] not in {"offline-ready", "schema-validated-draft"}:
+            errors.append(f"{path}: invalid materialization lifecycle state")
         relative = PurePosixPath(str(entry["plan"]))
         if relative.is_absolute() or ".." in relative.parts or relative.parts[:2] != (
             "materialization",
@@ -1297,13 +1347,13 @@ def validate_live_gate(
     errors: list[str] = []
     source_locks = value.get("source_locks")
     if not isinstance(source_locks, dict) or set(source_locks) != {
-        "cauce_commit", "runtime_commit", "workspace_commit"
+        "cauce_commit", "runtime_commit", "workspace_commit", "repository_control_commit"
     }:
         errors.append(f"{path}: live gate source locks are incomplete")
     else:
         if source_locks["cauce_commit"] != cauce_commit:
             errors.append(f"{path}: live gate CAUCE commit does not match operation lock")
-        for name in ("runtime_commit", "workspace_commit"):
+        for name in ("runtime_commit", "workspace_commit", "repository_control_commit"):
             if not isinstance(source_locks[name], str) or not GIT_SHA.fullmatch(source_locks[name]):
                 errors.append(f"{path}: {name} must be a full Git SHA")
     runtime_profiles = value.get("runtime_profiles")
@@ -1323,7 +1373,7 @@ def validate_live_gate(
     if workspace != {
         "required_diagnostic_schema": "comfy.workspace-diagnostic/1",
         "required_export_schema": "comfy.workspace-export/2",
-        "required_workspace_control_version": "0.4.0",
+        "required_workspace_control_version": "0.4.2",
         "required_methods": [
             "inventory",
             "planOpenExact",
@@ -1880,6 +1930,9 @@ def validate_repository(root: Path = ROOT) -> list[str]:
             cauce_commit=lock.get("source", {}).get("commit"),
             runtime_commit=live_gate.get("source_locks", {}).get("runtime_commit"),
             workspace_commit=live_gate.get("source_locks", {}).get("workspace_commit"),
+            repository_control_commit=live_gate.get("source_locks", {}).get(
+                "repository_control_commit"
+            ),
         )
     )
     acceptance_path = root / "acceptance" / "catalog.json"

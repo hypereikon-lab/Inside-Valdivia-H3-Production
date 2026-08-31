@@ -39,6 +39,21 @@ def build_readiness_report(root: Path = ROOT) -> dict[str, Any]:
     live_gate = load_json(root / "materialization" / "live-gate.json")
     archetypes = load_json(root / "archetypes.lock.json").get("archetypes", [])
     compatibility = load_json(root / "runtime" / "compatibility-lock.json")
+    runtime_manifests = _load_directory("runtime/manifests")
+    runtime_evaluations = _load_directory("runtime/evaluations")
+    latest_runtime_manifest = max(
+        runtime_manifests,
+        key=lambda value: str(value.get("captured_at", "")),
+        default=None,
+    )
+    ready_runtime_profiles = sorted(
+        value.get("requirements_id")
+        for value in runtime_evaluations
+        if value.get("schema") == "comfy.runtime-readiness/1"
+        and value.get("ready") is True
+        and value.get("runtime_manifest_hash")
+        == (latest_runtime_manifest or {}).get("manifest_hash")
+    )
     materialized = [
         plan
         for plan in plans
@@ -48,6 +63,23 @@ def build_readiness_report(root: Path = ROOT) -> dict[str, Any]:
     schema_validated = [
         plan for plan in plans if plan.get("validation", {}).get("schema_status") == "validated"
     ]
+    required_runtime_profiles = {
+        "inside-valdivia-h3-core",
+        "inside-valdivia-h3-full",
+    }
+    runtime_ready = required_runtime_profiles <= set(ready_runtime_profiles)
+    if latest_runtime_manifest is None:
+        next_gate = "capture-content-addressed-runtime-manifest"
+    elif not runtime_ready:
+        next_gate = "resolve-runtime-requirements"
+    elif not materialized:
+        next_gate = "materialize-generate-keyframed-text-only"
+    elif not schema_validated:
+        next_gate = "schema-validate-first-paired-workflow"
+    elif not assessments:
+        next_gate = "execute-and-visually-assess-first-workflow"
+    else:
+        next_gate = "promote-only-accepted-workflows"
     return {
         "schema": "inside-valdivia.readiness-report/1",
         "offline_valid": not errors,
@@ -65,6 +97,8 @@ def build_readiness_report(root: Path = ROOT) -> dict[str, Any]:
             "experiment_definitions": len(experiments),
             "visual_assessments": len(assessments),
             "live_gate_phases": len(live_gate.get("phases", [])),
+            "runtime_manifests": len(runtime_manifests),
+            "runtime_readiness_evaluations": len(runtime_evaluations),
         },
         "evidence": {
             "offline_ready_topologies": sum(plan.get("status") == "offline-ready" for plan in plans),
@@ -76,10 +110,15 @@ def build_readiness_report(root: Path = ROOT) -> dict[str, Any]:
                 invocation.get("status") in {"visually-accepted", "rejected"}
                 for invocation in invocations
             ),
+            "latest_runtime_manifest_hash": (latest_runtime_manifest or {}).get(
+                "manifest_hash"
+            ),
+            "ready_runtime_profiles": ready_runtime_profiles,
         },
-        "next_gate": "recover-origin-reconcile-manager-and-capture-runtime-manifest",
+        "next_gate": next_gate,
         "production_ready": bool(
             not errors
+            and runtime_ready
             and materialized
             and schema_validated
             and assessments

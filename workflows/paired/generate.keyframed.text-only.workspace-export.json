@@ -1,0 +1,957 @@
+{
+  "schema": "comfy.workspace-export/2",
+  "capturedAt": "2026-08-31T22:48:30.666Z",
+  "workspaceControlVersion": "0.4.2",
+  "activePath": "workflows/Inside Valdivia/Canonical/H3 Keyframed Text Only.json",
+  "activeWorkflow": {
+    "path": "workflows/Inside Valdivia/Canonical/H3 Keyframed Text Only.json",
+    "filename": "H3 Keyframed Text Only",
+    "isActive": true,
+    "isModified": false,
+    "isPersisted": true,
+    "isTemporary": false,
+    "signature": "f679da0b860cff21b33da0d80915431765435886000a3e266db06082bf6b3cf3"
+  },
+  "graphStats": {
+    "uiNodeCount": 13,
+    "uiLinkCount": 15,
+    "apiNodeCount": 13
+  },
+  "uiGraph": {
+    "id": "6b74a238-8460-4ebc-834d-83877595c45b",
+    "revision": 0,
+    "last_node_id": 13,
+    "last_link_id": 30,
+    "nodes": [
+      {
+        "id": 1,
+        "type": "CLIPLoader",
+        "pos": [
+          100,
+          130
+        ],
+        "size": [
+          270,
+          106
+        ],
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "CLIP",
+            "type": "CLIP",
+            "links": [
+              16
+            ]
+          }
+        ],
+        "title": "Load H3 Qwen encoder",
+        "properties": {
+          "cnr_id": "comfy-core",
+          "ver": "0.33.0",
+          "Node name for S&R": "CLIPLoader"
+        },
+        "widgets_values": [
+          "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+          "minimax",
+          "default"
+        ],
+        "widgets_values_named": {
+          "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+          "type": "minimax",
+          "device": "default"
+        }
+      },
+      {
+        "id": 2,
+        "type": "VAELoader",
+        "pos": [
+          100,
+          366
+        ],
+        "size": [
+          270,
+          58
+        ],
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "VAE",
+            "type": "VAE",
+            "links": [
+              17,
+              28
+            ]
+          }
+        ],
+        "title": "Load H3 video VAE",
+        "properties": {
+          "cnr_id": "comfy-core",
+          "ver": "0.33.0",
+          "Node name for S&R": "VAELoader"
+        },
+        "widgets_values": [
+          "minimax_h3_video_vae_fp16.safetensors"
+        ],
+        "widgets_values_named": {
+          "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+        }
+      },
+      {
+        "id": 3,
+        "type": "UNETLoader",
+        "pos": [
+          100,
+          554
+        ],
+        "size": [
+          270,
+          82
+        ],
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "MODEL",
+            "type": "MODEL",
+            "links": [
+              18,
+              20
+            ]
+          }
+        ],
+        "title": "Load H3 FL2VA",
+        "properties": {
+          "cnr_id": "comfy-core",
+          "ver": "0.33.0",
+          "Node name for S&R": "UNETLoader"
+        },
+        "widgets_values": [
+          "minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+          "default"
+        ],
+        "widgets_values_named": {
+          "unet_name": "minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+          "weight_dtype": "default"
+        }
+      },
+      {
+        "id": 4,
+        "type": "MiniMaxH3ImageToVideo",
+        "pos": [
+          470,
+          130
+        ],
+        "size": [
+          400,
+          220
+        ],
+        "flags": {},
+        "order": 5,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "clip",
+            "type": "CLIP",
+            "link": 16
+          },
+          {
+            "name": "vae",
+            "type": "VAE",
+            "link": 17
+          },
+          {
+            "name": "first_frame",
+            "shape": 7,
+            "type": "IMAGE",
+            "link": null
+          },
+          {
+            "name": "last_frame",
+            "shape": 7,
+            "type": "IMAGE",
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "positive",
+            "type": "CONDITIONING",
+            "links": [
+              19
+            ]
+          },
+          {
+            "name": "LATENT",
+            "type": "LATENT",
+            "links": [
+              25
+            ]
+          }
+        ],
+        "title": "H3 text-only conditioning",
+        "properties": {
+          "cnr_id": "comfy-core",
+          "ver": "0.33.0",
+          "Node name for S&R": "MiniMaxH3ImageToVideo"
+        },
+        "widgets_values": [
+          "Describe one continuous visual shot and its intended motion. Do not request dialogue, music, sound effects, or generated audio.",
+          1344,
+          768,
+          124
+        ],
+        "widgets_values_named": {
+          "prompt": "Describe one continuous visual shot and its intended motion. Do not request dialogue, music, sound effects, or generated audio.",
+          "width": 1344,
+          "height": 768,
+          "length": 124
+        }
+      },
+      {
+        "id": 5,
+        "type": "RandomNoise",
+        "pos": [
+          100,
+          766
+        ],
+        "size": [
+          270,
+          82
+        ],
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "NOISE",
+            "type": "NOISE",
+            "links": [
+              21
+            ]
+          }
+        ],
+        "title": "Seed",
+        "properties": {
+          "cnr_id": "comfy-core",
+          "ver": "0.33.0",
+          "Node name for S&R": "RandomNoise"
+        },
+        "widgets_values": [
+          0,
+          "randomize"
+        ],
+        "widgets_values_named": {
+          "noise_seed": 0,
+          "control_after_generate": "randomize"
+        }
+      },
+      {
+        "id": 6,
+        "type": "BasicGuider",
+        "pos": [
+          970,
+          130
+        ],
+        "size": [
+          159.568359375,
+          46
+        ],
+        "flags": {},
+        "order": 7,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "model",
+            "type": "MODEL",
+            "link": 18
+          },
+          {
+            "name": "conditioning",
+            "type": "CONDITIONING",
+            "link": 19
+          }
+        ],
+        "outputs": [
+          {
+            "name": "GUIDER",
+            "type": "GUIDER",
+            "links": [
+              22
+            ]
+          }
+        ],
+        "title": "Basic guider",
+        "properties": {
+          "cnr_id": "comfy-core",
+          "ver": "0.33.0",
+          "Node name for S&R": "BasicGuider"
+        }
+      },
+      {
+        "id": 7,
+        "type": "BasicScheduler",
+        "pos": [
+          470,
+          480
+        ],
+        "size": [
+          270,
+          106
+        ],
+        "flags": {},
+        "order": 6,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "model",
+            "type": "MODEL",
+            "link": 20
+          }
+        ],
+        "outputs": [
+          {
+            "name": "SIGMAS",
+            "type": "SIGMAS",
+            "links": [
+              24
+            ]
+          }
+        ],
+        "title": "H3 scheduler",
+        "properties": {
+          "cnr_id": "comfy-core",
+          "ver": "0.33.0",
+          "Node name for S&R": "BasicScheduler"
+        },
+        "widgets_values": [
+          "simple",
+          20,
+          1
+        ],
+        "widgets_values_named": {
+          "scheduler": "simple",
+          "steps": 20,
+          "denoise": 1
+        }
+      },
+      {
+        "id": 8,
+        "type": "KSamplerSelect",
+        "pos": [
+          100,
+          978
+        ],
+        "size": [
+          270,
+          58
+        ],
+        "flags": {},
+        "order": 4,
+        "mode": 0,
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "SAMPLER",
+            "type": "SAMPLER",
+            "links": [
+              23
+            ]
+          }
+        ],
+        "title": "H3 sampler",
+        "properties": {
+          "cnr_id": "comfy-core",
+          "ver": "0.33.0",
+          "Node name for S&R": "KSamplerSelect"
+        },
+        "widgets_values": [
+          "res_multistep"
+        ],
+        "widgets_values_named": {
+          "sampler_name": "res_multistep"
+        }
+      },
+      {
+        "id": 9,
+        "type": "SamplerCustomAdvanced",
+        "pos": [
+          1229.568359375,
+          130
+        ],
+        "size": [
+          212.3638671875,
+          106
+        ],
+        "flags": {},
+        "order": 8,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "noise",
+            "type": "NOISE",
+            "link": 21
+          },
+          {
+            "name": "guider",
+            "type": "GUIDER",
+            "link": 22
+          },
+          {
+            "name": "sampler",
+            "type": "SAMPLER",
+            "link": 23
+          },
+          {
+            "name": "sigmas",
+            "type": "SIGMAS",
+            "link": 24
+          },
+          {
+            "name": "latent_image",
+            "type": "LATENT",
+            "link": 25
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output",
+            "type": "LATENT",
+            "links": [
+              26,
+              27
+            ]
+          },
+          {
+            "name": "denoised_output",
+            "type": "LATENT",
+            "links": null
+          }
+        ],
+        "title": "Sample H3",
+        "properties": {
+          "cnr_id": "comfy-core",
+          "ver": "0.33.0",
+          "Node name for S&R": "SamplerCustomAdvanced"
+        }
+      },
+      {
+        "id": 10,
+        "type": "CauceSaveAVLatent",
+        "pos": [
+          1541.9322265625,
+          130
+        ],
+        "size": [
+          283.062109375,
+          82
+        ],
+        "flags": {},
+        "order": 9,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "latent",
+            "type": "LATENT",
+            "link": 26
+          }
+        ],
+        "outputs": [
+          {
+            "name": "latent_path",
+            "type": "STRING",
+            "links": null
+          }
+        ],
+        "title": "Retain native H3 state",
+        "properties": {
+          "aux_id": "hypereikon-lab/ComfyUI-Cauce",
+          "ver": "9172c30b37fc43272473409e6f42eaacc0a10e60",
+          "Node name for S&R": "CauceSaveAVLatent"
+        },
+        "widgets_values": [
+          "cauce/latents/inside-valdivia/keyframed-text-only",
+          1
+        ],
+        "widgets_values_named": {
+          "filename_prefix": "cauce/latents/inside-valdivia/keyframed-text-only",
+          "artifact_index": 1
+        }
+      },
+      {
+        "id": 11,
+        "type": "VAEDecode",
+        "pos": [
+          1541.9322265625,
+          342
+        ],
+        "size": [
+          163.5484375,
+          46
+        ],
+        "flags": {},
+        "order": 10,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "samples",
+            "type": "LATENT",
+            "link": 27
+          },
+          {
+            "name": "vae",
+            "type": "VAE",
+            "link": 28
+          }
+        ],
+        "outputs": [
+          {
+            "name": "IMAGE",
+            "type": "IMAGE",
+            "links": [
+              29
+            ]
+          }
+        ],
+        "title": "Decode video only",
+        "properties": {
+          "cnr_id": "comfy-core",
+          "ver": "0.33.0",
+          "Node name for S&R": "VAEDecode"
+        }
+      },
+      {
+        "id": 12,
+        "type": "CreateVideo",
+        "pos": [
+          1924.9943359375002,
+          130
+        ],
+        "size": [
+          270,
+          102
+        ],
+        "flags": {},
+        "order": 11,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "images",
+            "type": "IMAGE",
+            "link": 29
+          },
+          {
+            "name": "audio",
+            "shape": 7,
+            "type": "AUDIO",
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "VIDEO",
+            "type": "VIDEO",
+            "links": [
+              30
+            ]
+          }
+        ],
+        "title": "Create silent 24 fps video",
+        "properties": {
+          "cnr_id": "comfy-core",
+          "ver": "0.33.0",
+          "Node name for S&R": "CreateVideo"
+        },
+        "widgets_values": [
+          24,
+          8
+        ],
+        "widgets_values_named": {
+          "fps": 24,
+          "bit_depth": 8
+        }
+      },
+      {
+        "id": 13,
+        "type": "SaveVideo",
+        "pos": [
+          2294.9943359375,
+          130
+        ],
+        "size": [
+          270,
+          106
+        ],
+        "flags": {},
+        "order": 12,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "video",
+            "type": "VIDEO",
+            "link": 30
+          }
+        ],
+        "outputs": [
+          {
+            "name": "video",
+            "type": "VIDEO",
+            "links": null
+          }
+        ],
+        "title": "Save silent video",
+        "properties": {
+          "cnr_id": "comfy-core",
+          "ver": "0.33.0"
+        },
+        "widgets_values": [
+          "video/inside-valdivia/keyframed-text-only",
+          "auto",
+          "auto",
+          "auto"
+        ],
+        "widgets_values_named": {
+          "filename_prefix": "video/inside-valdivia/keyframed-text-only",
+          "format": "auto",
+          "format.codec": "auto",
+          "codec": "auto"
+        }
+      }
+    ],
+    "links": [
+      [
+        16,
+        1,
+        0,
+        4,
+        0,
+        "CLIP"
+      ],
+      [
+        17,
+        2,
+        0,
+        4,
+        1,
+        "VAE"
+      ],
+      [
+        18,
+        3,
+        0,
+        6,
+        0,
+        "MODEL"
+      ],
+      [
+        19,
+        4,
+        0,
+        6,
+        1,
+        "CONDITIONING"
+      ],
+      [
+        20,
+        3,
+        0,
+        7,
+        0,
+        "MODEL"
+      ],
+      [
+        21,
+        5,
+        0,
+        9,
+        0,
+        "NOISE"
+      ],
+      [
+        22,
+        6,
+        0,
+        9,
+        1,
+        "GUIDER"
+      ],
+      [
+        23,
+        8,
+        0,
+        9,
+        2,
+        "SAMPLER"
+      ],
+      [
+        24,
+        7,
+        0,
+        9,
+        3,
+        "SIGMAS"
+      ],
+      [
+        25,
+        4,
+        1,
+        9,
+        4,
+        "LATENT"
+      ],
+      [
+        26,
+        9,
+        0,
+        10,
+        0,
+        "LATENT"
+      ],
+      [
+        27,
+        9,
+        0,
+        11,
+        0,
+        "LATENT"
+      ],
+      [
+        28,
+        2,
+        0,
+        11,
+        1,
+        "VAE"
+      ],
+      [
+        29,
+        11,
+        0,
+        12,
+        0,
+        "IMAGE"
+      ],
+      [
+        30,
+        12,
+        0,
+        13,
+        0,
+        "VIDEO"
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "extra": {
+      "ds": {
+        "scale": 0.9,
+        "offset": [
+          416,
+          110
+        ]
+      },
+      "frontendVersion": "1.49.6"
+    },
+    "version": 0.4
+  },
+  "apiGraph": {
+    "1": {
+      "inputs": {
+        "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+        "type": "minimax",
+        "device": "default"
+      },
+      "class_type": "CLIPLoader",
+      "_meta": {
+        "title": "Load H3 Qwen encoder"
+      }
+    },
+    "2": {
+      "inputs": {
+        "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+      },
+      "class_type": "VAELoader",
+      "_meta": {
+        "title": "Load H3 video VAE"
+      }
+    },
+    "3": {
+      "inputs": {
+        "unet_name": "minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+        "weight_dtype": "default"
+      },
+      "class_type": "UNETLoader",
+      "_meta": {
+        "title": "Load H3 FL2VA"
+      }
+    },
+    "4": {
+      "inputs": {
+        "prompt": "Describe one continuous visual shot and its intended motion. Do not request dialogue, music, sound effects, or generated audio.",
+        "width": 1344,
+        "height": 768,
+        "length": 124,
+        "clip": [
+          "1",
+          0
+        ],
+        "vae": [
+          "2",
+          0
+        ]
+      },
+      "class_type": "MiniMaxH3ImageToVideo",
+      "_meta": {
+        "title": "H3 text-only conditioning"
+      }
+    },
+    "5": {
+      "inputs": {
+        "noise_seed": 0
+      },
+      "class_type": "RandomNoise",
+      "_meta": {
+        "title": "Seed"
+      }
+    },
+    "6": {
+      "inputs": {
+        "model": [
+          "3",
+          0
+        ],
+        "conditioning": [
+          "4",
+          0
+        ]
+      },
+      "class_type": "BasicGuider",
+      "_meta": {
+        "title": "Basic guider"
+      }
+    },
+    "7": {
+      "inputs": {
+        "scheduler": "simple",
+        "steps": 20,
+        "denoise": 1,
+        "model": [
+          "3",
+          0
+        ]
+      },
+      "class_type": "BasicScheduler",
+      "_meta": {
+        "title": "H3 scheduler"
+      }
+    },
+    "8": {
+      "inputs": {
+        "sampler_name": "res_multistep"
+      },
+      "class_type": "KSamplerSelect",
+      "_meta": {
+        "title": "H3 sampler"
+      }
+    },
+    "9": {
+      "inputs": {
+        "noise": [
+          "5",
+          0
+        ],
+        "guider": [
+          "6",
+          0
+        ],
+        "sampler": [
+          "8",
+          0
+        ],
+        "sigmas": [
+          "7",
+          0
+        ],
+        "latent_image": [
+          "4",
+          1
+        ]
+      },
+      "class_type": "SamplerCustomAdvanced",
+      "_meta": {
+        "title": "Sample H3"
+      }
+    },
+    "10": {
+      "inputs": {
+        "filename_prefix": "cauce/latents/inside-valdivia/keyframed-text-only",
+        "artifact_index": 1,
+        "latent": [
+          "9",
+          0
+        ]
+      },
+      "class_type": "CauceSaveAVLatent",
+      "_meta": {
+        "title": "Retain native H3 state"
+      }
+    },
+    "11": {
+      "inputs": {
+        "samples": [
+          "9",
+          0
+        ],
+        "vae": [
+          "2",
+          0
+        ]
+      },
+      "class_type": "VAEDecode",
+      "_meta": {
+        "title": "Decode video only"
+      }
+    },
+    "12": {
+      "inputs": {
+        "fps": 24,
+        "bit_depth": 8,
+        "images": [
+          "11",
+          0
+        ]
+      },
+      "class_type": "CreateVideo",
+      "_meta": {
+        "title": "Create silent 24 fps video"
+      }
+    },
+    "13": {
+      "inputs": {
+        "filename_prefix": "video/inside-valdivia/keyframed-text-only",
+        "format": "auto",
+        "format.codec": "auto",
+        "codec": "auto",
+        "video": [
+          "12",
+          0
+        ]
+      },
+      "class_type": "SaveVideo",
+      "_meta": {
+        "title": "Save silent video"
+      }
+    }
+  },
+  "uiGraphSignature": "77e45856809b7752723ec6ceb21da4f5a18dfa7cc6353994ac387daf6049e61b",
+  "apiGraphSignature": "ca5391162eb7cc62af298d059005a7f61c7bff94eb68223978306feeef011092"
+}
+

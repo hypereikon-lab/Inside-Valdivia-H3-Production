@@ -4,8 +4,8 @@ This is the exact boundary between offline preparation and claims about the
 laboratory runtime. It is intentionally read-only until all compatibility gates
 pass.
 
-The source commits required by the gate, the four runtime profiles, every stop
-condition, and the complete 31-topology evidence order are machine-readable in
+The source commits required by the gate, the two runtime profiles, every stop
+condition, and the complete 32-topology evidence order are machine-readable in
 `materialization/live-gate.json`.
 
 ## 1. Establish reachability without diagnosis by guess
@@ -67,7 +67,7 @@ comfy-runtime check-requirements runtime/requirements/h3-core.json \
 The automated gate checks:
 
 - required routes;
-- all 23 locked CAUCE nodes;
+- all 24 locked CAUCE nodes;
 - official FL2VA, sampler, decode, `CreateVideo`, and `SaveVideo` nodes;
 - exact expected FL2VA, Qwen, and video-VAE filenames;
 - at least 60 GB total RAM and 30 GB total VRAM;
@@ -96,7 +96,7 @@ Require:
 
 ```text
 schema = comfy.workspace-diagnostic/1
-capabilities.version = 0.4.0
+capabilities.version = 0.4.2
 readiness.ready = true
 required methods include planOpenExact and planCloseOwned
 ```
@@ -107,7 +107,8 @@ temporary, unidentified, or signature-changed workflows.
 
 ## 5. Materialize, do not reconstruct from memory
 
-Start with `generate.keyframed@text-only`. Resolve its locked graph archetype,
+The saved `generate.keyframed@text-only` draft is the first paired baseline.
+Resolve its locked graph archetype,
 then build the graph from its topology dossier using current live schemas. A
 later binding profile may reuse that paired graph only when the archetype id is
 identical. The artifact path must end in:
@@ -121,8 +122,10 @@ Export `uiGraph` and `apiGraph` together as `comfy.workspace-export/2` with
 captured literal values and guard every pointer with its expected value. Use
 `materialize-export` with the same runtime manifest.
 
-The resulting pair remains `requires-live-review`. Validate it again before
-submitting exactly once.
+The resulting pair remains `requires-live-review`. The current text-only pair
+has zero schema errors and warnings against the captured runtime, but still
+requires a concrete prompt and a fresh pre-submit validation before one exact
+submission.
 
 ## 6. Evidence order
 
@@ -135,6 +138,8 @@ execution order. `materialization/live-gate.json` owns the empirical order:
 4. variants dependent on mechanisms already observed.
 5. native masked editing and outpaint, beginning with static and centered controls;
 6. bounded refinement only after its denoise-strength ladder is bound.
+7. native temporal densification only after preserved-frame behavior is verified;
+8. native spatial regeneration only after bounded second-pass controls execute.
 
 Stop after any failed schema, execution, artifact, or visual gate. Preserve a
 negative result as evidence; do not silently change several parameters and call

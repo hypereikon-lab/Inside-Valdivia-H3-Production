@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the three source-component locks against explicit local checkouts."""
+"""Verify every source-component lock against explicit local checkouts."""
 
 from __future__ import annotations
 
@@ -69,10 +69,11 @@ def verify_components(
 
 
 def main(argv: list[str]) -> int:
-    if len(argv) != 4:
+    if len(argv) != 5:
         print(
             "usage: verify_component_locks.py /path/to/ComfyUI-Cauce "
-            "/path/to/ComfyUI-Runtime-Control /path/to/ComfyUI-Workspace-Control",
+            "/path/to/ComfyUI-Runtime-Control /path/to/ComfyUI-Workspace-Control "
+            "/path/to/ComfyUI-Repository-Control",
             file=sys.stderr,
         )
         return 2
@@ -80,6 +81,7 @@ def main(argv: list[str]) -> int:
         "cauce": Path(argv[1]).resolve(),
         "runtime_control": Path(argv[2]).resolve(),
         "workspace_control": Path(argv[3]).resolve(),
+        "repository_control": Path(argv[4]).resolve(),
     }
     errors = verify_components(ROOT, checkouts)
     if errors:

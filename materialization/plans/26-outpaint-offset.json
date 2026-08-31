@@ -1,8 +1,8 @@
 {
   "schema": "inside-valdivia.materialization-plan/1",
   "operation": "reframe.outpaint_video",
-  "operation_version": 1,
-  "operation_contract_hash": "49ba366f6033cef8a0bce2dc3a71eb492846b08708217adae151600d4a303465",
+  "operation_version": 2,
+  "operation_contract_hash": "d2bacf6df803fe21217642cb96e1c9c143e60a8f5da6197d2fdbf156cadf7ae8",
   "variant": "offset",
   "topology_key": "reframe.outpaint_video@offset",
   "priority": 26,
@@ -30,8 +30,6 @@
     "sampler": null,
     "scheduler": null,
     "steps": null,
-    "video_shift": null,
-    "audio_shift": null,
     "artifact": { "frame_rate": 24, "filename_prefix": null, "format": "auto", "codec": "auto", "history_resolvable": true, "retain_native_state": true },
     "inputs": { "source_native_av_latent": null }
   },

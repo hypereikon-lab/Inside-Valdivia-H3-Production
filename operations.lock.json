@@ -2,21 +2,21 @@
   "schema": "inside-valdivia.cauce-operation-lock/1",
   "source": {
     "repository": "https://github.com/hypereikon-lab/ComfyUI-Cauce",
-    "commit": "3aa28eb070d63520a5d6ef0a3c662229e708c90e",
-    "catalog_hash": "eee05a1d4458ce0cdf0e6de84f402ef015bee660a5dacfee2d1cdedc487e34a2"
+    "commit": "9172c30b37fc43272473409e6f42eaacc0a10e60",
+    "catalog_hash": "ae613bd012a959290dbb1d5a96319a39fabf94e3d18626e070387b6a3779ac91"
   },
   "operations": [
-    { "id": "complete.native_av", "version": 1, "contract_hash": "bef22c04534126804a4d884ae69f8229a97eb3bc562c8403ffdca508a0043ca4" },
-    { "id": "continue.native_av", "version": 2, "contract_hash": "2776bb1db0e844648bcb2b4d98a1ef84b36a2488449ef7bdc77d7e44ceb6a8b5" },
-    { "id": "densify.temporal", "version": 1, "contract_hash": "3e2caf680c4ba5f2b422c6b17174b917f2843027e788ebcf90df591358aa1346" },
-    { "id": "edit.masked_video", "version": 1, "contract_hash": "d4efeb87b8e651427cf230989a9359dab0d3791fd062ae22e5fed19c5696361c" },
+    { "id": "complete.native_av", "version": 2, "contract_hash": "08a4aa23368d53570e432bc0d00df96318214886d5ebbdfb1f25eef4ddd60f01" },
+    { "id": "continue.native_av", "version": 3, "contract_hash": "7990464810ab00136edadb5e3b5f624521fc70681c2fb4b803232ea5496be4cd" },
+    { "id": "densify.temporal", "version": 2, "contract_hash": "64251914e9e72a3b5da1c57e2ec9befc477c0fba75acfe3f07fc9e5c4cad6da0" },
+    { "id": "edit.masked_video", "version": 2, "contract_hash": "755fcd6a413a84420d7980f600beec6b7a310419f5b922dc58f5cbd4c3064d1f" },
     { "id": "frames.assemble", "version": 2, "contract_hash": "bf6da173fa4785bee22643d838c56cafdaf095a2b33fb43f71ff201308c0f19b" },
-    { "id": "generate.from_references", "version": 3, "contract_hash": "479a9e932bc54b533b6f4db693433aeb20f626f4571459705921309cf590e771" },
-    { "id": "generate.keyframed", "version": 1, "contract_hash": "293c342e54d66ac4b8f5147636e9aa0617635abba5d2d4acc2919999104208b1" },
-    { "id": "generate.with_guides", "version": 2, "contract_hash": "6aa98ac3795988f9797de0d5043505609fc7e86959b0da0832951ac3e535e3dc" },
-    { "id": "refine.video", "version": 1, "contract_hash": "5eab6c144af380fd3e0d86f4ac8b5112a1c8b62f5a902f0c81ef758716724ab9" },
-    { "id": "reframe.outpaint_video", "version": 1, "contract_hash": "49ba366f6033cef8a0bce2dc3a71eb492846b08708217adae151600d4a303465" },
-    { "id": "regenerate.spatial", "version": 1, "contract_hash": "aa7e957f9156a8f1daead0ab3fc0ec2680b8d11f05957a4341bb9e945fd3e9d6" },
+    { "id": "generate.from_references", "version": 4, "contract_hash": "117a99a5622049000c31d15e34b9bd55e8f1ea164a5d9f9935e72548197a9176" },
+    { "id": "generate.keyframed", "version": 2, "contract_hash": "3d9f3d24a99ac78161ea7b7bd2c4e976795b94c37bc890613873bf70d9ce05df" },
+    { "id": "generate.with_guides", "version": 3, "contract_hash": "49aa03c63837e7cbc3dd09992e6575196dced0061847986f8643b347cbe98dfc" },
+    { "id": "refine.video", "version": 2, "contract_hash": "d03a8943dd890bb3dba3b0f08fe1dbef251ee3ff91bf00a920db3d299e14c143" },
+    { "id": "reframe.outpaint_video", "version": 2, "contract_hash": "d2bacf6df803fe21217642cb96e1c9c143e60a8f5da6197d2fdbf156cadf7ae8" },
+    { "id": "regenerate.spatial", "version": 2, "contract_hash": "40a801bf58ab20e2757725f961298ba48078d241517f596c7215de4efe7e267d" },
     { "id": "rollback.native_av", "version": 1, "contract_hash": "e440ecd49654c0f21227593a69af5a009d879c73389bfe6b8c859d64d1d61a1c" }
   ]
 }

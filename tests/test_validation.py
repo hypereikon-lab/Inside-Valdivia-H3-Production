@@ -241,10 +241,17 @@ class RepositoryValidationTests(unittest.TestCase):
                 cauce_commit=operation_lock["source"]["commit"],
                 runtime_commit=live_gate["source_locks"]["runtime_commit"],
                 workspace_commit=live_gate["source_locks"]["workspace_commit"],
+                repository_control_commit=live_gate["source_locks"][
+                    "repository_control_commit"
+                ],
             ),
             [],
         )
-        self.assertEqual(lock["platform"]["full_profile"]["minimum_comfyui"], "0.34.0")
+        self.assertEqual(lock["platform"]["full_profile"]["minimum_comfyui"], "0.33.0")
+        self.assertEqual(
+            set(lock["components"]),
+            {"cauce", "runtime_control", "workspace_control", "repository_control"},
+        )
         self.assertEqual(
             lock["components"]["workspace_control"]["distribution"],
             "registry-prepared-unpublished",
@@ -545,7 +552,7 @@ class RepositoryValidationTests(unittest.TestCase):
             "id": "unit-assessment",
             "invocation": invocation["id"],
             "operation": "generate.keyframed",
-            "operation_version": 1,
+            "operation_version": registry["generate.keyframed"]["version"],
             "variant": "first-last",
             "run_receipt": "receipts/prompt-1.json",
             "artifact": {"filename": "result.mp4", "subfolder": "unit", "type": "output"},
@@ -591,15 +598,25 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertEqual(report["counts"]["materialization_plans"], 32)
         self.assertEqual(report["counts"]["graph_archetypes"], 29)
         self.assertEqual(report["counts"]["binding_profiles"], 32)
-        self.assertEqual(report["counts"]["locked_control_components"], 3)
-        self.assertEqual(report["counts"]["paired_workflows"], 0)
-        self.assertEqual(report["counts"]["schema_validated_workflows"], 0)
+        self.assertEqual(report["counts"]["locked_control_components"], 4)
+        self.assertEqual(report["counts"]["runtime_manifests"], 1)
+        self.assertEqual(report["counts"]["runtime_readiness_evaluations"], 2)
+        self.assertEqual(report["counts"]["paired_workflows"], 1)
+        self.assertEqual(report["counts"]["schema_validated_workflows"], 1)
         self.assertEqual(report["counts"]["visual_assessments"], 0)
-        self.assertEqual(report["evidence"]["offline_ready_topologies"], 32)
+        self.assertEqual(report["evidence"]["offline_ready_topologies"], 31)
+        self.assertEqual(
+            report["evidence"]["latest_runtime_manifest_hash"],
+            "e97aa6c8e6f449e0f3d0f51fd3921e66c51f763de6d64de3ed9f2474019ba9c9",
+        )
+        self.assertEqual(
+            report["evidence"]["ready_runtime_profiles"],
+            ["inside-valdivia-h3-core", "inside-valdivia-h3-full"],
+        )
         self.assertFalse(report["production_ready"])
         self.assertEqual(
             report["next_gate"],
-            "recover-origin-reconcile-manager-and-capture-runtime-manifest",
+            "execute-and-visually-assess-first-workflow",
         )
 
 

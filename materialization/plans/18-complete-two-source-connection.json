@@ -1,8 +1,8 @@
 {
   "schema": "inside-valdivia.materialization-plan/1",
   "operation": "complete.native_av",
-  "operation_version": 1,
-  "operation_contract_hash": "bef22c04534126804a4d884ae69f8229a97eb3bc562c8403ffdca508a0043ca4",
+  "operation_version": 2,
+  "operation_contract_hash": "08a4aa23368d53570e432bc0d00df96318214886d5ebbdfb1f25eef4ddd60f01",
   "variant": "two-source-connection",
   "topology_key": "complete.native_av@two-source-connection",
   "priority": 18,
@@ -38,8 +38,6 @@
     "sampler": null,
     "scheduler": null,
     "steps": null,
-    "video_shift": null,
-    "audio_shift": null,
     "artifact": {
       "frame_rate": 24,
       "filename_prefix": null,

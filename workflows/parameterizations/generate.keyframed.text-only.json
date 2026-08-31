@@ -1,0 +1,60 @@
+{
+  "schema": "comfy.api-parameterization/1",
+  "parameters": [
+    {
+      "name": "prompt",
+      "pointers": ["/4/inputs/prompt"],
+      "expected": "Describe one continuous visual shot and its intended motion. Do not request dialogue, music, sound effects, or generated audio."
+    },
+    {
+      "name": "width",
+      "pointers": ["/4/inputs/width"],
+      "expected": 1344
+    },
+    {
+      "name": "height",
+      "pointers": ["/4/inputs/height"],
+      "expected": 768
+    },
+    {
+      "name": "target_frames",
+      "pointers": ["/4/inputs/length"],
+      "expected": 124
+    },
+    {
+      "name": "seed",
+      "pointers": ["/5/inputs/noise_seed"],
+      "expected": 0
+    },
+    {
+      "name": "scheduler",
+      "pointers": ["/7/inputs/scheduler"],
+      "expected": "simple"
+    },
+    {
+      "name": "steps",
+      "pointers": ["/7/inputs/steps"],
+      "expected": 20
+    },
+    {
+      "name": "sampler",
+      "pointers": ["/8/inputs/sampler_name"],
+      "expected": "res_multistep"
+    },
+    {
+      "name": "native_state_prefix",
+      "pointers": ["/10/inputs/filename_prefix"],
+      "expected": "cauce/latents/inside-valdivia/keyframed-text-only"
+    },
+    {
+      "name": "native_state_index",
+      "pointers": ["/10/inputs/artifact_index"],
+      "expected": 1
+    },
+    {
+      "name": "video_filename_prefix",
+      "pointers": ["/13/inputs/filename_prefix"],
+      "expected": "video/inside-valdivia/keyframed-text-only"
+    }
+  ]
+}

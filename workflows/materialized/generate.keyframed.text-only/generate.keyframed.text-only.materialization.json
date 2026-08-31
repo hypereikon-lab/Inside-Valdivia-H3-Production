@@ -1,0 +1,72 @@
+{
+  "operation": {
+    "contract_hash": "3d9f3d24a99ac78161ea7b7bd2c4e976795b94c37bc890613873bf70d9ce05df",
+    "id": "generate.keyframed",
+    "version": 2
+  },
+  "products": {
+    "api_template": "generate.keyframed.text-only.api.template.json",
+    "api_template_hash": "a58c9727c230d90b3175e97aa019fb77b1fc275da1736e95b35b69c402908c3a",
+    "bindings": "generate.keyframed.text-only.bindings.json",
+    "bindings_hash": "8da9de20c0e2802e230e6d4f08106db6a856b01fe6d587fdb842472ec5fd6949",
+    "ui_graph": "generate.keyframed.text-only.ui.json",
+    "ui_graph_hash": "77e45856809b7752723ec6ceb21da4f5a18dfa7cc6353994ac387daf6049e61b"
+  },
+  "promotion_gate": "requires-live-review",
+  "round_trip": {
+    "compiled_api_graph_hash": "ca5391162eb7cc62af298d059005a7f61c7bff94eb68223978306feeef011092",
+    "used_bindings": [
+      "height",
+      "native_state_index",
+      "native_state_prefix",
+      "prompt",
+      "sampler",
+      "scheduler",
+      "seed",
+      "steps",
+      "target_frames",
+      "video_filename_prefix",
+      "width"
+    ],
+    "valid": true
+  },
+  "runtime_manifest": {
+    "captured_at": "2026-08-31T21:20:07.491636+00:00",
+    "manifest_hash": "e97aa6c8e6f449e0f3d0f51fd3921e66c51f763de6d64de3ed9f2474019ba9c9",
+    "object_info_hash": "839c98fafb6ecdac528df75fa72939f76156893b34bcac03b99f043b99d7b85c",
+    "runtime": "comfy.hypereikon.online-authenticated-browser"
+  },
+  "schema": "comfy.materialization-draft/1",
+  "schema_validation": {
+    "error_count": 0,
+    "issues": [],
+    "referenced_node_types": [
+      "BasicGuider",
+      "BasicScheduler",
+      "CLIPLoader",
+      "CauceSaveAVLatent",
+      "CreateVideo",
+      "KSamplerSelect",
+      "MiniMaxH3ImageToVideo",
+      "RandomNoise",
+      "SamplerCustomAdvanced",
+      "SaveVideo",
+      "UNETLoader",
+      "VAEDecode",
+      "VAELoader"
+    ],
+    "schema": "comfy.api-graph-validation/1",
+    "valid": true,
+    "warning_count": 0
+  },
+  "source": {
+    "active_path": "workflows/Inside Valdivia/Canonical/H3 Keyframed Text Only.json",
+    "api_graph_hash": "ca5391162eb7cc62af298d059005a7f61c7bff94eb68223978306feeef011092",
+    "captured_at": "2026-08-31T22:48:30.666Z",
+    "schema": "comfy.workspace-export/2",
+    "ui_graph_hash": "77e45856809b7752723ec6ceb21da4f5a18dfa7cc6353994ac387daf6049e61b",
+    "workspace_control_version": "0.4.2"
+  },
+  "state": "schema-validated-draft",
+  "variant": "text-only"
+}

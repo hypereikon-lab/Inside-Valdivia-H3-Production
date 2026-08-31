@@ -2,8 +2,8 @@
   "schema": "inside-valdivia.operation-invocation/1",
   "id": "example-keyframed-generation-0001",
   "operation": "generate.keyframed",
-  "operation_version": 1,
-  "operation_contract_hash": "293c342e54d66ac4b8f5147636e9aa0617635abba5d2d4acc2919999104208b1",
+  "operation_version": 2,
+  "operation_contract_hash": "3d9f3d24a99ac78161ea7b7bd2c4e976795b94c37bc890613873bf70d9ce05df",
   "inputs": {
     "first_frame": "input://frames/example-start.png",
     "last_frame": "input://frames/example-end.png"

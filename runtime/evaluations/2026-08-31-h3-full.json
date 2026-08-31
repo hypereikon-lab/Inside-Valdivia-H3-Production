@@ -1,0 +1,52 @@
+{
+  "checks": {
+    "endpoints": {
+      "missing": [],
+      "required": [
+        "features",
+        "system_stats",
+        "object_info",
+        "queue"
+      ]
+    },
+    "hardware": {
+      "failures": [],
+      "observed_device_names": [
+        "cuda:0 NVIDIA GeForce RTX 5090 : cudaMallocAsync"
+      ],
+      "observed_total_ram_bytes": 67768381440,
+      "observed_total_vram_bytes": 34190458880
+    },
+    "models": {
+      "missing": [],
+      "required": [
+        "minimax_h3_audio_vae_fp32.safetensors",
+        "minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+        "minimax_h3_ref2va_pruned_fp8_scaled.safetensors",
+        "minimax_h3_video_vae_fp16.safetensors",
+        "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors"
+      ]
+    },
+    "node_types": {
+      "missing": [],
+      "missing_groups": [],
+      "required_count": 41
+    },
+    "queue": {
+      "failure": false,
+      "observed_idle": true,
+      "required_idle": true
+    }
+  },
+  "manual_checks": [
+    "Confirm at least 30 GB of free local storage before any new model or long render.",
+    "Confirm Windows sleep is disabled for the agreed production window.",
+    "Confirm cloudflared and ComfyUI recovery behavior after process restart without changing the GPU stack.",
+    "Confirm LoadVideo decodes the selected production clip at 24 fps and preserves exact frame ordering.",
+    "Confirm SaveVideo writes a resolvable history artifact under the declared output prefix."
+  ],
+  "ready": true,
+  "requirements_id": "inside-valdivia-h3-full",
+  "runtime_manifest_hash": "e97aa6c8e6f449e0f3d0f51fd3921e66c51f763de6d64de3ed9f2474019ba9c9",
+  "schema": "comfy.runtime-readiness/1"
+}

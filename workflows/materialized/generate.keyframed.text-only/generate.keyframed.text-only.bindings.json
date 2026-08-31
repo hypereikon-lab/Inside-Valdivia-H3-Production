@@ -1,0 +1,13 @@
+{
+  "height": 768,
+  "native_state_index": 1,
+  "native_state_prefix": "cauce/latents/inside-valdivia/keyframed-text-only",
+  "prompt": "Describe one continuous visual shot and its intended motion. Do not request dialogue, music, sound effects, or generated audio.",
+  "sampler": "res_multistep",
+  "scheduler": "simple",
+  "seed": 0,
+  "steps": 20,
+  "target_frames": 124,
+  "video_filename_prefix": "video/inside-valdivia/keyframed-text-only",
+  "width": 1344
+}

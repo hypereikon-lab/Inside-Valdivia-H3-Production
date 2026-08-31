@@ -6,14 +6,14 @@ not restoration targets. A new workflow starts with the smallest current
 official ComfyUI H3 graph and adds CAUCE only when an operation needs native
 AV-state algebra that upstream does not expose.
 
-Checked on 2026-08-30 against:
+Checked on 2026-08-31 against:
 
 - ComfyUI `v0.34.0`, commit
   `12d5279438bfefc058a269eae805ceab6047777f`;
 - ComfyUI `master`, commit
-  `8a33128f2f8c5585c57486c07de481241e70a39c`, for observation only;
+  `95d755cd8107a72258d452b5d3657273d571f07d`, for observation only;
 - official workflow templates commit
-  `d11b69157009227ad2a7d3a927a1eb68a3d5f281` for the relevant enhancement templates;
+  `4c4b8cbc04e01507b11d69f207c2209a59362420`, including the current H3 I2V template;
 - the MiniMax H3 model card and official prompt guides;
 - merged and open ComfyUI H3 pull requests listed below.
 
@@ -44,9 +44,11 @@ separate states.
 Official ComfyUI owns:
 
 - packed joint video/audio latent allocation;
+- released empty H3 AV latent allocation through
+  `EmptyMiniMaxH3LatentAV`;
 - the `17k+5` decoded-frame lattice at 24 fps;
 - target canvas alignment to multiples of 32;
-- H3 video/audio sigma shifts;
+- an optional H3 video/audio sigma-shift patch;
 - model loading, guider, scheduler, sampler, VAE decode and video saving;
 - stock sampler compatibility through H3's internal AV schedule mapping.
 
@@ -159,6 +161,9 @@ comparison with released upstream behavior:
 - `CauceH3PrepareReferenceClip`;
 - `CauceH3InspectConditioning`.
 
+Any CAUCE target-allocation path must likewise be compared against the released
+`EmptyMiniMaxH3LatentAV` node before it is retained as a distinct primitive.
+
 Likewise, `generate.keyframed`, `generate.from_references` and
 `generate.with_guides` are project workflow families over official nodes. They
 should not imply that CAUCE implements those generation mechanisms.
@@ -228,11 +233,12 @@ They require fixed-source denoise ladders and explicit visual comparison.
 These do not enter the suite until merged, released, present in the laboratory
 manifest and separately accepted:
 
-| Upstream work | Current state on 2026-08-30 | Potential workflow surface |
+| Upstream work | Current state on 2026-08-31 | Potential workflow surface |
 | --- | --- | --- |
-| ComfyUI PR #15735 | open | official builder for separately encoded H3 video/audio latents; may replace a CAUCE allocation/assembly primitive |
-| ComfyUI PR #15860 | open | Fun ControlNet Union support |
-| ComfyUI PR #15975 | open | alternative Fun ControlNet implementation as model patches |
+| ComfyUI PR #15735 | open, non-draft | official builder for separately encoded H3 video/audio latents; may replace a CAUCE allocation/assembly primitive |
+| ComfyUI PR #15860 | open, non-draft | Fun ControlNet Union support |
+| ComfyUI PR #15975 | open, non-draft | alternative Fun ControlNet implementation as model patches |
+| ComfyUI PR #15983 | open | correct H3 memory estimation; runtime planning rather than a workflow capability |
 | ComfyUI PR #15270 | open | attention patch hooks; infrastructure, not a user workflow by itself |
 | ComfyUI PR #15958 | draft | FastVideo VSA acceleration; outside present scope |
 | ComfyUI PR #15972 | open | audio VAE crop correction; relevant to runtime correctness even though project delivery discards H3 audio |
@@ -245,6 +251,8 @@ pull requests, so no canonical graph or model download is committed yet.
 
 The following mechanisms are plausible additions, not present capabilities:
 
+- Qwen-only time-addressed image/video references that do not consume native
+  H3 reference slots;
 - learned H3 latent spatial upscaling followed by a second sampling pass;
 - direct NestedTensor-aware latent upscaling/re-noising;
 - motion-context continuation that carries exact latent tail state;
@@ -255,6 +263,10 @@ The following mechanisms are plausible additions, not present capabilities:
 Their code, weights, storage cost, license, compatibility strategy and visible
 benefit must be evaluated one at a time. None becomes a CAUCE dependency merely
 because it exists.
+
+The project-specific distinction between semantic references, target-aligned
+temporal guides, preservation masks and pending structural control is developed in
+[Native movement control research](MOVEMENT_CONTROL_RESEARCH.md).
 
 ## Explicit exclusions
 

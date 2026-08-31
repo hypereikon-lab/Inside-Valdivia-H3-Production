@@ -13,13 +13,24 @@ changes, not inferred from workflow screenshots:
 - [ComfyUI PR #15735: proposed native H3 AV latent builder](https://github.com/Comfy-Org/ComfyUI/pull/15735)
 - [ComfyUI PR #15860: proposed H3 Fun ControlNet support](https://github.com/Comfy-Org/ComfyUI/pull/15860)
 - [ComfyUI PR #15975: proposed H3 ControlNet model-patch path](https://github.com/Comfy-Org/ComfyUI/pull/15975)
+- [ComfyUI PR #15808: merged H3 special-token fix](https://github.com/Comfy-Org/ComfyUI/pull/15808)
+- [ComfyUI issue #15805: prompt-dependence failure report](https://github.com/Comfy-Org/ComfyUI/issues/15805)
+- [ComfyUI PR #15983: proposed H3 memory-estimation correction](https://github.com/Comfy-Org/ComfyUI/pull/15983)
 - [Official ComfyUI H3 workflow templates](https://github.com/Comfy-Org/workflow_templates/tree/main/templates)
 - [DiffSynth-Studio H3 training documentation](https://github.com/modelscope/DiffSynth-Studio/blob/main/docs/en/Model_Details/MiniMax-H3.md)
 - [FrescoDiffusion tiled regeneration](https://arxiv.org/abs/2603.17555)
 - [STCDiT anchor-frame video super-resolution](https://arxiv.org/abs/2511.18786)
 - [Warped Diffusion for video inverse problems](https://arxiv.org/abs/2410.16152)
+- [VGI-Bench process-sensitive video-generation evaluation](https://arxiv.org/abs/2608.19583)
+- [FilmBench fine-grained film-oriented video evaluation](https://arxiv.org/abs/2607.24241)
+- [FlexTraj point-trajectory video control](https://arxiv.org/abs/2510.08527)
+- [MagicMotion dense-to-sparse trajectory guidance](https://arxiv.org/abs/2503.16421)
 - [MiniMax H3 community-maintained integration index](https://github.com/MiniMax-AI/awesome-minimax-h3-integration)
 - [Alibaba PAI MiniMax H3 Fun ControlNet Union](https://huggingface.co/alibaba-pai/MiniMax-H3-Fun-Controlnet-Union)
+- [Seedance 2.0 official launch](https://seed.bytedance.com/en/blog/seedance-2-0-%E6%AD%A3%E5%BC%8F%E5%8F%91%E5%B8%83)
+- [Seedance 2.5 official launch](https://seed.bytedance.com/en/blog/one-take-creation-flexible-referencing-introducing-seedance-2-5)
+- [Seedance 2.5 official product page](https://seed.bytedance.com/en/seedance2_5)
+- [BytePlus Seedance API capability documentation](https://docs.byteplus.com/en/docs/byteplus_las/video_gen_enhanced)
 - [ComfyUI v0.34.0 release](https://github.com/Comfy-Org/ComfyUI/releases/tag/v0.34.0)
 - [ComfyUI frontend v1.53.2 release](https://github.com/Comfy-Org/ComfyUI_frontend/releases/tag/v1.53.2)
 - [Official H3 mask projection and preserved-state injection](https://github.com/Comfy-Org/ComfyUI/blob/master/comfy/model_base.py)
@@ -39,6 +50,11 @@ dependencies or behavioral proof:
 - [Community MiniMax H3 latent upscaler](https://github.com/LBH-123-AI/Comfyui_Minimax_h3_latent_Upscaler)
 - [ComfyUI-Continuity H3 native latent second pass](https://github.com/roadmaus/ComfyUI-Continuity)
 - [H3 latent upscaler experiments](https://github.com/rockerBOO/h3-latent-upscaler)
+- [MiniMax H3 Timed References](https://github.com/ethanfel/ComfyUI-MiniMaxH3-Timed-References)
+- [MiniMax H3 Tone Compensate](https://github.com/rkfg/ComfyUI-MiniMaxH3-ToneCompensate)
+- [H3 GuideMaster](https://github.com/MajoorWaldi/ComfyUI-Majoor-H3-GuideMaster)
+- [H3 Native Masked Context](https://github.com/wjc573/ComfyUI-H3-Native-Masked-Context)
+- [MMH3 UltimateUpscale](https://github.com/irregular-dressing1531/Comfyui-MMH3-UltimateUpscale)
 
 The checked official surface establishes optional first/last images, ordered
 Ref2VA references, arbitrary-frame AddGuide composition, packed visual and
@@ -49,17 +65,32 @@ primitives. Community techniques become production capabilities only after
 their mechanism is reproduced transparently and live evidence is retained.
 
 Learned latent upscalers remain research references, not dependencies of the
-current 24-node CAUCE surface. The still-draft H3 Fun ControlNet integration is likewise deferred;
-neither is represented as an implemented production operation.
+current 24-node CAUCE surface. The still-open H3 Fun ControlNet integrations
+are likewise deferred; neither is represented as an implemented production
+operation.
 
-The official source was rechecked on 2026-08-30. The released H3 surface exposes
+The official source was rechecked on 2026-08-31. The released H3 surface exposes
 `MiniMaxH3ImageToVideo`, `MiniMaxH3ReferenceToVideo`, `MiniMaxH3AddGuide`, and
-`MiniMaxH3SigmaShift`; the core video path exposes `LoadVideo`, `CreateVideo`,
-and `SaveVideo`. ComfyUI `v0.34.0` is pinned at commit
-`12d5279438bfefc058a269eae805ceab6047777f`; the 2026-08-30 source observation
-used master commit `8a33128f2f8c5585c57486c07de481241e70a39c` only to watch unreleased work.
+`MiniMaxH3SigmaShift`, plus `EmptyMiniMaxH3LatentAV`; the core video path
+exposes `LoadVideo`, `CreateVideo`, and `SaveVideo`. ComfyUI `v0.34.0` is pinned
+at commit
+`12d5279438bfefc058a269eae805ceab6047777f`; the 2026-08-31 source observation
+used master commit `95d755cd8107a72258d452b5d3657273d571f07d` only to watch unreleased work.
 These upstream observations inform readiness requirements but do not prove
 that the laboratory is on the same commit. Live `/object_info` remains
 authoritative. See [H3 capability map](H3_CAPABILITY_MAP.md) for the native-first
 workflow rebuild and the exact boundary between released, project, pending and
 excluded mechanisms.
+
+Presence in `/object_info` is not the same as canonical use. The 2026-08-31
+official I2V template and the known-running laboratory FL2VA workflow connect
+the model directly to the guider and scheduler; the sigma-shift node is retained
+only as an explicit comparison variable.
+
+See [Native movement control research](MOVEMENT_CONTROL_RESEARCH.md) for the
+project-specific evidence audit, current community probe, model-routing policy
+and controlled H3/Seedance experiment queue.
+
+See [H3 intent routing and latent operator space](H3_INTENT_ROUTING.md) for the
+architecture-derived operator grammar and the boundary between released,
+near-native, model-patch, training-required and rejected interventions.
