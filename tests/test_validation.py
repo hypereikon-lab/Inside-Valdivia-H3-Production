@@ -521,25 +521,35 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertFalse(policy["allow_automatic_model_deletion"])
         self.assertFalse(policy["allow_unindexed_output_deletion"])
 
-    def test_visual_assessments_are_empty_until_live_review_and_fail_closed(self):
+    def test_visual_assessments_validate_and_fail_closed(self):
         lock_path = ROOT / "operations.lock.json"
         _, registry = validate_operation_lock(load_json(lock_path), lock_path)
         acceptance = load_json(ROOT / "acceptance" / "catalog.json")
         catalog_path = ROOT / "assessments" / "catalog.json"
         catalog = load_json(catalog_path)
         invocation = load_json(ROOT / "invocations" / "example.json")
+        invocation_ids = {
+            load_json(path)["id"]
+            for path in sorted((ROOT / "invocations").glob("*.json"))
+        }
         self.assertEqual(
             validate_visual_assessment_catalog(
                 catalog,
                 catalog_path,
                 ROOT,
                 registry,
-                {invocation["id"]},
+                invocation_ids,
                 acceptance,
             ),
             [],
         )
-        self.assertEqual(catalog["assessments"], [])
+        self.assertEqual(
+            {entry["id"] for entry in catalog["assessments"]},
+            {
+                "2026-08-31-temporal-densify-2x-rejected",
+                "2026-08-31-interior-still-guide-rejected",
+            },
+        )
 
         profile = next(
             item for item in acceptance["profiles"] if item["operation"] == "generate.keyframed"
@@ -603,7 +613,9 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertEqual(report["counts"]["runtime_readiness_evaluations"], 2)
         self.assertEqual(report["counts"]["paired_workflows"], 1)
         self.assertEqual(report["counts"]["schema_validated_workflows"], 1)
-        self.assertEqual(report["counts"]["visual_assessments"], 0)
+        self.assertEqual(report["counts"]["visual_assessments"], 2)
+        self.assertEqual(report["evidence"]["accepted_visual_assessments"], 0)
+        self.assertEqual(report["evidence"]["rejected_visual_assessments"], 2)
         self.assertEqual(report["evidence"]["offline_ready_topologies"], 31)
         self.assertEqual(
             report["evidence"]["latest_runtime_manifest_hash"],
@@ -616,7 +628,7 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertFalse(report["production_ready"])
         self.assertEqual(
             report["next_gate"],
-            "execute-and-visually-assess-first-workflow",
+            "repeat-and-earn-first-accepted-workflow",
         )
 
 

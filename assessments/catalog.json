@@ -1,4 +1,13 @@
 {
   "schema": "inside-valdivia.visual-assessment-catalog/1",
-  "assessments": []
+  "assessments": [
+    {
+      "id": "2026-08-31-temporal-densify-2x-rejected",
+      "path": "assessments/records/2026-08-31-temporal-densify-2x-rejected.json"
+    },
+    {
+      "id": "2026-08-31-interior-still-guide-rejected",
+      "path": "assessments/records/2026-08-31-interior-still-guide-rejected.json"
+    }
+  ]
 }

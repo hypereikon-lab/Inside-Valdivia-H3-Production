@@ -1,0 +1,40 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "2026-08-31-10-native-refine-020",
+  "operation": "refine.video",
+  "operation_version": 2,
+  "operation_contract_hash": "d03a8943dd890bb3dba3b0f08fe1dbef251ee3ff91bf00a920db3d299e14c143",
+  "inputs": {
+    "source_native_state": "comfy-output://cauce/latents/2026-08-31/03_fl2va_first_a_last_b_00001.safetensors",
+    "first_frame": {
+      "uri": "comfy-input://inside-valdivia-frame-a.png",
+      "sha256": "c1e448e2a28dd259d31e78f59fb4bd4778229424b678410af1b7c6bab37ec07e"
+    },
+    "last_frame": {
+      "uri": "comfy-input://inside-valdivia-frame-b.png",
+      "sha256": "dc34fc48c6ea7b5df5924dd2a856b573ab1f2f2058d9bbb4e943daf342eab767"
+    }
+  },
+  "parameters": {
+    "width": 1344,
+    "height": 768,
+    "target_frames": 124,
+    "fps": 24,
+    "steps": 20,
+    "sampler": "res_multistep",
+    "scheduler": "simple",
+    "variant": "full-frame",
+    "video_denoise": 0.2,
+    "audio_denoise": 0,
+    "seed": 260831
+  },
+  "status": "executes",
+  "outputs": {
+    "video": "comfy-output://video/2026-08-31/10_native_refine_strength_020_00001_.mp4",
+    "native_state": "comfy-output://cauce/latents/2026-08-31/10_native_refine_strength_020_00001.safetensors"
+  },
+  "run_receipts": [
+    "runtime/receipts/2026-08-31/10-native-refine-020.json"
+  ],
+  "notes": "Live H3 characterization batch. See docs/LIVE_BATCH_2026-08-31.md for measured visual evidence and limitations."
+}

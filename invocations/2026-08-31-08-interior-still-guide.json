@@ -1,0 +1,38 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "2026-08-31-08-interior-still-guide",
+  "operation": "generate.with_guides",
+  "operation_version": 3,
+  "operation_contract_hash": "49aa03c63837e7cbc3dd09992e6575196dced0061847986f8643b347cbe98dfc",
+  "inputs": {
+    "first_frame": {
+      "uri": "comfy-input://inside-valdivia-frame-a.png",
+      "sha256": "c1e448e2a28dd259d31e78f59fb4bd4778229424b678410af1b7c6bab37ec07e"
+    },
+    "guide_frame": {
+      "uri": "comfy-input://inside-valdivia-frame-b.png",
+      "sha256": "dc34fc48c6ea7b5df5924dd2a856b573ab1f2f2058d9bbb4e943daf342eab767"
+    }
+  },
+  "parameters": {
+    "width": 1344,
+    "height": 768,
+    "target_frames": 124,
+    "fps": 24,
+    "steps": 20,
+    "sampler": "res_multistep",
+    "scheduler": "simple",
+    "variant": "single-anchor",
+    "guide_frame_index": 61,
+    "seed": 260835
+  },
+  "status": "rejected",
+  "outputs": {
+    "video": "comfy-output://video/2026-08-31/08_first_a_interior_guide_b_00001_.mp4",
+    "native_state": "comfy-output://cauce/latents/2026-08-31/08_first_a_interior_guide_b_00001.safetensors"
+  },
+  "run_receipts": [
+    "runtime/receipts/2026-08-31/08-interior-still-guide.json"
+  ],
+  "notes": "Live H3 characterization batch. See docs/LIVE_BATCH_2026-08-31.md for measured visual evidence and limitations."
+}

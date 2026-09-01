@@ -34,7 +34,8 @@ this repository
   exact operation/archetype/component locks, 31 offline binding profiles,
   1 schema-validated paired draft, project data,
   runtime readiness profiles, acceptance criteria, storage policy,
-  experiments, rolling dependency/checkpoint plans
+  experiments, rolling dependency/checkpoint plans,
+  11 live invocations / executed API graphs / immutable receipts
 ```
 
 ## Locked operations
@@ -69,9 +70,11 @@ structurally distinct graphs, then to project binding profiles cataloged in
 dossier is a checked design, not executable workflow JSON. Each variant becomes
 executable only after one live ComfyUI graph is exported in paired UI/API form,
 validated against the same `/object_info` capture, and bound to concrete data.
-The first `generate.keyframed@text-only` pair now satisfies the export and
-schema-validation boundary; it has deliberately not been queued or visually
-promoted.
+The first `generate.keyframed@text-only` pair satisfies the UI/API export and
+schema-validation boundary; it remains an unqueued control. Separately, the
+2026-08-31 characterization batch retained eleven exact executed API graphs and
+their evidence. Those graphs are not presented as paired UI workflows, and no
+generative variant is visually promoted.
 
 The rolling plan in [`rolling/catalog.json`](rolling/catalog.json) records a
 strict serial native-state chain, immutable checkpoints, and branch rules. It
@@ -91,6 +94,7 @@ next required compatibility target.
 
 - [Project model](docs/PROJECT_MODEL.md)
 - [Current state](docs/CURRENT_STATE.md)
+- [Live H3 operation batch — 2026-08-31](docs/LIVE_BATCH_2026-08-31.md)
 - [Current H3 capability map and workflow rebuild](docs/H3_CAPABILITY_MAP.md)
 - [Native H3/Seedance movement-control research](docs/MOVEMENT_CONTROL_RESEARCH.md)
 - [H3 intent routing and latent operator space](docs/H3_INTENT_ROUTING.md)

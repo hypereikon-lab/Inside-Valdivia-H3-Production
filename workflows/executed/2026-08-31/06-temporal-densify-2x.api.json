@@ -1,0 +1,192 @@
+{
+  "1": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "default"
+    }
+  },
+  "2": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "3": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "4": {
+    "class_type": "CauceLoadAVLatent",
+    "inputs": {
+      "path_or_folder": "cauce/latents/2026-08-31/03_fl2va_first_a_last_b_00001.safetensors",
+      "artifact_index": 0
+    }
+  },
+  "5": {
+    "class_type": "CauceH3DilateVisualTokens",
+    "inputs": {
+      "latent": [
+        "4",
+        0
+      ],
+      "factor": 2,
+      "anchor_denoise": 0,
+      "gap_denoise": 1,
+      "feather_tokens": 1,
+      "curve": "smootherstep",
+      "audio_denoise": 1
+    }
+  },
+  "6": {
+    "class_type": "MiniMaxH3ImageToVideo",
+    "inputs": {
+      "clip": [
+        "1",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "prompt": "Increase the temporal sampling density of the preserved native H3 shot. Keep every original anchor moment, camera trajectory, forest geometry, lighting, water flow, and vegetation motion stable. Synthesize only coherent intermediate motion between anchors, with no cuts, morphing, temporal echoes, resets, extra events, people, text, or generated audio.",
+      "width": 1344,
+      "height": 768,
+      "length": 260
+    }
+  },
+  "7": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 260833
+    }
+  },
+  "8": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "conditioning": [
+        "6",
+        0
+      ]
+    }
+  },
+  "9": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1
+    }
+  },
+  "10": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "res_multistep"
+    }
+  },
+  "11": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "7",
+        0
+      ],
+      "guider": [
+        "8",
+        0
+      ],
+      "sampler": [
+        "10",
+        0
+      ],
+      "sigmas": [
+        "9",
+        0
+      ],
+      "latent_image": [
+        "5",
+        0
+      ]
+    }
+  },
+  "12": {
+    "class_type": "CauceH3ClearAVDenoiseMask",
+    "inputs": {
+      "latent": [
+        "11",
+        0
+      ],
+      "timeline_origin_frame": 0
+    }
+  },
+  "13": {
+    "class_type": "CauceSaveAVLatent",
+    "inputs": {
+      "latent": [
+        "12",
+        0
+      ],
+      "filename_prefix": "cauce/latents/2026-08-31/06_temporal_densify_2x",
+      "artifact_index": 1
+    }
+  },
+  "14": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "12",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ]
+    }
+  },
+  "15": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "14",
+        0
+      ],
+      "start_frame": 0,
+      "frame_count": 247
+    }
+  },
+  "16": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "15",
+        0
+      ],
+      "fps": 48,
+      "bit_depth": 8
+    }
+  },
+  "17": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "16",
+        0
+      ],
+      "filename_prefix": "video/2026-08-31/06_temporal_densify_2x",
+      "format": "auto",
+      "codec": "auto"
+    }
+  }
+}

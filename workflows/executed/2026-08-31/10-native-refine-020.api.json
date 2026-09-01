@@ -1,0 +1,206 @@
+{
+  "1": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "default"
+    }
+  },
+  "2": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "3": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "4": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "inside-valdivia-frame-a.png"
+    }
+  },
+  "5": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "inside-valdivia-frame-b.png"
+    }
+  },
+  "6": {
+    "class_type": "MiniMaxH3ImageToVideo",
+    "inputs": {
+      "clip": [
+        "1",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "prompt": "A single uninterrupted cinematic camera move through one continuous real temperate rainforest wetland. Preserve the existing composition, camera path, geometry and timing while refining fine natural texture, physically coherent parallax, water reflections and foliage detail. No new scene, no cut, no dissolve, no morphing, no people, no text, silent imagery.",
+      "width": 1344,
+      "height": 768,
+      "length": 124,
+      "first_frame": [
+        "4",
+        0
+      ],
+      "last_frame": [
+        "5",
+        0
+      ]
+    }
+  },
+  "7": {
+    "class_type": "CauceLoadAVLatent",
+    "inputs": {
+      "path_or_folder": "cauce/latents/2026-08-31/03_fl2va_first_a_last_b_00001.safetensors",
+      "artifact_index": 1
+    }
+  },
+  "8": {
+    "class_type": "CauceH3SetAVDenoiseInterval",
+    "inputs": {
+      "latent": [
+        "7",
+        0
+      ],
+      "timeline_origin_frame": 0,
+      "start_frame": 0,
+      "frame_count": 124,
+      "inside_strength_video": 0.2,
+      "outside_strength_video": 0,
+      "inside_strength_audio": 0,
+      "outside_strength_audio": 0,
+      "fade_in_frames": 0,
+      "fade_out_frames": 0,
+      "curve": "smootherstep",
+      "combine": "replace"
+    }
+  },
+  "9": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 260831
+    }
+  },
+  "10": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "conditioning": [
+        "6",
+        0
+      ]
+    }
+  },
+  "11": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1
+    }
+  },
+  "12": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "res_multistep"
+    }
+  },
+  "13": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "9",
+        0
+      ],
+      "guider": [
+        "10",
+        0
+      ],
+      "sampler": [
+        "12",
+        0
+      ],
+      "sigmas": [
+        "11",
+        0
+      ],
+      "latent_image": [
+        "8",
+        0
+      ]
+    }
+  },
+  "14": {
+    "class_type": "CauceH3ClearAVDenoiseMask",
+    "inputs": {
+      "latent": [
+        "13",
+        0
+      ],
+      "timeline_origin_frame": 0
+    }
+  },
+  "15": {
+    "class_type": "CauceSaveAVLatent",
+    "inputs": {
+      "latent": [
+        "14",
+        0
+      ],
+      "filename_prefix": "cauce/latents/2026-08-31/10_native_refine_strength_020",
+      "artifact_index": 1
+    }
+  },
+  "16": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "14",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ]
+    }
+  },
+  "17": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "16",
+        0
+      ],
+      "fps": 24,
+      "bit_depth": 8
+    }
+  },
+  "18": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "17",
+        0
+      ],
+      "filename_prefix": "video/2026-08-31/10_native_refine_strength_020",
+      "format": "auto",
+      "codec": "auto"
+    }
+  }
+}

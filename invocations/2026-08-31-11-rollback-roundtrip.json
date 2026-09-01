@@ -1,0 +1,24 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "2026-08-31-11-rollback-roundtrip",
+  "operation": "rollback.native_av",
+  "operation_version": 1,
+  "operation_contract_hash": "e440ecd49654c0f21227593a69af5a009d879c73389bfe6b8c859d64d1d61a1c",
+  "inputs": {
+    "source_native_state": "comfy-output://cauce/latents/2026-08-31/03_fl2va_first_a_last_b_00001.safetensors"
+  },
+  "parameters": {
+    "variant": "branch-suffix",
+    "cut_frame": 90,
+    "reappend_suffix": true
+  },
+  "status": "executes",
+  "outputs": {
+    "video": "comfy-output://video/2026-08-31/11_rollback_roundtrip_00001_.mp4",
+    "native_state": "comfy-output://cauce/latents/2026-08-31/11_rollback_roundtrip_00001.safetensors"
+  },
+  "run_receipts": [
+    "runtime/receipts/2026-08-31/11-rollback-roundtrip.json"
+  ],
+  "notes": "Live H3 characterization batch. See docs/LIVE_BATCH_2026-08-31.md for measured visual evidence and limitations."
+}

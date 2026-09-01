@@ -1,0 +1,32 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "2026-08-31-06-temporal-densify-2x",
+  "operation": "densify.temporal",
+  "operation_version": 2,
+  "operation_contract_hash": "64251914e9e72a3b5da1c57e2ec9befc477c0fba75acfe3f07fc9e5c4cad6da0",
+  "inputs": {
+    "source_native_state": "comfy-output://cauce/latents/2026-08-31/03_fl2va_first_a_last_b_00001.safetensors"
+  },
+  "parameters": {
+    "variant": "token-inpaint",
+    "factor": 2,
+    "source_frames": 124,
+    "h3_target_frames": 260,
+    "delivery_frames": 247,
+    "delivery_fps": 48,
+    "anchor_denoise": 0,
+    "gap_denoise": 1,
+    "feather_tokens": 1,
+    "curve": "smootherstep",
+    "seed": 260833
+  },
+  "status": "rejected",
+  "outputs": {
+    "video": "comfy-output://video/2026-08-31/06_temporal_densify_2x_00001_.mp4",
+    "native_state": "comfy-output://cauce/latents/2026-08-31/06_temporal_densify_2x_00001.safetensors"
+  },
+  "run_receipts": [
+    "runtime/receipts/2026-08-31/06-temporal-densify-2x.json"
+  ],
+  "notes": "Live H3 characterization batch. See docs/LIVE_BATCH_2026-08-31.md for measured visual evidence and limitations."
+}

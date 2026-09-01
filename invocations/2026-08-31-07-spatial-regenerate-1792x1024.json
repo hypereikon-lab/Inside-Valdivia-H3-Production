@@ -1,0 +1,28 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "2026-08-31-07-spatial-regenerate-1792x1024",
+  "operation": "regenerate.spatial",
+  "operation_version": 2,
+  "operation_contract_hash": "40a801bf58ab20e2757725f961298ba48078d241517f596c7215de4efe7e267d",
+  "inputs": {
+    "source_native_state": "comfy-output://cauce/latents/2026-08-31/03_fl2va_first_a_last_b_00001.safetensors"
+  },
+  "parameters": {
+    "variant": "latent-second-pass",
+    "target_width": 1792,
+    "target_height": 1024,
+    "resize_method": "bicubic",
+    "video_denoise": 0.35,
+    "audio_denoise": 0,
+    "seed": 260834
+  },
+  "status": "executes",
+  "outputs": {
+    "video": "comfy-output://video/2026-08-31/07_spatial_regenerate_1792x1024_00001_.mp4",
+    "native_state": "comfy-output://cauce/latents/2026-08-31/07_spatial_regenerate_1792x1024_00001.safetensors"
+  },
+  "run_receipts": [
+    "runtime/receipts/2026-08-31/07-spatial-regenerate-1792x1024.json"
+  ],
+  "notes": "Live H3 characterization batch. See docs/LIVE_BATCH_2026-08-31.md for measured visual evidence and limitations."
+}

@@ -33,7 +33,20 @@ def build_readiness_report(root: Path = ROOT) -> dict[str, Any]:
         for entry in materialization.get("plans", [])
     ]
     experiments = load_json(root / "experiments" / "catalog.json").get("experiments", [])
-    assessments = load_json(root / "assessments" / "catalog.json").get("assessments", [])
+    assessment_entries = load_json(root / "assessments" / "catalog.json").get(
+        "assessments", []
+    )
+    assessments = [
+        load_json(root / entry["path"])
+        for entry in assessment_entries
+        if isinstance(entry, dict) and isinstance(entry.get("path"), str)
+    ]
+    accepted_assessments = [
+        value for value in assessments if value.get("verdict") == "visually-accepted"
+    ]
+    rejected_assessments = [
+        value for value in assessments if value.get("verdict") == "rejected"
+    ]
     media = load_json(root / "media" / "catalog.json").get("media", [])
     invocations = _load_directory("invocations")
     live_gate = load_json(root / "materialization" / "live-gate.json")
@@ -78,6 +91,8 @@ def build_readiness_report(root: Path = ROOT) -> dict[str, Any]:
         next_gate = "schema-validate-first-paired-workflow"
     elif not assessments:
         next_gate = "execute-and-visually-assess-first-workflow"
+    elif not accepted_assessments:
+        next_gate = "repeat-and-earn-first-accepted-workflow"
     else:
         next_gate = "promote-only-accepted-workflows"
     return {
@@ -110,6 +125,8 @@ def build_readiness_report(root: Path = ROOT) -> dict[str, Any]:
                 invocation.get("status") in {"visually-accepted", "rejected"}
                 for invocation in invocations
             ),
+            "accepted_visual_assessments": len(accepted_assessments),
+            "rejected_visual_assessments": len(rejected_assessments),
             "latest_runtime_manifest_hash": (latest_runtime_manifest or {}).get(
                 "manifest_hash"
             ),
@@ -121,7 +138,7 @@ def build_readiness_report(root: Path = ROOT) -> dict[str, Any]:
             and runtime_ready
             and materialized
             and schema_validated
-            and assessments
+            and accepted_assessments
         ),
     }
 

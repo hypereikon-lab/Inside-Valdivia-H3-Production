@@ -1,0 +1,67 @@
+{
+  "schema": "inside-valdivia.visual-assessment/1",
+  "id": "2026-08-31-temporal-densify-2x-rejected",
+  "invocation": "2026-08-31-06-temporal-densify-2x",
+  "operation": "densify.temporal",
+  "operation_version": 2,
+  "variant": "token-inpaint",
+  "run_receipt": "runtime/receipts/2026-08-31/06-temporal-densify-2x.json",
+  "artifact": {
+    "filename": "06_temporal_densify_2x_00001_.mp4",
+    "subfolder": "video\\2026-08-31",
+    "type": "output"
+  },
+  "reviewer": "codex-live-batch-review",
+  "reviewed_at": "2026-09-01T00:36:00Z",
+  "technical_checks": [
+    {
+      "id": "native-source",
+      "result": "pass",
+      "notes": "Loaded the retained native FL2VA state from run 03."
+    },
+    {
+      "id": "token-layout",
+      "result": "pass",
+      "notes": "The factor-two dilation graph executed with anchor strength 0 and gap strength 1."
+    },
+    {
+      "id": "delivery-clock",
+      "result": "pass",
+      "notes": "The artifact is 247 frames at 48 fps and 5.145833 seconds."
+    },
+    {
+      "id": "trained-window",
+      "result": "pass",
+      "notes": "The sampled H3 target is 260 frames, inside the declared 124–362 range."
+    },
+    {
+      "id": "artifact-lineage",
+      "result": "pass",
+      "notes": "Invocation, exact API graph, prompt id, history hash, video and native output path are retained."
+    }
+  ],
+  "visual_checks": [
+    {
+      "id": "new-motion",
+      "result": "pass",
+      "notes": "Sampled interstitial frames are not simple duplicates."
+    },
+    {
+      "id": "anchor-drift",
+      "result": "fail",
+      "notes": "Sampled anchor drift is approximately 11–16 RGB levels per channel; endpoint drift is 6.30/7.32."
+    },
+    {
+      "id": "motion-continuity",
+      "result": "fail",
+      "notes": "Interstitial cadence is uneven and can exceed the original adjacent-frame change substantially."
+    },
+    {
+      "id": "occlusion-quality",
+      "result": "not-applicable",
+      "notes": "The selected forest shot does not provide a controlled occlusion benchmark."
+    }
+  ],
+  "verdict": "rejected",
+  "notes": "Reject as faithful temporal upscale/slow motion. The exact clock is useful, but this binding behaves as H3 temporal regeneration."
+}

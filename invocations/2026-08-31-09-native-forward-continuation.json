@@ -1,0 +1,30 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "2026-08-31-09-native-forward-continuation",
+  "operation": "continue.native_av",
+  "operation_version": 3,
+  "operation_contract_hash": "7990464810ab00136edadb5e3b5f624521fc70681c2fb4b803232ea5496be4cd",
+  "inputs": {
+    "source_native_state": "comfy-output://cauce/latents/2026-08-31/03_fl2va_first_a_last_b_00001.safetensors"
+  },
+  "parameters": {
+    "variant": "masked-overlap",
+    "source_frames": 124,
+    "overlap_frames": 22,
+    "extension_frames": 119,
+    "window_frames": 141,
+    "cumulative_frames": 243,
+    "fade_in_frames": 8,
+    "curve": "smootherstep",
+    "seed": 260836
+  },
+  "status": "executes",
+  "outputs": {
+    "video": "comfy-output://video/2026-08-31/09_native_forward_continuation_00001_.mp4",
+    "native_state": "comfy-output://cauce/latents/2026-08-31/09_native_forward_continuation_00001.safetensors"
+  },
+  "run_receipts": [
+    "runtime/receipts/2026-08-31/09-native-forward-continuation.json"
+  ],
+  "notes": "Live H3 characterization batch. See docs/LIVE_BATCH_2026-08-31.md for measured visual evidence and limitations."
+}

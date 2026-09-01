@@ -1,0 +1,33 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "2026-08-31-05-native-two-source-bridge",
+  "operation": "complete.native_av",
+  "operation_version": 2,
+  "operation_contract_hash": "08a4aa23368d53570e432bc0d00df96318214886d5ebbdfb1f25eef4ddd60f01",
+  "inputs": {
+    "left_native_state": "comfy-output://cauce/latents/2026-08-31/01_fl2va_first_a_00001.safetensors",
+    "right_native_state": "comfy-output://cauce/latents/2026-08-31/02_fl2va_last_b_00001.safetensors"
+  },
+  "parameters": {
+    "variant": "two-source-connection",
+    "target_frames": 124,
+    "left_frames": 39,
+    "right_start_frame": 90,
+    "right_frames": 34,
+    "generated_start_frame": 39,
+    "generated_frames": 51,
+    "fade_in_frames": 8,
+    "fade_out_frames": 8,
+    "curve": "smootherstep",
+    "seed": 260832
+  },
+  "status": "executes",
+  "outputs": {
+    "video": "comfy-output://video/2026-08-31/05_bidirectional_native_bridge_00001_.mp4",
+    "native_state": "comfy-output://cauce/latents/2026-08-31/05_bidirectional_native_bridge_00001.safetensors"
+  },
+  "run_receipts": [
+    "runtime/receipts/2026-08-31/05-native-two-source-bridge.json"
+  ],
+  "notes": "Live H3 characterization batch. See docs/LIVE_BATCH_2026-08-31.md for measured visual evidence and limitations."
+}

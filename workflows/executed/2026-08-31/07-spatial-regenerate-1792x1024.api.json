@@ -1,0 +1,180 @@
+{
+  "1": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "default"
+    }
+  },
+  "2": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "3": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "4": {
+    "class_type": "CauceLoadAVLatent",
+    "inputs": {
+      "path_or_folder": "cauce/latents/2026-08-31/03_fl2va_first_a_last_b_00001.safetensors",
+      "artifact_index": 0
+    }
+  },
+  "5": {
+    "class_type": "CauceH3ResizeAVLatent",
+    "inputs": {
+      "latent": [
+        "4",
+        0
+      ],
+      "target_width": 1792,
+      "target_height": 1024,
+      "method": "bicubic",
+      "video_denoise": 0.35,
+      "audio_denoise": 0
+    }
+  },
+  "6": {
+    "class_type": "MiniMaxH3ImageToVideo",
+    "inputs": {
+      "clip": [
+        "1",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "prompt": "Regenerate the preserved native H3 shot at higher spatial resolution while keeping the original camera path, timing, forest topology, water layout, trees, lighting, color, and material identity stable. Add only fine coherent natural detail. No reframing, cut, morphing, new objects, people, text, temporal reset, or generated audio.",
+      "width": 1792,
+      "height": 1024,
+      "length": 124
+    }
+  },
+  "7": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 260834
+    }
+  },
+  "8": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "conditioning": [
+        "6",
+        0
+      ]
+    }
+  },
+  "9": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1
+    }
+  },
+  "10": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "res_multistep"
+    }
+  },
+  "11": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "7",
+        0
+      ],
+      "guider": [
+        "8",
+        0
+      ],
+      "sampler": [
+        "10",
+        0
+      ],
+      "sigmas": [
+        "9",
+        0
+      ],
+      "latent_image": [
+        "5",
+        0
+      ]
+    }
+  },
+  "12": {
+    "class_type": "CauceH3ClearAVDenoiseMask",
+    "inputs": {
+      "latent": [
+        "11",
+        0
+      ],
+      "timeline_origin_frame": 0
+    }
+  },
+  "13": {
+    "class_type": "CauceSaveAVLatent",
+    "inputs": {
+      "latent": [
+        "12",
+        0
+      ],
+      "filename_prefix": "cauce/latents/2026-08-31/07_spatial_regenerate_1792x1024",
+      "artifact_index": 1
+    }
+  },
+  "14": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "12",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ]
+    }
+  },
+  "15": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "14",
+        0
+      ],
+      "fps": 24,
+      "bit_depth": 8
+    }
+  },
+  "16": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "15",
+        0
+      ],
+      "filename_prefix": "video/2026-08-31/07_spatial_regenerate_1792x1024",
+      "format": "auto",
+      "codec": "auto"
+    }
+  }
+}

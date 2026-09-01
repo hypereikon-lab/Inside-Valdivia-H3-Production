@@ -1,0 +1,247 @@
+{
+  "1": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "default"
+    }
+  },
+  "2": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "3": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "4": {
+    "class_type": "CauceLoadAVLatent",
+    "inputs": {
+      "path_or_folder": "cauce/latents/2026-08-31/01_fl2va_first_a_00001.safetensors",
+      "artifact_index": 0
+    }
+  },
+  "5": {
+    "class_type": "CauceLoadAVLatent",
+    "inputs": {
+      "path_or_folder": "cauce/latents/2026-08-31/02_fl2va_last_b_00001.safetensors",
+      "artifact_index": 0
+    }
+  },
+  "6": {
+    "class_type": "MiniMaxH3ImageToVideo",
+    "inputs": {
+      "clip": [
+        "1",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "prompt": "Complete only the missing middle interval between the preserved left and right native H3 contexts as one continuous real camera move through the same temperate rainforest wetland. Maintain motion direction, camera velocity, parallax, water flow, vegetation, lighting, scale, and spatial geometry across both boundaries. No cut, dissolve, reset, teleportation, morph, sudden acceleration, people, text, or generated audio.",
+      "width": 1344,
+      "height": 768,
+      "length": 124
+    }
+  },
+  "7": {
+    "class_type": "CauceH3ExtractAVSpan",
+    "inputs": {
+      "latent": [
+        "4",
+        0
+      ],
+      "start_frame": 0,
+      "frame_count": 39,
+      "timeline_origin_frame": 0
+    }
+  },
+  "8": {
+    "class_type": "CauceH3ExtractAVSpan",
+    "inputs": {
+      "latent": [
+        "5",
+        0
+      ],
+      "start_frame": 90,
+      "frame_count": 34,
+      "timeline_origin_frame": 0
+    }
+  },
+  "9": {
+    "class_type": "CauceH3PlaceAVSpan",
+    "inputs": {
+      "span": [
+        "7",
+        0
+      ],
+      "target_av_latent": [
+        "6",
+        1
+      ],
+      "target_frame_idx": 0,
+      "timeline_origin_frame": 0
+    }
+  },
+  "10": {
+    "class_type": "CauceH3PlaceAVSpan",
+    "inputs": {
+      "span": [
+        "8",
+        0
+      ],
+      "target_av_latent": [
+        "9",
+        0
+      ],
+      "target_frame_idx": 90,
+      "timeline_origin_frame": 0
+    }
+  },
+  "11": {
+    "class_type": "CauceH3SetAVDenoiseInterval",
+    "inputs": {
+      "latent": [
+        "10",
+        0
+      ],
+      "timeline_origin_frame": 0,
+      "start_frame": 39,
+      "frame_count": 51,
+      "inside_strength_video": 1,
+      "outside_strength_video": 0,
+      "inside_strength_audio": 1,
+      "outside_strength_audio": 0,
+      "fade_in_frames": 8,
+      "fade_out_frames": 8,
+      "curve": "smootherstep",
+      "combine": "replace"
+    }
+  },
+  "12": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 260832
+    }
+  },
+  "13": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "conditioning": [
+        "6",
+        0
+      ]
+    }
+  },
+  "14": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1
+    }
+  },
+  "15": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "res_multistep"
+    }
+  },
+  "16": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "12",
+        0
+      ],
+      "guider": [
+        "13",
+        0
+      ],
+      "sampler": [
+        "15",
+        0
+      ],
+      "sigmas": [
+        "14",
+        0
+      ],
+      "latent_image": [
+        "11",
+        0
+      ]
+    }
+  },
+  "17": {
+    "class_type": "CauceH3ClearAVDenoiseMask",
+    "inputs": {
+      "latent": [
+        "16",
+        0
+      ],
+      "timeline_origin_frame": 0
+    }
+  },
+  "18": {
+    "class_type": "CauceSaveAVLatent",
+    "inputs": {
+      "latent": [
+        "17",
+        0
+      ],
+      "filename_prefix": "cauce/latents/2026-08-31/05_bidirectional_native_bridge",
+      "artifact_index": 1
+    }
+  },
+  "19": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "17",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ]
+    }
+  },
+  "20": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "19",
+        0
+      ],
+      "fps": 24,
+      "bit_depth": 8
+    }
+  },
+  "21": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "20",
+        0
+      ],
+      "filename_prefix": "video/2026-08-31/05_bidirectional_native_bridge",
+      "format": "auto",
+      "codec": "auto"
+    }
+  }
+}

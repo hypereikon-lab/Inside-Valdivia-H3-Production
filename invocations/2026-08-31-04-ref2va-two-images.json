@@ -1,0 +1,40 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "2026-08-31-04-ref2va-two-images",
+  "operation": "generate.from_references",
+  "operation_version": 4,
+  "operation_contract_hash": "117a99a5622049000c31d15e34b9bd55e8f1ea164a5d9f9935e72548197a9176",
+  "inputs": {
+    "references": [
+      {
+        "uri": "comfy-input://inside-valdivia-frame-a.png",
+        "sha256": "c1e448e2a28dd259d31e78f59fb4bd4778229424b678410af1b7c6bab37ec07e"
+      },
+      {
+        "uri": "comfy-input://inside-valdivia-frame-b.png",
+        "sha256": "dc34fc48c6ea7b5df5924dd2a856b573ab1f2f2058d9bbb4e943daf342eab767"
+      }
+    ]
+  },
+  "parameters": {
+    "width": 1344,
+    "height": 768,
+    "target_frames": 124,
+    "fps": 24,
+    "steps": 20,
+    "sampler": "res_multistep",
+    "scheduler": "simple",
+    "variant": "image-reference-match",
+    "ref_image_size": "match",
+    "seed": 260831
+  },
+  "status": "executes",
+  "outputs": {
+    "video": "comfy-output://video/2026-08-31/04_ref2va_both_images_00001_.mp4",
+    "native_state": "comfy-output://cauce/latents/2026-08-31/04_ref2va_both_images_00001.safetensors"
+  },
+  "run_receipts": [
+    "runtime/receipts/2026-08-31/04-ref2va-two-images.json"
+  ],
+  "notes": "Live H3 characterization batch. See docs/LIVE_BATCH_2026-08-31.md for measured visual evidence and limitations."
+}

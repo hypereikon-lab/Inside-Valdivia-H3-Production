@@ -37,7 +37,8 @@ Production data
   1 offline rolling-chain plan
   2 runtime requirements profiles
   12 acceptance profiles covering all 32 variants
-  0 visual assessment records until live artifacts exist
+  11 live project invocations, executed API graphs and immutable run receipts
+  2 explicit rejected visual assessment records
   1 eight-phase live materialization gate
   1 fail-closed storage policy
   local tests  27 passing
@@ -84,9 +85,12 @@ Control still clean at their locked revisions. The bounded receipt is retained
 at `runtime/verifications/2026-08-31-post-restart.json`. No CUDA, PyTorch,
 driver, model, ComfyUI core, frontend, Windows or Cloudflare mutation occurred.
 
-The remaining live checks are physical or artifact-level: free disk on the
-actual model/output volume, Windows sleep policy, host/tunnel recovery, exact
-`LoadVideo` frame ordering, and one resolvable `SaveVideo` artifact.
+The first characterization batch is retained in
+[`LIVE_BATCH_2026-08-31.md`](LIVE_BATCH_2026-08-31.md). All eleven submitted
+graphs completed and wrote resolvable `SaveVideo` artifacts plus native-state
+paths where declared. The remaining platform checks are physical: free disk on
+the actual model/output volume, Windows sleep policy, host/tunnel recovery, and
+exact `LoadVideo` frame ordering for imported production clips.
 
 ## What is implemented
 
@@ -137,24 +141,24 @@ diagnostic must pass before tab or graph automation begins.
 
 | Operation | Current implementation evidence | Live/visual evidence |
 | --- | --- | --- |
-| `generate.keyframed` | official H3 contract + checked variants | text-only paired and schema-validated; not executed or visually assessed |
-| `generate.from_references` | official H3 contract + checked variants | not materialized at current lock |
-| `generate.with_guides` | official H3/AddGuide contract + checked variants | not materialized at current lock |
-| `continue.native_av` | CAUCE layout/span/mask paths unit-validated | older keyframe mechanism executed synthetically; current variants uncharacterized |
-| `complete.native_av` | placement/mask/replacement layer unit-validated | not yet sampled live |
+| `generate.keyframed` | official H3 contract + checked variants | first-frame, last-frame and first/last execute at 1344×768 × 124; one run each, not promoted |
+| `generate.from_references` | official H3 contract + checked variants | ordered two-image `match` binding executes; one run, not promoted |
+| `generate.with_guides` | official H3/AddGuide contract + checked variants | single interior still executes but is rejected for a 46.17/255 snap into frame 61 |
+| `continue.native_av` | CAUCE layout/span/mask paths unit-validated | masked-overlap executes to 243 frames with exact decoded prefix preservation; promising, not promoted |
+| `complete.native_av` | placement/mask/replacement layer unit-validated | two-source connection executes with preserved left/right contexts; measurable boundary rise remains |
 | `edit.masked_video` | static/animated mask projection and composition unit-validated | static mask primitive executes live; H3 result unassessed |
-| `refine.video` | bounded native-state denoise contract unit-validated | useful strength range uncharacterized |
+| `refine.video` | bounded native-state denoise contract unit-validated | full-frame 0.20 executes with useful detail signal and moderate drift; ladder still required |
 | `reframe.outpaint_video` | aligned allocation, exact copy, and new-region mask unit-validated | expansion primitive executes live; H3 result unassessed |
-| `rollback.native_av` | synchronized split/branch layer unit-validated | not yet exercised in production |
+| `rollback.native_av` | synchronized split/branch layer unit-validated | split/reappend executes and matches all 124 decoded comparison frames; promotion still needs independently persisted prefix/suffix checkpoints |
 | `frames.assemble` | deterministic range layer unit-validated | no inference claim |
-| `densify.temporal` | native token-lattice geometry, masks, tail crop, and delivery clock unit-validated | official H3 sampling and visuals unassessed |
-| `regenerate.spatial` | latent resize and H3-VAE visual-stream graft unit-validated; three offline topologies | denoise range, VRAM, tiles, and visuals unassessed |
+| `densify.temporal` | native token-lattice geometry, masks, tail crop, and delivery clock unit-validated | factor-two run delivers exact 247 frames at 48 fps but is rejected as faithful slow motion because anchors drift |
+| `regenerate.spatial` | latent resize and H3-VAE visual-stream graft unit-validated; three offline topologies | 1792×1024 latent second pass fits the 5090 and executes; 0.35 gains detail but drifts too far for a baseline |
 
 `implemented`, `materialized`, `executes`, and `visually accepted` are separate
-states. One current-lock topology has a retained paired UI/API graph and zero
-schema issues. It has not been queued. The repository therefore makes no claim
-that any of the 32 variants is presently production-ready or visually
-accepted.
+states. Eleven exact API graphs now have prompt-id receipts and saved artifacts;
+two bindings are explicitly rejected. No generative variant has yet met its
+minimum repeat count and visual promotion rule, so none is called
+production-ready.
 
 ## Materialization assets
 
@@ -182,17 +186,20 @@ graphs and operation-reference files.
 
 ## Next live gate
 
-With the laboratory origin healthy and both automated runtime profiles passing:
+With the laboratory origin healthy, both automated runtime profiles passing and
+the first live batch complete:
 
 1. verify free storage, Windows sleep policy, and the agreed host/tunnel
    recovery path without changing the GPU stack;
-2. bind a real text-only prompt, run its exact prompt-id technical smoke,
-   retain the receipt and native state, then perform visual acceptance;
-3. materialize the first-frame archetype and continue one graph at a time;
-4. for accepted graphs, retain receipts and native state, then
-   perform visual acceptance separately;
-5. compile the accepted, explicitly prebound graphs into a Runtime Control
-   serial plan and test interruption/resume before long unattended production.
+2. repeat native continuation and two-source completion with a second seed and
+   perform full-motion human review;
+3. run fixed-source denoise ladders for refinement and spatial regeneration;
+4. replace the rejected isolated still anchor with a legal guide clip;
+5. redesign source preservation before repeating the rejected temporal 2× run;
+6. persist rollback prefix and suffix independently, then repeat its deterministic
+   round-trip acceptance check;
+7. pair accepted API graphs with their UI graphs and compile only those accepted,
+   explicitly prebound graphs into a Runtime Control serial plan.
 
 Every graph must persist a resolvable video artifact through the current core
 `CreateVideo -> SaveVideo` path. `VAEDecode` alone is not sufficient evidence

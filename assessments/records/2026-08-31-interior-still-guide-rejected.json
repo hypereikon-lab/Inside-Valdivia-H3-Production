@@ -1,0 +1,57 @@
+{
+  "schema": "inside-valdivia.visual-assessment/1",
+  "id": "2026-08-31-interior-still-guide-rejected",
+  "invocation": "2026-08-31-08-interior-still-guide",
+  "operation": "generate.with_guides",
+  "operation_version": 3,
+  "variant": "single-anchor",
+  "run_receipt": "runtime/receipts/2026-08-31/08-interior-still-guide.json",
+  "artifact": {
+    "filename": "08_first_a_interior_guide_b_00001_.mp4",
+    "subfolder": "video\\2026-08-31",
+    "type": "output"
+  },
+  "reviewer": "codex-live-batch-review",
+  "reviewed_at": "2026-09-01T00:36:00Z",
+  "technical_checks": [
+    {
+      "id": "guide-placement",
+      "result": "pass",
+      "notes": "The still guide was placed at target frame 61."
+    },
+    {
+      "id": "conditioning-edge",
+      "result": "pass",
+      "notes": "MiniMaxH3AddGuide was chained on active positive conditioning."
+    },
+    {
+      "id": "target-grid",
+      "result": "pass",
+      "notes": "The graph used 1344×768 and a legal 124-frame H3 target."
+    },
+    {
+      "id": "artifact-lineage",
+      "result": "pass",
+      "notes": "Invocation, exact graph, prompt id, history hash, guide input hash and video are retained."
+    }
+  ],
+  "visual_checks": [
+    {
+      "id": "guide-fidelity",
+      "result": "pass",
+      "notes": "Frame 61 visibly reconstructs the intended B composition."
+    },
+    {
+      "id": "approach-departure",
+      "result": "fail",
+      "notes": "Frame 60→61 measures 46.17/255 versus approximately 2–5 around the anchor."
+    },
+    {
+      "id": "guide-artifacts",
+      "result": "fail",
+      "notes": "The isolated still anchor creates a hard temporal snap/reconstruction scar."
+    }
+  ],
+  "verdict": "rejected",
+  "notes": "Reject the single-still binding for continuous motion. Evaluate a legal 5- or 22-frame guide clip instead."
+}
