@@ -2,7 +2,7 @@
   "schema": "inside-valdivia.cauce-node-lock/1",
   "source": {
     "repository": "https://github.com/hypereikon-lab/ComfyUI-Cauce",
-    "commit": "558ed5b308d622af3693973539489649c33d22af",
+    "commit": "b3559f564304f8793bfba4db15782dfb5cc25add",
     "bundle_hash": "a46beeddd673232b44289e4245cf0fc0a5eaa00cc974cba66f9f7078f0ecbf71"
   },
   "nodes": [
