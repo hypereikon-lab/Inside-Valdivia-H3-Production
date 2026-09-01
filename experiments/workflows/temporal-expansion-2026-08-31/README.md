@@ -104,6 +104,20 @@ completed in 118.598 seconds and delivered exactly 119 frames at 24 fps
 (4.958 seconds). Sampled technical inspection is coherent; full-motion operator
 review remains pending.
 
+The remaining source was then covered without artificial padding:
+
+| Window | Source range | Source frames | Guides | H3 target | Delivery | Runtime |
+| ---: | --- | ---: | ---: | ---: | --- | ---: |
+| 1 | 0–59 | 60 | 9 | 124 | 119 frames / 4.958 s | 118.598 s |
+| 2 | 59–118 | 60 | 9 | 124 | 119 frames / 4.958 s | 119.064 s |
+| 3 | 118–144 | 27 | 5 | 56 | 53 frames / 2.208 s | 46.033 s |
+
+Adjacent windows share exactly one source boundary frame. Assembly must remove
+the first decoded frame of windows 2 and 3 so the shared boundary is represented
+once. The final window demonstrates that the operation can select the next
+legal H3 target and crop to the exact delivery length instead of padding the
+source or extending beyond its final frame.
+
 ## Rejected native-token hypothesis
 
 The `rejected/` directory preserves the exact 2x and 3x graphs that dilated

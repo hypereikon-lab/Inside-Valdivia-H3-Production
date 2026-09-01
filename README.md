@@ -35,7 +35,7 @@ this repository
   1 schema-validated paired draft, project data,
   runtime readiness profiles, acceptance criteria, storage policy,
   experiments, rolling dependency/checkpoint plans,
-  22 tracked live invocations, 24 executed API graphs and immutable receipts
+  24 tracked live invocations, 26 executed API graphs and immutable receipts
 ```
 
 ## Locked operations
@@ -72,7 +72,7 @@ executable only after one live ComfyUI graph is exported in paired UI/API form,
 validated against the same `/object_info` capture, and bound to concrete data.
 The first `generate.keyframed@text-only` pair satisfies the UI/API export and
 schema-validation boundary; it remains an unqueued control. Separately, the
-2026-08-31 characterization batch plus its sparse-anchor extension retained twenty-four exact executed API graphs
+2026-08-31 characterization batch plus its sparse-anchor extension retained twenty-six exact executed API graphs
 and their evidence, including a dense official-AddGuide temporal-expansion
 ladder at 2x/3x/4x and stride-8/16 boundary tests. Those graphs are not presented as paired UI workflows, and
 no generative variant is formally promoted.

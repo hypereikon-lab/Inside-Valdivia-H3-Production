@@ -1,0 +1,340 @@
+{
+  "1": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "default"
+    }
+  },
+  "2": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "3": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "4": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "inside-valdivia/temporal-expansion/Gen-4_5.gen-4_5 (5).mp4"
+    }
+  },
+  "5": {
+    "class_type": "GetVideoComponents",
+    "inputs": {
+      "video": [
+        "4",
+        0
+      ]
+    }
+  },
+  "6": {
+    "class_type": "MiniMaxH3ImageToVideo",
+    "inputs": {
+      "clip": [
+        "1",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "prompt": "Generate a single continuous slow-motion trajectory through the supplied temporally ordered visual anchors. Preserve the subjects, scene geometry, camera path, lighting, exposure, textures, motion direction and causal continuity. Generate coherent motion only between the anchors. No cuts, resets, duplicated gestures, temporal echoes, morphing, new objects, text or generated audio.",
+      "width": 672,
+      "height": 672,
+      "length": 56
+    }
+  },
+  "20": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 118,
+      "frame_count": 1
+    }
+  },
+  "21": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "6",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "20",
+        0
+      ],
+      "frame_idx": 0
+    }
+  },
+  "22": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 126,
+      "frame_count": 1
+    }
+  },
+  "23": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "21",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "22",
+        0
+      ],
+      "frame_idx": 16
+    }
+  },
+  "24": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 134,
+      "frame_count": 1
+    }
+  },
+  "25": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "23",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "24",
+        0
+      ],
+      "frame_idx": 32
+    }
+  },
+  "26": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 142,
+      "frame_count": 1
+    }
+  },
+  "27": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "25",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "26",
+        0
+      ],
+      "frame_idx": 48
+    }
+  },
+  "28": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 144,
+      "frame_count": 1
+    }
+  },
+  "29": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "27",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "28",
+        0
+      ],
+      "frame_idx": 52
+    }
+  },
+  "200": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 310944
+    }
+  },
+  "201": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "conditioning": [
+        "29",
+        0
+      ]
+    }
+  },
+  "202": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1.0
+    }
+  },
+  "203": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "res_multistep"
+    }
+  },
+  "204": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "200",
+        0
+      ],
+      "guider": [
+        "201",
+        0
+      ],
+      "sampler": [
+        "203",
+        0
+      ],
+      "sigmas": [
+        "202",
+        0
+      ],
+      "latent_image": [
+        "6",
+        1
+      ]
+    }
+  },
+  "205": {
+    "class_type": "CauceSaveAVLatent",
+    "inputs": {
+      "latent": [
+        "204",
+        0
+      ],
+      "filename_prefix": "cauce/latents/2026-08-31/gen45_slowmo2x_stride8_w03_f118_s08",
+      "artifact_index": 118
+    }
+  },
+  "206": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "204",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ]
+    }
+  },
+  "207": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "206",
+        0
+      ],
+      "start_frame": 0,
+      "frame_count": 53
+    }
+  },
+  "208": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "207",
+        0
+      ],
+      "fps": 24,
+      "bit_depth": 8
+    }
+  },
+  "209": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "208",
+        0
+      ],
+      "filename_prefix": "video/2026-08-31/gen45_slowmo2x_stride8_w03_f118_s08",
+      "format": "auto",
+      "codec": "auto"
+    }
+  }
+}

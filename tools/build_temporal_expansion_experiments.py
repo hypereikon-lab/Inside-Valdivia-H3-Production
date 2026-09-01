@@ -158,8 +158,11 @@ def addguide_video_graph(
     height: int,
     output_label: str,
     source_stride: int = 1,
+    source_frames: int | None = None,
 ) -> dict[str, dict]:
-    source_frames = {2: 60, 3: 40, 4: 30}[factor]
+    source_frames = source_frames or {2: 60, 3: 40, 4: 30}[factor]
+    if source_frames < 2:
+        raise ValueError("source_frames must contain at least two frames")
     delivery_frames = (source_frames - 1) * factor + 1
     target_frames = legal_h3_frames(delivery_frames)
     graph = {
@@ -287,7 +290,9 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--uploaded-video")
     parser.add_argument("--window-starts", default="0,38,77,115")
+    parser.add_argument("--source-frame-counts")
     parser.add_argument("--source-strides", default="8,16")
+    parser.add_argument("--window-ordinal-start", type=int, default=1)
     parser.add_argument("--factor", type=int, choices=(2, 3, 4), default=4)
     parser.add_argument("--width", type=int, default=672)
     parser.add_argument("--height", type=int, default=672)
@@ -301,9 +306,22 @@ def main() -> None:
     if args.uploaded_video:
         starts = [int(value.strip()) for value in args.window_starts.split(",")]
         strides = [int(value.strip()) for value in args.source_strides.split(",")]
+        if args.source_frame_counts:
+            frame_counts = [
+                int(value.strip()) for value in args.source_frame_counts.split(",")
+            ]
+            if len(frame_counts) != len(starts):
+                raise ValueError("source frame counts must match window starts")
+        else:
+            frame_counts = [None] * len(starts)
         if any(stride < 1 for stride in strides):
             raise ValueError("source strides must be positive integers")
-        for ordinal, start in enumerate(starts, start=1):
+        if any(count is not None and count < 2 for count in frame_counts):
+            raise ValueError("source frame counts must be at least two")
+        windows = zip(starts, frame_counts, strict=True)
+        for ordinal, (start, frame_count) in enumerate(
+            windows, start=args.window_ordinal_start
+        ):
             for stride in strides:
                 label = (
                     f"{args.output_label}_w{ordinal:02d}_f{start:03d}_s{stride:02d}"
@@ -319,6 +337,7 @@ def main() -> None:
                             height=args.height,
                             output_label=label,
                             source_stride=stride,
+                            source_frames=frame_count,
                         ),
                         ensure_ascii=False,
                         indent=2,

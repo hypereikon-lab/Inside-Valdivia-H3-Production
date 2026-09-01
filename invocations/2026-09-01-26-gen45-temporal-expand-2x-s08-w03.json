@@ -1,0 +1,41 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "2026-09-01-26-gen45-temporal-expand-2x-s08-w03",
+  "operation": "generate.with_guides",
+  "operation_version": 3,
+  "operation_contract_hash": "49aa03c63837e7cbc3dd09992e6575196dced0061847986f8643b347cbe98dfc",
+  "inputs": {
+    "source_video": {
+      "uri": "comfy-input://inside-valdivia/temporal-expansion/Gen-4_5.gen-4_5 (5).mp4",
+      "sha256": "d7300236e2a395c3c91eb59e05fcc2a0895956b53cb170316ae7480564da16a3"
+    }
+  },
+  "parameters": {
+    "variant": "sparse-anchor-temporal-expansion",
+    "factor": 2,
+    "source_start_frame": 118,
+    "source_frames": 27,
+    "source_stride_frames": 8,
+    "source_guide_offsets": [0, 8, 16, 24, 26],
+    "target_guide_indices": [0, 16, 32, 48, 52],
+    "guide_count": 5,
+    "target_frames": 56,
+    "delivery_frames": 53,
+    "delivery_fps": 24,
+    "width": 672,
+    "height": 672,
+    "steps": 20,
+    "sampler": "res_multistep",
+    "scheduler": "simple",
+    "seed": 310944,
+    "runtime_seconds": 46.033
+  },
+  "status": "executes",
+  "outputs": {
+    "video": "comfy-output://video/2026-08-31/gen45_slowmo2x_stride8_w03_f118_s08_00001_.mp4"
+  },
+  "run_receipts": [
+    "runtime/receipts/2026-09-01/gen45-slowmo2x-s08-w03/3c2d1ef1-83c7-4f30-b1dd-78770c45df3b.json"
+  ],
+  "notes": "Final sparse official AddGuide 2x window. It covers the exact 27-frame source tail without padding, uses the next legal 56-frame H3 target, crops to 53 delivery frames, and remains coherent in sampled technical inspection; operator review is pending."
+}

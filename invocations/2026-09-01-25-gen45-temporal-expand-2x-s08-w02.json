@@ -1,0 +1,41 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "2026-09-01-25-gen45-temporal-expand-2x-s08-w02",
+  "operation": "generate.with_guides",
+  "operation_version": 3,
+  "operation_contract_hash": "49aa03c63837e7cbc3dd09992e6575196dced0061847986f8643b347cbe98dfc",
+  "inputs": {
+    "source_video": {
+      "uri": "comfy-input://inside-valdivia/temporal-expansion/Gen-4_5.gen-4_5 (5).mp4",
+      "sha256": "d7300236e2a395c3c91eb59e05fcc2a0895956b53cb170316ae7480564da16a3"
+    }
+  },
+  "parameters": {
+    "variant": "sparse-anchor-temporal-expansion",
+    "factor": 2,
+    "source_start_frame": 59,
+    "source_frames": 60,
+    "source_stride_frames": 8,
+    "source_guide_offsets": [0, 8, 16, 24, 32, 40, 48, 56, 59],
+    "target_guide_indices": [0, 16, 32, 48, 64, 80, 96, 112, 118],
+    "guide_count": 9,
+    "target_frames": 124,
+    "delivery_frames": 119,
+    "delivery_fps": 24,
+    "width": 672,
+    "height": 672,
+    "steps": 20,
+    "sampler": "res_multistep",
+    "scheduler": "simple",
+    "seed": 310944,
+    "runtime_seconds": 119.064
+  },
+  "status": "executes",
+  "outputs": {
+    "video": "comfy-output://video/2026-08-31/gen45_slowmo2x_stride8_w02_f059_s08_00001_.mp4"
+  },
+  "run_receipts": [
+    "runtime/receipts/2026-09-01/gen45-slowmo2x-s08-w02/82f58474-69cf-44e7-97e6-ba48e198194b.json"
+  ],
+  "notes": "Second sparse official AddGuide 2x window. It overlaps the prior source window by one boundary frame, delivers 119 frames, and remains coherent in sampled technical inspection; operator review is pending."
+}
