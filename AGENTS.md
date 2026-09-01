@@ -17,6 +17,9 @@ rendered media.
   `17k + 5`; prefer the documented trained range 124–362.
 - Every invocation references one semantic CAUCE operation id, version, and
   contract hash from `operations.lock.json`.
+- Historical evidence must match one exact tuple in
+  `operations.history.lock.json`; a lower version or well-formed hash alone is
+  never sufficient.
 - A generic operation contract is not an importable UI/API graph until CAUCE
   records a paired materialization validated against live `/object_info`.
 - A CAUCE offline topology dossier is a graph design, not workflow JSON. Build
@@ -59,7 +62,9 @@ python3 tools/validate.py
 python3 tools/readiness.py
 python3 -m unittest discover -s tests -v
 python3 tools/verify_cauce_lock.py ../ComfyUI-Cauce
+python3 tools/sync_cauce_contracts.py ../ComfyUI-Cauce --check
 python3 tools/verify_component_locks.py \
-  ../ComfyUI-Cauce ../ComfyUI-Runtime-Control ../ComfyUI-Workspace-Control
+  ../ComfyUI-Cauce ../ComfyUI-Runtime-Control ../ComfyUI-Workspace-Control \
+  ../ComfyUI-Repository-Control
 git diff --check
 ```

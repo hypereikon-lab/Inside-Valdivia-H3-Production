@@ -40,7 +40,12 @@ jobs:
               components = json.load(handle)["components"]
 
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
-              for name in ("cauce", "runtime_control", "workspace_control"):
+              for name in (
+                  "cauce",
+                  "runtime_control",
+                  "workspace_control",
+                  "repository_control",
+              ):
                   output.write(f"{name}={components[name]['commit']}\n")
           PY
       - run: git clone https://github.com/hypereikon-lab/ComfyUI-Cauce "$RUNNER_TEMP/cauce"
@@ -49,5 +54,8 @@ jobs:
       - run: git -C "$RUNNER_TEMP/runtime-control" checkout "${{ steps.locks.outputs.runtime_control }}"
       - run: git clone https://github.com/hypereikon-lab/ComfyUI-Workspace-Control "$RUNNER_TEMP/workspace-control"
       - run: git -C "$RUNNER_TEMP/workspace-control" checkout "${{ steps.locks.outputs.workspace_control }}"
+      - run: git clone https://github.com/hypereikon-lab/ComfyUI-Repository-Control "$RUNNER_TEMP/repository-control"
+      - run: git -C "$RUNNER_TEMP/repository-control" checkout "${{ steps.locks.outputs.repository_control }}"
       - run: python tools/verify_cauce_lock.py "$RUNNER_TEMP/cauce"
-      - run: python tools/verify_component_locks.py "$RUNNER_TEMP/cauce" "$RUNNER_TEMP/runtime-control" "$RUNNER_TEMP/workspace-control"
+      - run: python tools/sync_cauce_contracts.py "$RUNNER_TEMP/cauce" --check
+      - run: python tools/verify_component_locks.py "$RUNNER_TEMP/cauce" "$RUNNER_TEMP/runtime-control" "$RUNNER_TEMP/workspace-control" "$RUNNER_TEMP/repository-control"

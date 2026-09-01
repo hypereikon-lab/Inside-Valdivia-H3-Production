@@ -5,11 +5,10 @@ from __future__ import annotations
 
 import hashlib
 import json
-from pathlib import Path, PurePosixPath
 import subprocess
 import sys
+from pathlib import Path
 from typing import Any
-
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
@@ -32,7 +31,7 @@ def content_hash(value: Any) -> str:
 def verify_lock(project_root: Path, cauce_root: Path) -> list[str]:
     errors: list[str] = []
     lock = load_json(project_root / "operations.lock.json")
-    catalog = load_json(cauce_root / "operations" / "catalog.json")
+    bundle = load_json(cauce_root / "operations" / "contract-bundle.json")
     expected_commit = lock["source"]["commit"]
     try:
         actual_commit = subprocess.run(
@@ -45,39 +44,48 @@ def verify_lock(project_root: Path, cauce_root: Path) -> list[str]:
     except (OSError, subprocess.CalledProcessError) as exc:
         return [f"cannot resolve CAUCE commit: {exc}"]
     if actual_commit != expected_commit:
-        errors.append(f"CAUCE checkout is {actual_commit}, lock requires {expected_commit}")
-    actual_catalog_hash = content_hash(catalog)
-    if actual_catalog_hash != lock["source"]["catalog_hash"]:
-        errors.append("CAUCE catalog hash does not match lock")
+        errors.append(
+            f"CAUCE checkout is {actual_commit}, lock requires {expected_commit}"
+        )
+    if bundle.get("schema") != "cauce.contract-bundle/1":
+        return errors + ["CAUCE contract bundle schema is unsupported"]
+    unhashed = {key: value for key, value in bundle.items() if key != "bundle_hash"}
+    if bundle.get("bundle_hash") != content_hash(unhashed):
+        errors.append("CAUCE contract bundle hash does not match its contents")
+    expected_source = {
+        "repository": "https://github.com/hypereikon-lab/ComfyUI-Cauce",
+        "commit": actual_commit,
+        "catalog_hash": bundle["operations"]["catalog_hash"],
+    }
+    if lock.get("source") != expected_source:
+        errors.append("CAUCE operation source lock differs from the contract bundle")
+    if lock.get("operations") != bundle["operations"]["current"]:
+        errors.append("locked operations differ from the CAUCE contract bundle")
 
-    locked = {entry["id"]: entry for entry in lock["operations"]}
-    catalog_entries = {entry["id"]: entry for entry in catalog["operations"]}
-    if set(locked) != set(catalog_entries):
-        errors.append("locked operation ids differ from CAUCE catalog")
-    for operation_id in sorted(set(locked) & set(catalog_entries)):
-        entry = catalog_entries[operation_id]
-        relative = PurePosixPath(entry["spec"])
-        if relative.is_absolute() or ".." in relative.parts:
-            errors.append(f"unsafe CAUCE spec path for {operation_id}")
-            continue
-        spec = load_json(cauce_root / "operations" / Path(*relative.parts))
-        if entry["version"] != locked[operation_id]["version"]:
-            errors.append(f"version mismatch for {operation_id}")
-        if content_hash(spec) != locked[operation_id]["contract_hash"]:
-            errors.append(f"contract hash mismatch for {operation_id}")
+    history_lock = load_json(project_root / "operations.history.lock.json")
+    expected_history_source = {
+        "repository": "https://github.com/hypereikon-lab/ComfyUI-Cauce",
+        "commit": actual_commit,
+        "catalog_hash": bundle["operations"]["history_catalog_hash"],
+    }
+    if history_lock.get("source") != expected_history_source:
+        errors.append("CAUCE history source lock differs from the contract bundle")
+    if history_lock.get("contracts") != bundle["operations"]["historical"]:
+        errors.append(
+            "historical operation tuples differ from the CAUCE contract bundle"
+        )
 
-    topology_catalog = load_json(cauce_root / "operations" / "topologies" / "catalog.json")
-    if topology_catalog.get("schema") != "cauce.operation-topology-catalog/2":
-        errors.append("CAUCE topology catalog is not variant-addressable schema 2")
-        topology_keys: set[str] = set()
-    else:
-        topology_keys = {
-            f"{entry.get('operation')}@{entry.get('variant')}"
-            for entry in topology_catalog.get("topologies", [])
-            if isinstance(entry, dict)
-        }
-        if len(topology_keys) != len(topology_catalog.get("topologies", [])):
-            errors.append("CAUCE topology catalog contains duplicate or malformed variants")
+    node_lock = load_json(project_root / "cauce.nodes.lock.json")
+    if node_lock.get("source") != {
+        "repository": "https://github.com/hypereikon-lab/ComfyUI-Cauce",
+        "commit": actual_commit,
+        "bundle_hash": bundle["bundle_hash"],
+    }:
+        errors.append("CAUCE node source lock differs from the contract bundle")
+    if node_lock.get("nodes") != bundle["nodes"]:
+        errors.append("locked CAUCE nodes differ from the contract bundle")
+
+    topology_keys = {entry["key"] for entry in bundle["topologies"]["entries"]}
 
     materialization = load_json(project_root / "materialization" / "catalog.json")
     planned_keys = {
@@ -99,13 +107,15 @@ def verify_lock(project_root: Path, cauce_root: Path) -> list[str]:
         )
 
     archetype_lock = load_json(project_root / "archetypes.lock.json")
-    archetype_catalog = load_json(cauce_root / "operations" / "archetypes" / "catalog.json")
     if archetype_lock.get("source", {}).get("commit") != actual_commit:
         errors.append("CAUCE archetype lock requires a different source commit")
-    if archetype_lock.get("source", {}).get("catalog_hash") != content_hash(archetype_catalog):
+    if (
+        archetype_lock.get("source", {}).get("catalog_hash")
+        != bundle["archetypes"]["catalog_hash"]
+    ):
         errors.append("CAUCE archetype catalog hash does not match lock")
-    if archetype_lock.get("archetypes") != archetype_catalog.get("archetypes"):
-        errors.append("locked graph archetypes differ from the CAUCE catalog")
+    if archetype_lock.get("archetypes") != bundle["archetypes"]["entries"]:
+        errors.append("locked graph archetypes differ from the CAUCE contract bundle")
     return errors
 
 
@@ -119,7 +129,7 @@ def main(argv: list[str]) -> int:
             print(error, file=sys.stderr)
         return 1
     print(
-        "verified: CAUCE source commit, catalog hash, operation hashes, "
+        "verified: CAUCE bundle, current/historical operations, node registry, "
         "graph archetypes, and complete topology-plan coverage"
     )
     return 0

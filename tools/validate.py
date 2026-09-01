@@ -4,11 +4,10 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path, PurePosixPath
 import re
 import sys
+from pathlib import Path, PurePosixPath
 from typing import Any
-
 
 ROOT = Path(__file__).resolve().parents[1]
 OPERATION_ID = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$")
@@ -94,6 +93,125 @@ def validate_operation_lock(value: Any, path: Path) -> tuple[list[str], dict[str
     if list(registry) != sorted(registry):
         errors.append(f"{path}: operation entries must be sorted by id")
     return errors, registry
+
+
+def validate_operation_history_lock(
+    value: Any,
+    path: Path,
+    current_registry: dict[str, dict[str, Any]],
+    cauce_commit: str,
+) -> tuple[list[str], dict[tuple[str, int], dict[str, Any]]]:
+    """Validate the exact immutable tuples allowed for historical evidence."""
+
+    errors: list[str] = []
+    if (
+        not isinstance(value, dict)
+        or value.get("schema") != "inside-valdivia.cauce-operation-history-lock/1"
+    ):
+        return [f"{path}: invalid operation history lock"], {}
+    if set(value) != {"schema", "source", "contracts"}:
+        return [f"{path}: operation history lock fields are incomplete or unexpected"], {}
+    source = value.get("source")
+    if not isinstance(source, dict) or set(source) != {
+        "repository", "commit", "catalog_hash"
+    }:
+        errors.append(f"{path}: operation history source lock is incomplete")
+    else:
+        if source.get("commit") != cauce_commit:
+            errors.append(f"{path}: history and operation locks require different CAUCE commits")
+        if not isinstance(source.get("repository"), str) or not source["repository"]:
+            errors.append(f"{path}: history source repository is required")
+        if not isinstance(source.get("catalog_hash"), str) or not SHA256.fullmatch(
+            source["catalog_hash"]
+        ):
+            errors.append(f"{path}: history catalog_hash must be lowercase SHA-256")
+    contracts = value.get("contracts")
+    if not isinstance(contracts, list):
+        return errors + [f"{path}: historical contracts must be a list"], {}
+    registry: dict[tuple[str, int], dict[str, Any]] = {}
+    for entry in contracts:
+        if not isinstance(entry, dict) or set(entry) != {
+            "id", "version", "contract_hash", "source_commit"
+        }:
+            errors.append(f"{path}: malformed historical contract {entry!r}")
+            continue
+        operation_id = entry.get("id")
+        version = entry.get("version")
+        key = (operation_id, version)
+        current = current_registry.get(operation_id)
+        if (
+            current is None
+            or not isinstance(version, int)
+            or version < 1
+            or version >= current["version"]
+            or key in registry
+        ):
+            errors.append(f"{path}: invalid or duplicate historical contract {key!r}")
+            continue
+        if not isinstance(entry.get("contract_hash"), str) or not SHA256.fullmatch(
+            entry["contract_hash"]
+        ):
+            errors.append(f"{path}: historical contract {key!r} needs an exact hash")
+        if not isinstance(entry.get("source_commit"), str) or not GIT_SHA.fullmatch(
+            entry["source_commit"]
+        ):
+            errors.append(f"{path}: historical contract {key!r} needs a source commit")
+        registry[key] = entry
+    if list(registry) != sorted(registry):
+        errors.append(f"{path}: historical contracts must be sorted by id and version")
+    return errors, registry
+
+
+def validate_cauce_node_lock(
+    value: Any,
+    path: Path,
+    cauce_commit: str,
+) -> tuple[list[str], set[str]]:
+    """Validate the generated registry of CAUCE node class types."""
+
+    if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.cauce-node-lock/1":
+        return [f"{path}: invalid CAUCE node lock"], set()
+    if set(value) != {"schema", "source", "nodes"}:
+        return [f"{path}: CAUCE node lock fields are incomplete or unexpected"], set()
+    errors: list[str] = []
+    source = value.get("source")
+    if not isinstance(source, dict) or set(source) != {
+        "repository", "commit", "bundle_hash"
+    }:
+        errors.append(f"{path}: CAUCE node source lock is incomplete")
+    else:
+        if source.get("commit") != cauce_commit:
+            errors.append(f"{path}: node and operation locks require different CAUCE commits")
+        if not isinstance(source.get("repository"), str) or not source["repository"]:
+            errors.append(f"{path}: CAUCE node source repository is required")
+        if not isinstance(source.get("bundle_hash"), str) or not SHA256.fullmatch(
+            source["bundle_hash"]
+        ):
+            errors.append(f"{path}: CAUCE node bundle_hash must be lowercase SHA-256")
+    entries = value.get("nodes")
+    if not isinstance(entries, list) or not entries:
+        return errors + [f"{path}: CAUCE node lock needs entries"], set()
+    class_types: list[str] = []
+    for entry in entries:
+        if not isinstance(entry, dict) or set(entry) != {
+            "class_type", "display_name", "category"
+        }:
+            errors.append(f"{path}: malformed CAUCE node entry {entry!r}")
+            continue
+        class_type = entry.get("class_type")
+        if not isinstance(class_type, str) or not re.fullmatch(r"Cauce[A-Za-z0-9]+", class_type):
+            errors.append(f"{path}: invalid CAUCE class type {class_type!r}")
+        else:
+            class_types.append(class_type)
+        if not isinstance(entry.get("display_name"), str) or not entry["display_name"]:
+            errors.append(f"{path}: CAUCE node {class_type!r} needs a display name")
+        if not isinstance(entry.get("category"), str) or not entry["category"].startswith(
+            "CAUCE/"
+        ):
+            errors.append(f"{path}: CAUCE node {class_type!r} needs a CAUCE category")
+    if class_types != sorted(set(class_types)):
+        errors.append(f"{path}: CAUCE class types must be sorted and unique")
+    return errors, set(class_types)
 
 
 def validate_archetype_lock(
@@ -285,6 +403,7 @@ def _validate_operation_reference(
     *,
     require_hash: bool,
     allow_historical: bool = False,
+    historical_registry: dict[tuple[str, int], dict[str, Any]] | None = None,
 ) -> list[str]:
     errors: list[str] = []
     operation_id = value.get("operation")
@@ -299,18 +418,26 @@ def _validate_operation_reference(
     )
     if referenced_version != locked["version"] and not is_historical:
         errors.append(f"{path}: operation version does not match lock")
+    historical = None
+    if is_historical:
+        historical = (historical_registry or {}).get((operation_id, referenced_version))
+        if historical is None:
+            errors.append(f"{path}: historical operation tuple is not archived")
     if require_hash:
         referenced_hash = value.get("operation_contract_hash")
         if is_historical:
-            if not isinstance(referenced_hash, str) or not SHA256.fullmatch(referenced_hash):
-                errors.append(f"{path}: historical operation contract hash is invalid")
+            if historical is not None and referenced_hash != historical["contract_hash"]:
+                errors.append(f"{path}: historical operation contract hash does not match archive")
         elif referenced_hash != locked["contract_hash"]:
             errors.append(f"{path}: operation contract hash does not match lock")
     return errors
 
 
 def validate_invocation(
-    value: Any, path: Path, registry: dict[str, dict[str, Any]]
+    value: Any,
+    path: Path,
+    registry: dict[str, dict[str, Any]],
+    historical_registry: dict[tuple[str, int], dict[str, Any]] | None = None,
 ) -> list[str]:
     if not isinstance(value, dict):
         return [f"{path}: invocation must be an object"]
@@ -324,6 +451,7 @@ def validate_invocation(
             registry,
             require_hash=True,
             allow_historical=value.get("status") in EVIDENCE,
+            historical_registry=historical_registry,
         )
     )
     if value.get("status") not in EVIDENCE | {"materialized", "queued"}:
@@ -375,7 +503,10 @@ def validate_segment(value: Any, path: Path, invocation_ids: set[str]) -> list[s
 
 
 def validate_experiment_catalog(
-    value: Any, path: Path, registry: dict[str, dict[str, Any]]
+    value: Any,
+    path: Path,
+    registry: dict[str, dict[str, Any]],
+    historical_registry: dict[tuple[str, int], dict[str, Any]] | None = None,
 ) -> list[str]:
     if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.h3-experiment-catalog/1":
         return [f"{path}: invalid experiment catalog"]
@@ -419,6 +550,7 @@ def validate_experiment_catalog(
                         registry,
                         require_hash=False,
                         allow_historical=True,
+                        historical_registry=historical_registry,
                     )
                 )
         if experiment["status"] not in EVIDENCE:
@@ -1304,7 +1436,12 @@ def validate_runtime_requirements(value: Any, path: Path) -> list[str]:
     return errors
 
 
-def validate_runtime_requirements_catalog(value: Any, path: Path, root: Path) -> list[str]:
+def validate_runtime_requirements_catalog(
+    value: Any,
+    path: Path,
+    root: Path,
+    locked_cauce_nodes: set[str] | None = None,
+) -> list[str]:
     if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.runtime-requirements-catalog/1":
         return [f"{path}: invalid runtime requirements catalog"]
     profiles = value.get("profiles")
@@ -1355,9 +1492,11 @@ def validate_runtime_requirements_catalog(value: Any, path: Path, root: Path) ->
     for field in ("required_endpoints", "required_node_types", "required_models"):
         if not set(core.get(field, [])).issubset(set(full.get(field, []))):
             errors.append(f"{path}: h3-full must include every h3-core {field}")
-    cauce_nodes = {name for name in core.get("required_node_types", []) if name.startswith("Cauce")}
-    if len(cauce_nodes) != 28:
-        errors.append(f"{path}: h3-core must require all 28 locked CAUCE nodes")
+    cauce_nodes = {
+        name for name in core.get("required_node_types", []) if name.startswith("Cauce")
+    }
+    if locked_cauce_nodes is not None and cauce_nodes != locked_cauce_nodes:
+        errors.append(f"{path}: h3-core CAUCE nodes must exactly match cauce.nodes.lock.json")
     for profile_id in ("h3-control-experimental", "h3-learned-upscale-experimental"):
         experimental = loaded[profile_id]
         for field in ("required_endpoints", "required_node_types", "required_models"):
@@ -1923,10 +2062,35 @@ def validate_repository(root: Path = ROOT) -> list[str]:
     lock_errors, registry = validate_operation_lock(lock, lock_path)
     errors.extend(lock_errors)
 
+    history_lock_path = root / "operations.history.lock.json"
+    try:
+        history_lock = load_json(history_lock_path)
+    except (OSError, json.JSONDecodeError) as exc:
+        return errors + [f"{history_lock_path}: invalid JSON: {exc}"]
+    history_errors, historical_registry = validate_operation_history_lock(
+        history_lock,
+        history_lock_path,
+        registry,
+        lock.get("source", {}).get("commit"),
+    )
+    errors.extend(history_errors)
+
+    node_lock_path = root / "cauce.nodes.lock.json"
+    try:
+        node_lock = load_json(node_lock_path)
+    except (OSError, json.JSONDecodeError) as exc:
+        return errors + [f"{node_lock_path}: invalid JSON: {exc}"]
+    node_errors, locked_cauce_nodes = validate_cauce_node_lock(
+        node_lock,
+        node_lock_path,
+        lock.get("source", {}).get("commit"),
+    )
+    errors.extend(node_errors)
+
     invocation_ids: set[str] = set()
     for path in sorted((root / "invocations").glob("*.json")):
         value = load_json(path)
-        errors.extend(validate_invocation(value, path, registry))
+        errors.extend(validate_invocation(value, path, registry, historical_registry))
         if isinstance(value, dict) and isinstance(value.get("id"), str):
             if value["id"] in invocation_ids:
                 errors.append(f"{path}: duplicate invocation id {value['id']!r}")
@@ -1934,7 +2098,11 @@ def validate_repository(root: Path = ROOT) -> list[str]:
     for path in sorted((root / "segments").glob("*.json")):
         errors.extend(validate_segment(load_json(path), path, invocation_ids))
     catalog_path = root / "experiments" / "catalog.json"
-    errors.extend(validate_experiment_catalog(load_json(catalog_path), catalog_path, registry))
+    errors.extend(
+        validate_experiment_catalog(
+            load_json(catalog_path), catalog_path, registry, historical_registry
+        )
+    )
     training_path = root / "training" / "catalog.json"
     errors.extend(validate_training_catalog(load_json(training_path), training_path, root))
     materialization_path = root / "materialization" / "catalog.json"
@@ -1956,7 +2124,10 @@ def validate_repository(root: Path = ROOT) -> list[str]:
     runtime_requirements_path = root / "runtime" / "catalog.json"
     errors.extend(
         validate_runtime_requirements_catalog(
-            load_json(runtime_requirements_path), runtime_requirements_path, root
+            load_json(runtime_requirements_path),
+            runtime_requirements_path,
+            root,
+            locked_cauce_nodes,
         )
     )
     live_gate_path = root / "materialization" / "live-gate.json"

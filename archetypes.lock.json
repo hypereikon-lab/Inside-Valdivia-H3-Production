@@ -2,41 +2,236 @@
   "schema": "inside-valdivia.cauce-archetype-lock/1",
   "source": {
     "repository": "https://github.com/hypereikon-lab/ComfyUI-Cauce",
-    "commit": "42f0f95ce405276a2ecbf7af2cefad1de034fb6e",
+    "commit": "558ed5b308d622af3693973539489649c33d22af",
     "catalog_hash": "adb19052056b0ef6b96774bf769ce6845edde27b29e40593615a05046572587a"
   },
   "archetypes": [
-    { "id": "complete-backward-prefix", "topology_signature": "21ea200536d9e87a04e6486e791268276de6d52fa02a1850c3bf7b5cf5854fd1", "topology_keys": ["complete.native_av@backward-prefix"] },
-    { "id": "complete-local-replacement", "topology_signature": "087468e4d37b74ebee63c975a5e82960f667a8a060e2bf116fb7c3d88a3fbe68", "topology_keys": ["complete.native_av@local-replacement"] },
-    { "id": "complete-two-sided-infill", "topology_signature": "eba266d901ac7e18169ec2c7135b04ca9f1b0a8a88fc8c109c6a56b8097579ce", "topology_keys": ["complete.native_av@two-sided-infill"] },
-    { "id": "complete-two-source-connection", "topology_signature": "1a12214daa5488568c3bdb294715c2c25b146f2f394d799d61ee6a227a71cece", "topology_keys": ["complete.native_av@two-source-connection"] },
-    { "id": "continue-keyframe-overlap", "topology_signature": "817bb5c3162e7011ee256720f3c955478b953beecb99fe7b2cbc016cf958cc4a", "topology_keys": ["continue.native_av@keyframe-overlap"] },
-    { "id": "continue-masked-future-guide", "topology_signature": "2ef0e11ec27e2c153f815b2fc69c0b95ad0707699b0dca0423b97ecdaf3c66bb", "topology_keys": ["continue.native_av@masked-overlap-future-guide"] },
-    { "id": "continue-masked-overlap", "topology_signature": "071dafa79efb7beaa22510524cf785c7d6d187790c968ab5dd3b1202d4208168", "topology_keys": ["continue.native_av@masked-overlap"] },
-    { "id": "edit-local-retake", "topology_signature": "a2ba088d01e7546945802e24e037637e31cc2a109b801d5b6dd92836590cb2ab", "topology_keys": ["edit.masked_video@local-retake"] },
-    { "id": "edit-spatiotemporal-mask", "topology_signature": "ceb3f5691b07c75c52c621e823a67474204dacedc5e080857d10b5c8af4cd531", "topology_keys": ["edit.masked_video@animated-spatiotemporal", "edit.masked_video@static-spatial"] },
-    { "id": "frames-ordered-assembly", "topology_signature": "ad7e5288361fa1edd50b019230a9df336f93ef03890c978fe581c91d2bf97393", "topology_keys": ["frames.assemble@ordered-concatenation"] },
-    { "id": "densify-native-token-inpaint", "topology_signature": "72d0f5f5dcb13148d742c1f5068967255a05c3759645fc31ef46927f37abff70", "topology_keys": ["densify.temporal@token-inpaint"] },
-    { "id": "guides-first-last-interior", "topology_signature": "09bdba2f61d94360f74626b9ef7fa1d34735502294a22da373291ecd484f6591", "topology_keys": ["generate.with_guides@first-last-interior"] },
-    { "id": "guides-guide-clip", "topology_signature": "5a11f73eb845702e26686c85dd8e37054ac8bf44910c79785a4bb7dbd66070a3", "topology_keys": ["generate.with_guides@guide-clip"] },
-    { "id": "guides-multi-anchor", "topology_signature": "4e748a4d782c7885564bfde0811161fa1b67e7c89e6fcb9706f4e223e3988738", "topology_keys": ["generate.with_guides@multi-anchor"] },
-    { "id": "guides-single-anchor", "topology_signature": "d038d182dc7afd8a1d2f11db9639f3b0f7d2627f63661f2e417804233c92493c", "topology_keys": ["generate.with_guides@single-anchor"] },
-    { "id": "control-masked-inpaint", "topology_signature": "bc671a3645e8cd846bd7ef2d75df5b487cbe2f20eadc863888d7386968ac1f0e", "topology_keys": ["generate.with_control@masked-inpaint"] },
-    { "id": "control-structural-video", "topology_signature": "f1e44edf5bca511f40d053c898d57655513ca315838b8e4b0d4dd75059e5bf42", "topology_keys": ["generate.with_control@structural-video"] },
-    { "id": "keyframed-first-frame", "topology_signature": "cf1b4ec38d6722763969c4ea8e9df00130385261dc97dbc06e550ac68bc7a8d4", "topology_keys": ["generate.keyframed@first-frame"] },
-    { "id": "keyframed-first-last", "topology_signature": "9d75f79304b366a7f56d7c7f11b3f60bd4c0dd85593980a17ab7a2fe786555f8", "topology_keys": ["generate.keyframed@first-last"] },
-    { "id": "keyframed-last-frame", "topology_signature": "d61a8672cd7728d49227f7011ef46ac6b97f10245b5e0b9a204337a7d8d493f8", "topology_keys": ["generate.keyframed@last-frame"] },
-    { "id": "keyframed-text-only", "topology_signature": "90c20b15500703b01ff8c47d0aa20319268d73c4433daa09b628e5cab8f44f01", "topology_keys": ["generate.keyframed@text-only"] },
-    { "id": "references-image", "topology_signature": "598f46d237077ca3d3fb420ce6e4b5305a329db7bdd8a9000e96f2b58b12e770", "topology_keys": ["generate.from_references@image-reference-match", "generate.from_references@image-reference-max"] },
-    { "id": "references-video", "topology_signature": "8d2ec3d1fa3cd59cf6ca46864dd7a7a7d61643ef8a7afd975e12436fee85baca", "topology_keys": ["generate.from_references@video-reference"] },
-    { "id": "references-video-with-guide", "topology_signature": "c1467e5f922b6f0cb7e0b8239125b044b82cd4ed350ad452c5fec1fdf5610c6f", "topology_keys": ["generate.from_references@video-reference-with-guide"] },
-    { "id": "refine-full-frame", "topology_signature": "929e568f644bcd38e6657cad355edf59fa1a82a3b8b2f96f33e8f1bd7bbc71ba", "topology_keys": ["refine.video@full-frame"] },
-    { "id": "refine-masked", "topology_signature": "6888adc16717b79e58494db0f01183d38cab2ac8f7bf0186e058f3db6f5e9bb9", "topology_keys": ["refine.video@masked"] },
-    { "id": "reframe-outpaint", "topology_signature": "d883d1a09d76fe2b410ae29a5cccc2d3232bc6008a44a4aab10ac2d44c7f1e45", "topology_keys": ["reframe.outpaint_video@centered", "reframe.outpaint_video@offset"] },
-    { "id": "regenerate-spatial-latent", "topology_signature": "3045d302a6c2e2fa732c474e81155e2626ae4e4911c345cdffe829249e8054cd", "topology_keys": ["regenerate.spatial@latent-second-pass"] },
-    { "id": "regenerate-spatial-pixel-vae", "topology_signature": "f2100fe74636d73bfb86f5b6e5abfb1dde452efe268d40c313ec8a38fec12fb1", "topology_keys": ["regenerate.spatial@pixel-vae-second-pass"] },
-    { "id": "regenerate-spatial-tiled", "topology_signature": "a5cbcabb6c695fe1a297fd974d5706215d199c6660634d077708137e78ddf1d6", "topology_keys": ["regenerate.spatial@tiled-pixel-vae"] },
-    { "id": "regenerate-spatial-learned", "topology_signature": "ee1dcc57f93b25950b5ba14a37a4980f8ad5e94ea851f02339e01cff481bbf0e", "topology_keys": ["regenerate.spatial@learned-latent-second-pass"] },
-    { "id": "rollback-native-branch", "topology_signature": "04032ca56ce4c950a4b3041581ccbafe0cde029d57a63e9ba52aa40f721b5344", "topology_keys": ["rollback.native_av@branch-suffix"] }
+    {
+      "id": "complete-backward-prefix",
+      "topology_signature": "21ea200536d9e87a04e6486e791268276de6d52fa02a1850c3bf7b5cf5854fd1",
+      "topology_keys": [
+        "complete.native_av@backward-prefix"
+      ]
+    },
+    {
+      "id": "complete-local-replacement",
+      "topology_signature": "087468e4d37b74ebee63c975a5e82960f667a8a060e2bf116fb7c3d88a3fbe68",
+      "topology_keys": [
+        "complete.native_av@local-replacement"
+      ]
+    },
+    {
+      "id": "complete-two-sided-infill",
+      "topology_signature": "eba266d901ac7e18169ec2c7135b04ca9f1b0a8a88fc8c109c6a56b8097579ce",
+      "topology_keys": [
+        "complete.native_av@two-sided-infill"
+      ]
+    },
+    {
+      "id": "complete-two-source-connection",
+      "topology_signature": "1a12214daa5488568c3bdb294715c2c25b146f2f394d799d61ee6a227a71cece",
+      "topology_keys": [
+        "complete.native_av@two-source-connection"
+      ]
+    },
+    {
+      "id": "continue-keyframe-overlap",
+      "topology_signature": "817bb5c3162e7011ee256720f3c955478b953beecb99fe7b2cbc016cf958cc4a",
+      "topology_keys": [
+        "continue.native_av@keyframe-overlap"
+      ]
+    },
+    {
+      "id": "continue-masked-future-guide",
+      "topology_signature": "2ef0e11ec27e2c153f815b2fc69c0b95ad0707699b0dca0423b97ecdaf3c66bb",
+      "topology_keys": [
+        "continue.native_av@masked-overlap-future-guide"
+      ]
+    },
+    {
+      "id": "continue-masked-overlap",
+      "topology_signature": "071dafa79efb7beaa22510524cf785c7d6d187790c968ab5dd3b1202d4208168",
+      "topology_keys": [
+        "continue.native_av@masked-overlap"
+      ]
+    },
+    {
+      "id": "control-masked-inpaint",
+      "topology_signature": "bc671a3645e8cd846bd7ef2d75df5b487cbe2f20eadc863888d7386968ac1f0e",
+      "topology_keys": [
+        "generate.with_control@masked-inpaint"
+      ]
+    },
+    {
+      "id": "control-structural-video",
+      "topology_signature": "f1e44edf5bca511f40d053c898d57655513ca315838b8e4b0d4dd75059e5bf42",
+      "topology_keys": [
+        "generate.with_control@structural-video"
+      ]
+    },
+    {
+      "id": "densify-native-token-inpaint",
+      "topology_signature": "72d0f5f5dcb13148d742c1f5068967255a05c3759645fc31ef46927f37abff70",
+      "topology_keys": [
+        "densify.temporal@token-inpaint"
+      ]
+    },
+    {
+      "id": "edit-local-retake",
+      "topology_signature": "a2ba088d01e7546945802e24e037637e31cc2a109b801d5b6dd92836590cb2ab",
+      "topology_keys": [
+        "edit.masked_video@local-retake"
+      ]
+    },
+    {
+      "id": "edit-spatiotemporal-mask",
+      "topology_signature": "ceb3f5691b07c75c52c621e823a67474204dacedc5e080857d10b5c8af4cd531",
+      "topology_keys": [
+        "edit.masked_video@animated-spatiotemporal",
+        "edit.masked_video@static-spatial"
+      ]
+    },
+    {
+      "id": "frames-ordered-assembly",
+      "topology_signature": "ad7e5288361fa1edd50b019230a9df336f93ef03890c978fe581c91d2bf97393",
+      "topology_keys": [
+        "frames.assemble@ordered-concatenation"
+      ]
+    },
+    {
+      "id": "guides-first-last-interior",
+      "topology_signature": "09bdba2f61d94360f74626b9ef7fa1d34735502294a22da373291ecd484f6591",
+      "topology_keys": [
+        "generate.with_guides@first-last-interior"
+      ]
+    },
+    {
+      "id": "guides-guide-clip",
+      "topology_signature": "5a11f73eb845702e26686c85dd8e37054ac8bf44910c79785a4bb7dbd66070a3",
+      "topology_keys": [
+        "generate.with_guides@guide-clip"
+      ]
+    },
+    {
+      "id": "guides-multi-anchor",
+      "topology_signature": "4e748a4d782c7885564bfde0811161fa1b67e7c89e6fcb9706f4e223e3988738",
+      "topology_keys": [
+        "generate.with_guides@multi-anchor"
+      ]
+    },
+    {
+      "id": "guides-single-anchor",
+      "topology_signature": "d038d182dc7afd8a1d2f11db9639f3b0f7d2627f63661f2e417804233c92493c",
+      "topology_keys": [
+        "generate.with_guides@single-anchor"
+      ]
+    },
+    {
+      "id": "keyframed-first-frame",
+      "topology_signature": "cf1b4ec38d6722763969c4ea8e9df00130385261dc97dbc06e550ac68bc7a8d4",
+      "topology_keys": [
+        "generate.keyframed@first-frame"
+      ]
+    },
+    {
+      "id": "keyframed-first-last",
+      "topology_signature": "9d75f79304b366a7f56d7c7f11b3f60bd4c0dd85593980a17ab7a2fe786555f8",
+      "topology_keys": [
+        "generate.keyframed@first-last"
+      ]
+    },
+    {
+      "id": "keyframed-last-frame",
+      "topology_signature": "d61a8672cd7728d49227f7011ef46ac6b97f10245b5e0b9a204337a7d8d493f8",
+      "topology_keys": [
+        "generate.keyframed@last-frame"
+      ]
+    },
+    {
+      "id": "keyframed-text-only",
+      "topology_signature": "90c20b15500703b01ff8c47d0aa20319268d73c4433daa09b628e5cab8f44f01",
+      "topology_keys": [
+        "generate.keyframed@text-only"
+      ]
+    },
+    {
+      "id": "references-image",
+      "topology_signature": "598f46d237077ca3d3fb420ce6e4b5305a329db7bdd8a9000e96f2b58b12e770",
+      "topology_keys": [
+        "generate.from_references@image-reference-match",
+        "generate.from_references@image-reference-max"
+      ]
+    },
+    {
+      "id": "references-video",
+      "topology_signature": "8d2ec3d1fa3cd59cf6ca46864dd7a7a7d61643ef8a7afd975e12436fee85baca",
+      "topology_keys": [
+        "generate.from_references@video-reference"
+      ]
+    },
+    {
+      "id": "references-video-with-guide",
+      "topology_signature": "c1467e5f922b6f0cb7e0b8239125b044b82cd4ed350ad452c5fec1fdf5610c6f",
+      "topology_keys": [
+        "generate.from_references@video-reference-with-guide"
+      ]
+    },
+    {
+      "id": "refine-full-frame",
+      "topology_signature": "929e568f644bcd38e6657cad355edf59fa1a82a3b8b2f96f33e8f1bd7bbc71ba",
+      "topology_keys": [
+        "refine.video@full-frame"
+      ]
+    },
+    {
+      "id": "refine-masked",
+      "topology_signature": "6888adc16717b79e58494db0f01183d38cab2ac8f7bf0186e058f3db6f5e9bb9",
+      "topology_keys": [
+        "refine.video@masked"
+      ]
+    },
+    {
+      "id": "reframe-outpaint",
+      "topology_signature": "d883d1a09d76fe2b410ae29a5cccc2d3232bc6008a44a4aab10ac2d44c7f1e45",
+      "topology_keys": [
+        "reframe.outpaint_video@centered",
+        "reframe.outpaint_video@offset"
+      ]
+    },
+    {
+      "id": "regenerate-spatial-latent",
+      "topology_signature": "3045d302a6c2e2fa732c474e81155e2626ae4e4911c345cdffe829249e8054cd",
+      "topology_keys": [
+        "regenerate.spatial@latent-second-pass"
+      ]
+    },
+    {
+      "id": "regenerate-spatial-learned",
+      "topology_signature": "ee1dcc57f93b25950b5ba14a37a4980f8ad5e94ea851f02339e01cff481bbf0e",
+      "topology_keys": [
+        "regenerate.spatial@learned-latent-second-pass"
+      ]
+    },
+    {
+      "id": "regenerate-spatial-pixel-vae",
+      "topology_signature": "f2100fe74636d73bfb86f5b6e5abfb1dde452efe268d40c313ec8a38fec12fb1",
+      "topology_keys": [
+        "regenerate.spatial@pixel-vae-second-pass"
+      ]
+    },
+    {
+      "id": "regenerate-spatial-tiled",
+      "topology_signature": "a5cbcabb6c695fe1a297fd974d5706215d199c6660634d077708137e78ddf1d6",
+      "topology_keys": [
+        "regenerate.spatial@tiled-pixel-vae"
+      ]
+    },
+    {
+      "id": "rollback-native-branch",
+      "topology_signature": "04032ca56ce4c950a4b3041581ccbafe0cde029d57a63e9ba52aa40f721b5344",
+      "topology_keys": [
+        "rollback.native_av@branch-suffix"
+      ]
+    }
   ]
 }

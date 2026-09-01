@@ -1,0 +1,150 @@
+{
+  "schema": "inside-valdivia.cauce-node-lock/1",
+  "source": {
+    "repository": "https://github.com/hypereikon-lab/ComfyUI-Cauce",
+    "commit": "558ed5b308d622af3693973539489649c33d22af",
+    "bundle_hash": "a46beeddd673232b44289e4245cf0fc0a5eaa00cc974cba66f9f7078f0ecbf71"
+  },
+  "nodes": [
+    {
+      "class_type": "CauceAcceptDecodedRange",
+      "display_name": "CAUCE · Accept Decoded Range",
+      "category": "CAUCE/Assembly"
+    },
+    {
+      "class_type": "CauceH3AddAVSpanGuide",
+      "display_name": "CAUCE · Add H3 AV Span Guide",
+      "category": "CAUCE/H3 AV Latent"
+    },
+    {
+      "class_type": "CauceH3AllocateAVWindow",
+      "display_name": "CAUCE · Allocate H3 AV Window",
+      "category": "CAUCE/H3 AV Latent"
+    },
+    {
+      "class_type": "CauceH3AppendAVSpan",
+      "display_name": "CAUCE · Append H3 AV Span",
+      "category": "CAUCE/H3 AV Latent"
+    },
+    {
+      "class_type": "CauceH3ApplyVideoDenoiseMask",
+      "display_name": "CAUCE · Apply H3 Video Denoise Mask",
+      "category": "CAUCE/H3 AV Latent"
+    },
+    {
+      "class_type": "CauceH3ClearAVDenoiseMask",
+      "display_name": "CAUCE · Clear H3 AV Denoise Mask",
+      "category": "CAUCE/H3 AV Latent"
+    },
+    {
+      "class_type": "CauceH3DilateVisualTokens",
+      "display_name": "CAUCE · Dilate H3 Visual Tokens",
+      "category": "CAUCE/H3 AV Latent"
+    },
+    {
+      "class_type": "CauceH3ExpandAVCanvas",
+      "display_name": "CAUCE · Expand H3 AV Canvas",
+      "category": "CAUCE/H3 AV Latent"
+    },
+    {
+      "class_type": "CauceH3ExtractAVSpan",
+      "display_name": "CAUCE · Extract H3 AV Span",
+      "category": "CAUCE/H3 AV Latent"
+    },
+    {
+      "class_type": "CauceH3ExtractVisualStream",
+      "display_name": "CAUCE · Extract H3 Visual Stream",
+      "category": "CAUCE/H3 AV Latent"
+    },
+    {
+      "class_type": "CauceH3InspectAVLatent",
+      "display_name": "CAUCE · Inspect H3 AV Latent",
+      "category": "CAUCE/H3 AV Latent"
+    },
+    {
+      "class_type": "CauceH3InspectConditioning",
+      "display_name": "CAUCE · Inspect H3 Conditioning",
+      "category": "CAUCE/H3 Planning"
+    },
+    {
+      "class_type": "CauceH3InspectPackedSequence",
+      "display_name": "CAUCE · Inspect H3 Packed Sequence",
+      "category": "CAUCE/H3 Planning"
+    },
+    {
+      "class_type": "CauceH3PlaceAVSpan",
+      "display_name": "CAUCE · Place H3 AV Span",
+      "category": "CAUCE/H3 AV Latent"
+    },
+    {
+      "class_type": "CauceH3PlanAVWindow",
+      "display_name": "CAUCE · Plan H3 AV Window",
+      "category": "CAUCE/H3 AV Latent"
+    },
+    {
+      "class_type": "CauceH3PlanControlClip",
+      "display_name": "CAUCE · Plan H3 Control Clip",
+      "category": "CAUCE/H3 Planning"
+    },
+    {
+      "class_type": "CauceH3PrepareGuideClip",
+      "display_name": "CAUCE · Prepare H3 Guide Clip",
+      "category": "CAUCE/H3 Planning"
+    },
+    {
+      "class_type": "CauceH3PrepareReferenceClip",
+      "display_name": "CAUCE · Prepare H3 Reference Clip",
+      "category": "CAUCE/H3 Planning"
+    },
+    {
+      "class_type": "CauceH3ReplaceAVSpan",
+      "display_name": "CAUCE · Replace H3 AV Span",
+      "category": "CAUCE/H3 AV Latent"
+    },
+    {
+      "class_type": "CauceH3ReplaceVisualStream",
+      "display_name": "CAUCE · Replace H3 Visual Stream",
+      "category": "CAUCE/H3 AV Latent"
+    },
+    {
+      "class_type": "CauceH3ResizeAVLatent",
+      "display_name": "CAUCE · Resize H3 AV Latent",
+      "category": "CAUCE/H3 AV Latent"
+    },
+    {
+      "class_type": "CauceH3ResolveTargetShape",
+      "display_name": "CAUCE · Resolve H3 Target Shape",
+      "category": "CAUCE/H3 Planning"
+    },
+    {
+      "class_type": "CauceH3SetAVDenoiseInterval",
+      "display_name": "CAUCE · Set H3 AV Denoise Interval",
+      "category": "CAUCE/H3 AV Latent"
+    },
+    {
+      "class_type": "CauceH3SplitAVLatent",
+      "display_name": "CAUCE · Split H3 AV Latent",
+      "category": "CAUCE/H3 AV Latent"
+    },
+    {
+      "class_type": "CauceLoadAVLatent",
+      "display_name": "CAUCE · Load H3 AV Latent",
+      "category": "CAUCE/Persistence"
+    },
+    {
+      "class_type": "CaucePlanH3GuideRetime",
+      "display_name": "CAUCE · Plan H3 Guide Retime",
+      "category": "CAUCE/Temporal Planning"
+    },
+    {
+      "class_type": "CauceRestoreDecodedAnchors",
+      "display_name": "CAUCE · Restore Decoded Anchors",
+      "category": "CAUCE/Assembly"
+    },
+    {
+      "class_type": "CauceSaveAVLatent",
+      "display_name": "CAUCE · Save H3 AV Latent",
+      "category": "CAUCE/Persistence"
+    }
+  ]
+}

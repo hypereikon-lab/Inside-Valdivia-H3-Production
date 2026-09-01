@@ -7,16 +7,17 @@ from tools.validate import (
     is_h3_frame_count,
     is_h3_visual_boundary,
     load_json,
-    validate_materialization_catalog,
-    validate_materialization_plan,
+    validate_acceptance_catalog,
     validate_archetype_lock,
     validate_compatibility_lock,
+    validate_invocation,
+    validate_live_gate,
+    validate_materialization_catalog,
+    validate_materialization_plan,
     validate_media_catalog,
+    validate_operation_history_lock,
     validate_operation_lock,
     validate_repository,
-    validate_invocation,
-    validate_acceptance_catalog,
-    validate_live_gate,
     validate_rolling_catalog,
     validate_rolling_plan,
     validate_runtime_requirements,
@@ -82,6 +83,14 @@ class RepositoryValidationTests(unittest.TestCase):
     def test_executed_historical_invocation_remains_immutable(self):
         lock_path = ROOT / "operations.lock.json"
         _, registry = validate_operation_lock(load_json(lock_path), lock_path)
+        history_path = ROOT / "operations.history.lock.json"
+        history_errors, history = validate_operation_history_lock(
+            load_json(history_path),
+            history_path,
+            registry,
+            load_json(lock_path)["source"]["commit"],
+        )
+        self.assertEqual(history_errors, [])
         invocation_path = (
             ROOT / "invocations" / "2026-08-31-07-spatial-regenerate-1792x1024.json"
         )
@@ -90,7 +99,16 @@ class RepositoryValidationTests(unittest.TestCase):
             invocation["operation_version"],
             registry[invocation["operation"]]["version"],
         )
-        self.assertEqual(validate_invocation(invocation, invocation_path, registry), [])
+        self.assertEqual(
+            validate_invocation(invocation, invocation_path, registry, history),
+            [],
+        )
+        tampered = copy.deepcopy(invocation)
+        tampered["operation_contract_hash"] = "0" * 64
+        self.assertIn(
+            f"{invocation_path}: historical operation contract hash does not match archive",
+            validate_invocation(tampered, invocation_path, registry, history),
+        )
 
     def test_segment_references_invocation_output(self):
         segment_path = ROOT / "segments" / "example.json"

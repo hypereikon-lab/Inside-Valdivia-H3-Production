@@ -1,0 +1,16 @@
+{
+  "schema": "inside-valdivia.cauce-operation-history-lock/1",
+  "source": {
+    "repository": "https://github.com/hypereikon-lab/ComfyUI-Cauce",
+    "commit": "558ed5b308d622af3693973539489649c33d22af",
+    "catalog_hash": "d9f83e60299b3e4d77be0544a02b972ec2324b4821641c3a0ed919a6ac6493a8"
+  },
+  "contracts": [
+    {
+      "id": "regenerate.spatial",
+      "version": 2,
+      "contract_hash": "40a801bf58ab20e2757725f961298ba48078d241517f596c7215de4efe7e267d",
+      "source_commit": "9172c30b37fc43272473409e6f42eaacc0a10e60"
+    }
+  ]
+}

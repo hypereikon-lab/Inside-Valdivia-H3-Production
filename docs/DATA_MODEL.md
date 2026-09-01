@@ -77,9 +77,18 @@ A receipt can prove execution but not visual quality.
 ## Content-addressed ownership
 
 `operations.lock.json` pins the CAUCE source commit, catalog hash, and every
-operation contract hash. `archetypes.lock.json` pins the structural signatures
+current operation contract hash. `operations.history.lock.json` admits only
+exact immutable tuples for superseded contracts used by preserved evidence.
+`cauce.nodes.lock.json` pins the exact registered class types, display names,
+and categories consumed by runtime requirements. `archetypes.lock.json` pins
+the structural signatures
 and exact topology membership. `runtime/compatibility-lock.json` pins the
 CAUCE, Runtime Control, and Workspace Control commit/tree/version/metadata
 tuple plus explicit platform gates. `tools/verify_cauce_lock.py` additionally
 requires exact archetype equality and one-to-one coverage between all current
 CAUCE topology dossiers and project materialization plans.
+
+These generic locks and every project-side CAUCE source pointer are derived
+from CAUCE's committed `cauce.contract-bundle/1` with
+`tools/sync_cauce_contracts.py`. The check mode is read-only and fails whenever
+a project lock was edited independently of its canonical bundle.
