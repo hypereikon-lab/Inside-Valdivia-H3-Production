@@ -1,0 +1,202 @@
+{
+  "1": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "default"
+    }
+  },
+  "2": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "3": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "4": {
+    "class_type": "CauceLoadAVLatent",
+    "inputs": {
+      "path_or_folder": "cauce/latents/2026-08-31/03_fl2va_first_a_last_b_00001.safetensors",
+      "artifact_index": 0
+    }
+  },
+  "6": {
+    "class_type": "MiniMaxH3ImageToVideo",
+    "inputs": {
+      "clip": [
+        "1",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "prompt": "Create smooth continuous slow motion through the supplied ordered temporal anchors. Preserve the exact scene, camera path, forest geometry, lighting, water flow, vegetation and exposure. Synthesize only coherent motion between anchors. No cuts, resets, morphing, temporal echoes, new events, people, text or generated audio.",
+      "width": 1344,
+      "height": 768,
+      "length": 124
+    }
+  },
+  "5": {
+    "class_type": "CauceH3SplitAVLatent",
+    "inputs": {
+      "latent": [
+        "4",
+        0
+      ],
+      "cut_frame": 39
+    }
+  },
+  "7": {
+    "class_type": "CauceH3DilateVisualTokens",
+    "inputs": {
+      "latent": [
+        "5",
+        0
+      ],
+      "factor": 3,
+      "anchor_denoise": 0.0,
+      "gap_denoise": 1.0,
+      "feather_tokens": 1,
+      "curve": "smootherstep",
+      "audio_denoise": 1.0
+    }
+  },
+  "8": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 310803
+    }
+  },
+  "9": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "conditioning": [
+        "6",
+        0
+      ]
+    }
+  },
+  "10": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1.0
+    }
+  },
+  "11": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "res_multistep"
+    }
+  },
+  "12": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "8",
+        0
+      ],
+      "guider": [
+        "9",
+        0
+      ],
+      "sampler": [
+        "11",
+        0
+      ],
+      "sigmas": [
+        "10",
+        0
+      ],
+      "latent_image": [
+        "7",
+        0
+      ]
+    }
+  },
+  "13": {
+    "class_type": "CauceH3ClearAVDenoiseMask",
+    "inputs": {
+      "latent": [
+        "12",
+        0
+      ],
+      "timeline_origin_frame": 0
+    }
+  },
+  "14": {
+    "class_type": "CauceSaveAVLatent",
+    "inputs": {
+      "latent": [
+        "13",
+        0
+      ],
+      "filename_prefix": "cauce/latents/2026-08-31/native_slowmo_3x",
+      "artifact_index": 3
+    }
+  },
+  "15": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "13",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ]
+    }
+  },
+  "16": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "15",
+        0
+      ],
+      "start_frame": 0,
+      "frame_count": 115
+    }
+  },
+  "17": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "16",
+        0
+      ],
+      "fps": 24,
+      "bit_depth": 8
+    }
+  },
+  "18": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "17",
+        0
+      ],
+      "filename_prefix": "video/2026-08-31/native_slowmo_3x",
+      "format": "auto",
+      "codec": "auto"
+    }
+  }
+}

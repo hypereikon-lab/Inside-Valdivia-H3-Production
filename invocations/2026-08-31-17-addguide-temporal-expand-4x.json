@@ -1,0 +1,36 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "2026-08-31-17-addguide-temporal-expand-4x",
+  "operation": "generate.with_guides",
+  "operation_version": 3,
+  "operation_contract_hash": "49aa03c63837e7cbc3dd09992e6575196dced0061847986f8643b347cbe98dfc",
+  "inputs": {
+    "source_native_state": "comfy-output://cauce/latents/2026-08-31/03_fl2va_first_a_last_b_00001.safetensors"
+  },
+  "parameters": {
+    "variant": "dense-anchor-temporal-expansion",
+    "factor": 4,
+    "source_frames": 30,
+    "guide_count": 30,
+    "guide_stride_frames": 4,
+    "last_guide_index": 116,
+    "target_frames": 124,
+    "delivery_frames": 117,
+    "delivery_fps": 24,
+    "width": 896,
+    "height": 512,
+    "steps": 20,
+    "sampler": "res_multistep",
+    "scheduler": "simple",
+    "seed": 310904
+  },
+  "status": "executes",
+  "outputs": {
+    "video": "comfy-output://video/2026-08-31/addguide_slowmo_4x_00001_.mp4",
+    "native_state": "comfy-output://cauce/latents/2026-08-31/addguide_slowmo_4x_00001.safetensors"
+  },
+  "run_receipts": [
+    "runtime/receipts/2026-08-31/addguide-30-slowmo-4x/a093dccf-a2d6-4eb3-ad34-bf8bb5fdfd30.json"
+  ],
+  "notes": "Dense official AddGuide expansion. Execution and exact delivery geometry are verified; visual review remains pending."
+}

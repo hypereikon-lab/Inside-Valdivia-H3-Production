@@ -86,14 +86,17 @@ After those mechanisms execute, establish the new native editing surface:
 5. `refine.video@full-frame` as a one-variable strength ladder, followed by
    `refine.video@masked` only if the full-frame pass shows useful behavior.
 
-Then materialize H3-native enhancement over retained native state:
+Then characterize H3-native enhancement over retained native state:
 
-1. `densify.temporal@token-inpaint` at 2x on one 124-frame native source;
-2. `regenerate.spatial@latent-second-pass` as a fixed-seed denoise ladder;
-3. `regenerate.spatial@pixel-vae-second-pass` on the same source and geometry;
-4. tiled regeneration only if the full-frame target exceeds the measured VRAM
+1. retain `densify.temporal@token-inpaint` as rejected evidence; same-duration
+   2x and duration-expansion 2x/3x did not yield useful slow motion;
+2. repeat `generate.with_guides@dense-anchor-temporal-expansion` at 2x/3x on a
+   second source and seed, and complete visual review of the executed 4x result;
+3. `regenerate.spatial@latent-second-pass` as a fixed-seed denoise ladder;
+4. `regenerate.spatial@pixel-vae-second-pass` on the same source and geometry;
+5. tiled regeneration only if the full-frame target exceeds the measured VRAM
    envelope and after overlap fusion is materialized from live node contracts;
-5. only after separate acceptance, compare temporal→spatial with the reverse
+6. only after separate acceptance, compare guided temporal→spatial with the reverse
    operation order.
 
 The remaining variants are retained and materialized after their underlying

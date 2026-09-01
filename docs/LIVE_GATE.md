@@ -138,7 +138,8 @@ execution order. `materialization/live-gate.json` owns the empirical order:
 4. variants dependent on mechanisms already observed.
 5. native masked editing and outpaint, beginning with static and centered controls;
 6. bounded refinement only after its denoise-strength ladder is bound.
-7. native temporal densification only after preserved-frame behavior is verified;
+7. retain native temporal densification as negative evidence rather than
+   requeueing the rejected slow-motion hypothesis;
 8. native spatial regeneration only after bounded second-pass controls execute.
 
 Stop after any failed schema, execution, artifact, or visual gate. Preserve a

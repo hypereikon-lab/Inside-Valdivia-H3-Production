@@ -41,6 +41,11 @@ artifact is a silent video.
 | 10 | `refine.video@full-frame` | 342.556 s | `executes` | At video strength 0.20, sampled edge energy rises from 10.76 to 13.41 (~25%) with composition MAD 7.21/255. Adjacent-frame MAD changes from 2.16 to 2.43. This is a better fidelity/detail tradeoff than spatial 0.35, but still needs a fixed-source ladder. |
 | 11 | `rollback.native_av@branch-suffix` | 16.644 s | `executes` | Split at frame 90 and reappend reconstructs 124/124 decoded frames with mean MAD 0, maximum MAD 0 and zero non-identical frames at the controlled comparison resolution. MP4 byte hashes differ because the artifact was re-encoded. The graph did not persist prefix and suffix as independent checkpoints, so it does not yet satisfy the full acceptance profile. |
 | 12 | `densify.temporal@token-inpaint` exact decoded-anchor delivery | 45.5 s | `rejected` | Restores all 124 source frames exactly before encoding and retains 123 H3-generated gaps, yielding 247 frames at 48 fps. Source-versus-even-anchor PSNR improves from 25.20 to 34.85 dB after independent MP4 encoding, but mean adjacent luma difference rises from 5.65 to 10.65. The generated gaps alternate with a different decoded trajectory, so exact anchors expose rather than solve the cadence discontinuity. |
+| 13 | native-token duration expansion 2x | 303.337 s | `rejected` | Retains 56 source frames, dilates their packed visual tokens and delivers 111 frames at 24 fps / 4.625 s. The graph executes, but operator review rejects the motion as useful slow motion. |
+| 14 | native-token duration expansion 3x | 296.933 s | `rejected` | Retains 39 source frames, dilates their packed visual tokens and delivers 115 frames at 24 fps / 4.792 s. The graph executes, but operator review again rejects the motion. No 4x run is justified. |
+| 15 | `generate.with_guides@dense-anchor-temporal-expansion` 2x | 393.625 s | `executes` | Decodes 60 contiguous source frames, places them as 60 official AddGuides at indices 0,2,…,118 and delivers 119 frames at 24 fps / 4.958 s. Operator review reports that the AddGuide method works. Formal promotion still needs repeat evidence. |
+| 16 | `generate.with_guides@dense-anchor-temporal-expansion` 3x | 272.572 s | `executes` | Places 40 official guides at indices 0,3,…,117 and lets H3 generate two frames per interval. Delivery is 118 frames at 24 fps / 4.917 s. Operator review reports that the AddGuide method works. |
+| 17 | `generate.with_guides@dense-anchor-temporal-expansion` 4x | 206.198 s | `executes` | Places 30 official guides at indices 0,4,…,116 and lets H3 generate three frames per interval. Delivery is 117 frames at 24 fps / 4.875 s. Execution is verified; visual review is pending. |
 
 MAD values are mean absolute RGB-channel differences on controlled, same-size
 canvas samples. They are diagnostics, not perceptual quality scores. The exact
@@ -50,7 +55,8 @@ and explicit visual review are satisfied.
 
 ## Evidence layout
 
-- Executed API graphs: `workflows/executed/2026-08-31/*.api.json`
+- Executed API graphs: `workflows/executed/2026-08-31/*.api.json` and
+  `experiments/workflows/temporal-expansion-2026-08-31/*.api.json`
 - Project invocations: `invocations/2026-08-31-*.json`
 - Immutable local receipts: `runtime/receipts/2026-08-31/*.json` (intentionally
   ignored by repository policy; tracked invocations retain their references and
@@ -83,6 +89,12 @@ The browser URL for an artifact is derived from its receipt, for example:
    token-inpaint result. It proves exact source placement, but H3's four-frame
    temporal VAE groups cannot encode an independent alternating decoded-frame
    preserve/generate mask.
+8. Reject native-token duration expansion as slow motion. Correct execution and
+   legal H3 shapes are insufficient when H3 reinterprets the transformed state.
+9. Retain dense official AddGuide expansion as the supported hypothesis. It
+   places every retained source frame at an explicit target time and received
+   positive operator review at 2x and 3x. The 4x result still needs review, and
+   no factor is promoted until repeat-count requirements pass.
 
 ## Immediate next characterization set
 
@@ -91,6 +103,7 @@ The browser URL for an artifact is derived from its receipt, for example:
 - run the fixed-source refinement ladder at 0.10/0.15/0.20/0.25;
 - run the spatial ladder at 0.10/0.20/0.30;
 - replace the rejected still anchor with a 5- or 22-frame guide clip;
-- pause the current temporal-densification binding until a native H3
-  conditioning path can constrain decoded cadence, rather than spending another
-  16-minute sample on post-decode anchor substitution.
+- repeat dense AddGuide 2x/3x on a second source and seed, review the completed
+  4x result, and characterize maximum guide count at production resolution;
+- keep native token dilation paused unless a new H3-native conditioning path
+  can constrain decoded cadence.

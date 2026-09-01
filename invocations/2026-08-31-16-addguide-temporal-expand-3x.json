@@ -1,0 +1,36 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "2026-08-31-16-addguide-temporal-expand-3x",
+  "operation": "generate.with_guides",
+  "operation_version": 3,
+  "operation_contract_hash": "49aa03c63837e7cbc3dd09992e6575196dced0061847986f8643b347cbe98dfc",
+  "inputs": {
+    "source_native_state": "comfy-output://cauce/latents/2026-08-31/03_fl2va_first_a_last_b_00001.safetensors"
+  },
+  "parameters": {
+    "variant": "dense-anchor-temporal-expansion",
+    "factor": 3,
+    "source_frames": 40,
+    "guide_count": 40,
+    "guide_stride_frames": 3,
+    "last_guide_index": 117,
+    "target_frames": 124,
+    "delivery_frames": 118,
+    "delivery_fps": 24,
+    "width": 896,
+    "height": 512,
+    "steps": 20,
+    "sampler": "res_multistep",
+    "scheduler": "simple",
+    "seed": 310903
+  },
+  "status": "executes",
+  "outputs": {
+    "video": "comfy-output://video/2026-08-31/addguide_slowmo_3x_00001_.mp4",
+    "native_state": "comfy-output://cauce/latents/2026-08-31/addguide_slowmo_3x_00001.safetensors"
+  },
+  "run_receipts": [
+    "runtime/receipts/2026-08-31/addguide-40-slowmo-3x/b0288c45-40bd-4d81-bce7-4ebd4dc2f8d8.json"
+  ],
+  "notes": "Dense official AddGuide expansion. The operator reported that the AddGuide result works; formal repeat-count promotion remains pending."
+}

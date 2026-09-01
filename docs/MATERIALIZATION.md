@@ -49,8 +49,9 @@ The queue covers:
 - 3 spatial/spatiotemporal masked-edit layouts;
 - 2 native outpaint placements;
 - 2 bounded-refinement layouts;
-- 1 rollback and 1 deterministic assembly.
-- 1 native H3 temporal-densification path;
+- 1 rollback and 1 deterministic assembly;
+- 1 native H3 temporal-densification path retained as rejected experiment
+  inventory, not a recommended slow-motion workflow;
 - 3 native H3 spatial-regeneration paths.
 
 ## Live materialization gates
@@ -67,7 +68,7 @@ types, model files, revisions, and storage before constructing graphs.
 
 First evaluate `runtime/requirements/h3-core.json`; evaluate `h3-full.json`
 before Ref2VA, AddGuide, video-loading, assembly, or the complete native-state
-surface, including temporal densification and spatial regeneration. No
+surface, including the retained temporal-densification topology and spatial regeneration. No
 auxiliary enhancement runtime profile or model download is required. When authentication
 exists only in the browser, use Runtime Control's
 snapshot-manifest handoff rather than extracting the browser cookie.

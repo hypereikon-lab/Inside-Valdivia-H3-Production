@@ -25,6 +25,12 @@ Official AddGuide chains place images or clips at exact target-frame indices.
 Variants cover one anchor, multiple anchors, one guide clip, and first/last
 endpoints plus an interior guide. A guide is conditioning, not a denoise mask.
 
+`dense-anchor-temporal-expansion` is a graph composition over the same official
+primitive, not a new CAUCE node. It decodes a contiguous source prefix and
+places every frame at a factor-spaced target index while preserving the 24 fps
+delivery clock. H3 generates only the unoccupied temporal positions. Live 2x
+and 3x results received positive operator review; 4x executes and awaits review.
+
 ## Native H3 AV state algebra
 
 ### `continue.native_av`
@@ -103,6 +109,8 @@ native state + continuous mask -> edit.masked_video
 native state -> refine.video or reframe.outpaint_video
 
 accepted decoded ranges -> frames.assemble
+
+decoded source frames -> dense factor-spaced AddGuide chain -> guided temporal expansion
 ```
 
 Edges are explicit artifact/native-state references. The catalog never assumes

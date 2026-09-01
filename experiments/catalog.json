@@ -112,11 +112,11 @@
     {
       "id": "h3-native-temporal-densification",
       "operations": [{ "id": "densify.temporal", "version": 2 }],
-      "question": "Can native H3 visual-token inpainting create useful additional motion samples while the multiplied delivery clock preserves editorial duration?",
+      "question": "Can native H3 visual-token dilation create useful slow motion under either same-duration or duration-expansion delivery?",
       "fixed": ["source native AV state", "factor=2", "resolution", "prompt", "seed", "sampler", "scheduler", "steps", "anchor_denoise=0", "gap_denoise=1"],
-      "variable": { "feather_tokens": [1, 2, 3] },
+      "variable": { "delivery_mode": ["same-duration higher-fps", "24fps duration-expansion"] },
       "measure": ["exact output frame count and fps", "new-motion evidence", "anchor drift", "jerk discontinuity", "occlusion quality", "runtime_seconds", "peak_vram"],
-      "status": "planned"
+      "status": "rejected"
     },
     {
       "id": "h3-native-spatial-regeneration",
@@ -131,22 +131,22 @@
       "id": "h3-native-enhancement-order",
       "operations": [
         { "id": "regenerate.spatial", "version": 2 },
-        { "id": "densify.temporal", "version": 2 }
+        { "id": "generate.with_guides", "version": 3 }
       ],
-      "question": "Should H3 create additional motion before or after its same-model spatial regeneration pass?",
-      "fixed": ["source native AV state", "factor=2", "accepted spatial variant and denoise", "final geometry", "final fps=48", "prompt", "seed", "sampler", "scheduler", "steps"],
-      "variable": { "operation_order": ["densify.temporal -> regenerate.spatial", "regenerate.spatial -> densify.temporal"] },
+      "question": "Should dense-guide H3 temporal expansion run before or after the accepted same-model spatial regeneration pass?",
+      "fixed": ["source native AV state", "factor=2", "accepted spatial variant and denoise", "final geometry", "final fps=24", "prompt", "seed", "sampler", "scheduler", "steps"],
+      "variable": { "operation_order": ["dense AddGuide expansion -> regenerate.spatial", "regenerate.spatial -> dense AddGuide expansion"] },
       "measure": ["exact final frame count and fps", "detail stability", "new-motion quality", "anchor drift", "temporal shimmer", "runtime_seconds", "peak_vram"],
       "status": "planned"
     },
     {
-      "id": "h3-sparse-guide-retime",
+      "id": "h3-dense-guide-temporal-expansion",
       "operations": [{ "id": "generate.with_guides", "version": 3 }],
-      "question": "How densely must decoded source frames be placed as official H3 single-image guides to create a useful creative duration change at native 24 fps?",
-      "fixed": ["source video", "endpoint guides", "duration scale", "resolved 17k+5 target", "model", "prompt", "seed", "sampler", "scheduler", "steps"],
-      "variable": { "guide_stride_source_frames": [12, 24, 48] },
-      "measure": ["endpoint fidelity", "appearance drift", "motion coherence", "timing utility", "guide reconstruction artifact", "runtime_seconds"],
-      "status": "planned"
+      "question": "How far can official target-time AddGuide conditioning expand a contiguous source prefix while retaining useful slow motion near a five-second 24 fps delivery?",
+      "fixed": ["source native AV state", "resolved target=124", "delivery fps=24", "model", "prompt", "sampler", "scheduler", "steps", "source_i maps to target_i*factor"],
+      "variable": { "factor_and_guide_count": ["2x:60", "3x:40", "4x:30"] },
+      "measure": ["exact duration and frame count", "source-anchor fidelity", "inter-anchor cadence", "appearance drift", "motion coherence", "runtime_seconds", "peak RAM and VRAM"],
+      "status": "executes"
     }
   ]
 }

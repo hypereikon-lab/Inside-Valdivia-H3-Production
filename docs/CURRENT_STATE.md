@@ -30,15 +30,15 @@ Repository Control
 Production data
   exact component commit/tree/version/metadata locks
   exact CAUCE operation and graph-archetype locks
-  31 offline binding/materialization profiles over 29 graph archetypes
+  32 offline binding/materialization profiles over 29 graph archetypes
   1 retained paired UI/API graph validated against the captured live schema
   16 controlled experiment definitions
   2 schema-validated, explicitly gated H3 LoRA research recipes
   1 offline rolling-chain plan
   2 runtime requirements profiles
   12 acceptance profiles covering all 32 variants
-  11 live project invocations, executed API graphs and immutable run receipts
-  2 explicit rejected visual assessment records
+  15 executed live project invocations, 17 API graphs and immutable run receipts
+  3 explicit rejected visual assessment records
   1 eight-phase live materialization gate
   1 fail-closed storage policy
   local tests  27 passing
@@ -86,7 +86,7 @@ at `runtime/verifications/2026-08-31-post-restart.json`. No CUDA, PyTorch,
 driver, model, ComfyUI core, frontend, Windows or Cloudflare mutation occurred.
 
 The first characterization batch is retained in
-[`LIVE_BATCH_2026-08-31.md`](LIVE_BATCH_2026-08-31.md). All eleven submitted
+[`LIVE_BATCH_2026-08-31.md`](LIVE_BATCH_2026-08-31.md). All seventeen submitted
 graphs completed and wrote resolvable `SaveVideo` artifacts plus native-state
 paths where declared. The remaining platform checks are physical: free disk on
 the actual model/output volume, Windows sleep policy, host/tunnel recovery, and
@@ -106,9 +106,10 @@ CAUCE provides deterministic primitives for:
 - exact native AV interval replacement;
 - native span guides, synchronized append, split/rollback, save, and load;
 - H3 target/reference/guide preflight and conditioning inspection;
-- native H3 temporal-token dilation with exact delivery clocks;
+- native H3 temporal-token dilation with exact delivery clocks, retained as a
+  low-level primitive but rejected as a slow-motion composition;
 - native H3 spatial latent resize and H3-VAE visual-stream graft;
-- sparse-guide H3 retime planning.
+- dense official-AddGuide temporal expansion at factor-spaced target indices.
 
 Official ComfyUI owns H3 first/last frames, Ref2VA references, arbitrary-frame
 AddGuide conditioning, model loading, prompting, sampling, and decoding. CAUCE
@@ -143,7 +144,7 @@ diagnostic must pass before tab or graph automation begins.
 | --- | --- | --- |
 | `generate.keyframed` | official H3 contract + checked variants | first-frame, last-frame and first/last execute at 1344×768 × 124; one run each, not promoted |
 | `generate.from_references` | official H3 contract + checked variants | ordered two-image `match` binding executes; one run, not promoted |
-| `generate.with_guides` | official H3/AddGuide contract + checked variants | single interior still executes but is rejected for a 46.17/255 snap into frame 61 |
+| `generate.with_guides` | official H3/AddGuide contract + checked variants | single interior still is rejected; dense 2x/3x target-time guide ladders execute with positive operator review, while 4x executes and awaits review |
 | `continue.native_av` | CAUCE layout/span/mask paths unit-validated | masked-overlap executes to 243 frames with exact decoded prefix preservation; promising, not promoted |
 | `complete.native_av` | placement/mask/replacement layer unit-validated | two-source connection executes with preserved left/right contexts; measurable boundary rise remains |
 | `edit.masked_video` | static/animated mask projection and composition unit-validated | static mask primitive executes live; H3 result unassessed |
@@ -151,12 +152,12 @@ diagnostic must pass before tab or graph automation begins.
 | `reframe.outpaint_video` | aligned allocation, exact copy, and new-region mask unit-validated | expansion primitive executes live; H3 result unassessed |
 | `rollback.native_av` | synchronized split/branch layer unit-validated | split/reappend executes and matches all 124 decoded comparison frames; promotion still needs independently persisted prefix/suffix checkpoints |
 | `frames.assemble` | deterministic range layer unit-validated | no inference claim |
-| `densify.temporal` | native token-lattice geometry, masks, exact decoded-anchor restoration, tail crop, and delivery clock unit-validated | factor-two token inpaint is rejected as faithful slow motion; restoring every decoded source frame exactly removes anchor drift but nearly doubles adjacent-frame luma change because generated gaps follow a different trajectory |
+| `densify.temporal` | native token-lattice geometry, masks, exact decoded-anchor restoration, tail crop, and delivery clock unit-validated | rejected as slow motion in same-duration 2x and duration-expansion 2x/3x tests; generated gaps follow a reinterpreted trajectory rather than the source cadence |
 | `regenerate.spatial` | latent resize and H3-VAE visual-stream graft unit-validated; three offline topologies | 1792×1024 latent second pass fits the 5090 and executes; 0.35 gains detail but drifts too far for a baseline |
 
 `implemented`, `materialized`, `executes`, and `visually accepted` are separate
-states. Twelve exact API graphs now have prompt-id receipts and saved artifacts;
-three bindings are explicitly rejected. No generative variant has yet met its
+states. Seventeen exact API graphs now have prompt-id receipts and saved artifacts;
+the native temporal-dilation path is explicitly rejected. No generative variant has yet met its
 minimum repeat count and visual promotion rule, so none is called
 production-ready.
 

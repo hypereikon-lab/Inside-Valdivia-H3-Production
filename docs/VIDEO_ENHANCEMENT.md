@@ -1,6 +1,6 @@
-# H3-native temporal and spatial enhancement
+# H3-native temporal expansion and spatial enhancement
 
-Inside Valdivia uses MiniMax H3 itself for both temporal densification and
+Inside Valdivia uses MiniMax H3 itself for both guided temporal expansion and
 spatial regeneration. No auxiliary interpolation, restoration, or learned
 upscaler model is part of the locked production surface.
 
@@ -8,53 +8,60 @@ upscaler model is part of the locked production surface.
 
 | Function | Topology | Initial state | Evidence |
 | --- | --- | --- | --- |
-| more motion samples | `densify.temporal@token-inpaint` | native H3 visual tokens dilated onto a longer time lattice | geometry/masks unit-validated; H3 execution and visuals pending |
+| guided duration expansion | `generate.with_guides@dense-anchor-temporal-expansion` | every retained decoded source frame becomes an official target-time AddGuide | 2x and 3x execute with positive operator review; 4x executes and awaits review |
+| native token dilation | `densify.temporal@token-inpaint` | packed H3 visual tokens dilated onto a longer time lattice | rejected across same-duration and duration-expansion tests |
 | fast spatial candidate | `regenerate.spatial@latent-second-pass` | bicubic resized native H3 visual latent | shape/masks unit-validated; visuals pending |
 | VAE-manifold candidate | `regenerate.spatial@pixel-vae-second-pass` | decoded resize re-encoded by H3 VAE | visual graft unit-validated; visuals pending |
 | VRAM-bounded candidate | `regenerate.spatial@tiled-pixel-vae` | overlapping H3-VAE tiles with one global prior | offline design only |
 
-All four reuse the locked H3 model, text encoder, and H3 video VAE already
+All paths reuse the locked H3 model, text encoder, and H3 video VAE already
 present on the laboratory machine.
 
-## Temporal densification baseline
+## Guided temporal expansion
 
-The first experiment uses a retained 124-frame packed H3 AV state:
-
-```text
-source frames               124 at 24 fps
-source visual tokens         37
-factor                         2
-delivery frames             247 at 48 fps
-legal H3 target             260 at model-time 24 fps
-target visual tokens          77
-decoded tail crop             13
-```
-
-CAUCE copies every source visual token to a monotone target-token anchor. The
-remaining target tokens start empty and carry denoise 1. Source anchors carry
-denoise 0. The ordinary H3 sampler therefore receives native known state on
-both temporal sides of each missing interval.
-
-Initial fixed values:
+The supported H3-native slow-motion path is a composition of decoded frame
+selection and the official `MiniMaxH3AddGuide` conditioning primitive. For
+factor `f`, retained source frame `i` is placed at target frame `i * f`. The
+frames between those observations remain generative:
 
 ```text
-factor             2
-anchor_denoise     0
-gap_denoise        1
-feather_tokens     1, then 2 and 3 as controlled variants
-curve              smootherstep
-audio_denoise      1
+source:    S0  S1  S2  S3 ...
+2x target: S0  __  S1  __  S2  __  S3 ...
+3x target: S0  __  __  S1  __  __  S2 ...
+4x target: S0  __  __  __  S1  __  __  __ ...
 ```
 
-The model target remains inside H3's documented 124–362-frame training range.
-Factors 3 and 4 are deferred until 2x produces genuine additional motion and
-acceptable anchor drift. Longer sources must be processed through overlapping
-native windows, not one out-of-range target.
+The delivery clock always remains 24 fps. The live five-second ladder is:
 
-Prompt comparison is part of the experiment: minimal continuity text, the
-source-generation prompt, and an explicit continuous-motion prompt at fixed
-seed. H3 structural audio is discarded after inference; the fixed production
-soundtrack remains external.
+| Factor | Source prefix | Official guides | H3 target | Delivery |
+| ---: | ---: | ---: | ---: | ---: |
+| 2x | 60 frames | 60 at stride 2 | 124 | 119 frames / 4.958 s |
+| 3x | 40 frames | 40 at stride 3 | 124 | 118 frames / 4.917 s |
+| 4x | 30 frames | 30 at stride 4 | 124 | 117 frames / 4.875 s |
+
+This is guided temporal expansion, not optical-flow interpolation and not a
+change to video playback metadata. H3 receives explicit target-time visual
+observations and synthesizes a new coherent trajectory through them. The 2x
+and 3x results received positive operator review; 4x has execution evidence but
+still needs full-motion review. See the exact graphs and arithmetic in
+`experiments/workflows/temporal-expansion-2026-08-31/`.
+
+The experiment runs at 896×512 because 60 independent guide encodes approached
+the measured system-RAM limit. Resolution regeneration remains a separate pass;
+do not silently combine it with temporal characterization.
+
+### Rejected native-token route
+
+Packed-token dilation is not a supported slow-motion workflow. It executed at
+2x in the earlier same-duration test and at 2x/3x in the present duration-
+expansion test, but visual review rejected the motion. The transformed initial
+state does not constrain H3 as a sequence of exact target-time observations;
+the model is free to reinterpret it as a new trajectory. Exact decoded-anchor
+restoration also failed because it exposed an alternating cadence discontinuity.
+
+The low-level CAUCE lattice nodes remain valid for state inspection and other
+experiments, but the repository must not advertise their composition as
+temporal interpolation or slow motion.
 
 ## Spatial regeneration baselines
 
@@ -99,11 +106,12 @@ target fits, prefer the simpler graph.
 
 ## Ordering
 
-Only after temporal and spatial operations pass independently, compare:
+Only after guided temporal expansion and spatial regeneration pass
+independently, compare:
 
 ```text
-densify.temporal -> regenerate.spatial
-regenerate.spatial -> densify.temporal
+generate.with_guides@dense-anchor-temporal-expansion -> regenerate.spatial
+regenerate.spatial -> generate.with_guides@dense-anchor-temporal-expansion
 ```
 
 The former lets the spatial pass see final dense motion but processes more
@@ -132,14 +140,14 @@ outside the current hardware target. See [Training](TRAINING.md).
 
 ## Live sequence
 
-1. Update CAUCE to locked commit `5a3d3a23b79712ed07349079b8312da4cd3fe4de`.
-2. Restart only the ComfyUI process and capture one fresh full runtime manifest.
-3. Confirm the three new CAUCE node types and existing H3 model files.
-4. Materialize temporal 2x and execute one 124-frame fixed-seed baseline.
-5. Materialize latent and pixel/VAE spatial graphs; run the denoise ladder.
+1. Re-run dense AddGuide 2x/3x once on a second source and seed.
+2. Review the completed 4x output for anchor fidelity, cadence and motion.
+3. Promote no factor until its acceptance repeat count and visual checks pass.
+4. Materialize latent and pixel/VAE spatial graphs; run the denoise ladder.
+5. Compare temporal-first and spatial-first only after independent acceptance.
 6. Record exact runtime, peak VRAM/RAM, disk delta, artifacts, native states,
    receipts, and explicit visual assessments.
 7. Stop on unknown queue outcome, missing model/node, low disk reserve, or
    ambiguous active workflow identity.
 
-The current repository state is offline-ready, not production-accepted.
+The dense-guide ladder is live-characterized but not yet production-promoted.
