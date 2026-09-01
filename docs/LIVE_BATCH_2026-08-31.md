@@ -46,6 +46,10 @@ artifact is a silent video.
 | 15 | `generate.with_guides@dense-anchor-temporal-expansion` 2x | 393.625 s | `executes` | Decodes 60 contiguous source frames, places them as 60 official AddGuides at indices 0,2,…,118 and delivers 119 frames at 24 fps / 4.958 s. Operator review reports that the AddGuide method works. Formal promotion still needs repeat evidence. |
 | 16 | `generate.with_guides@dense-anchor-temporal-expansion` 3x | 272.572 s | `executes` | Places 40 official guides at indices 0,3,…,117 and lets H3 generate two frames per interval. Delivery is 118 frames at 24 fps / 4.917 s. Operator review reports that the AddGuide method works. |
 | 17 | `generate.with_guides@dense-anchor-temporal-expansion` 4x | 206.198 s | `executes` | Places 30 official guides at indices 0,4,…,116 and lets H3 generate three frames per interval. Delivery is 117 frames at 24 fps / 4.875 s. Execution is verified; visual review is pending. |
+| 18 | direct-MP4 dense AddGuide 4x, frames 0–29 | 635.985 s | `executes` | Loads a 960×960 MP4 through native Comfy video nodes, places 30 guides and delivers 117 frames / 4.875 s. Visual review pending. |
+| 19 | direct-MP4 dense AddGuide 4x, frames 38–67 | 635.887 s | `executes` | Same fixed graph and seed with only the source start changed. Delivers 117 frames / 4.875 s. Visual review pending. |
+| 20 | direct-MP4 dense AddGuide 4x, frames 77–106 | 635.985 s | `executes` | Same fixed graph and seed with only the source start changed. Delivers 117 frames / 4.875 s. Visual review pending. |
+| 21 | direct-MP4 dense AddGuide 4x, frames 115–144 | 634.851 s | `executes` | Reaches the final frame of the 145-frame source and delivers 117 frames / 4.875 s. Visual review pending. |
 
 MAD values are mean absolute RGB-channel differences on controlled, same-size
 canvas samples. They are diagnostics, not perceptual quality scores. The exact
@@ -95,6 +99,9 @@ The browser URL for an artifact is derived from its receipt, for example:
    places every retained source frame at an explicit target time and received
    positive operator review at 2x and 3x. The 4x result still needs review, and
    no factor is promoted until repeat-count requirements pass.
+10. Direct-MP4 input is sufficient. A source does not need to originate in H3
+    or retain packed native state before dense AddGuide expansion; native Comfy
+    video decoding can supply the exact ordered frame observations.
 
 ## Immediate next characterization set
 

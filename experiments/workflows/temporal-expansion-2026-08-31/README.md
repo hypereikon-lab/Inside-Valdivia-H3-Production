@@ -37,6 +37,24 @@ All three accepted experiment graphs use 896×512 to keep dozens of independent
 VAE-encoded guide conditions inside the measured 64 GB RAM / 32 GB VRAM
 envelope. They retain native H3 checkpoints and silent MP4 deliveries.
 
+## Direct-MP4 4x windows
+
+The same operation also executes without a pre-existing H3 native checkpoint.
+`LoadVideo` and `GetVideoComponents` decode an uploaded MP4, after which exact
+decoded ranges feed the ordinary dense AddGuide chain. A 145-frame, 24 fps,
+960×960 source was sampled at four evenly distributed 30-frame windows:
+
+| Window | Source frames | Approximate source time | Delivery | Runtime |
+| --- | --- | --- | --- | ---: |
+| 1 | 0–29 | 0.00–1.21 s | 117 frames / 4.875 s | 635.985 s |
+| 2 | 38–67 | 1.58–2.79 s | 117 frames / 4.875 s | 635.887 s |
+| 3 | 77–106 | 3.21–4.42 s | 117 frames / 4.875 s | 635.985 s |
+| 4 | 115–144 | 4.79–6.00 s | 117 frames / 4.875 s | 634.851 s |
+
+All four graphs validated live with zero issues and completed serially. They
+used identical model, prompt, seed, sampler, scheduler, steps and geometry; only
+the source start frame changed. Their visual verdict remains pending.
+
 ## Rejected native-token hypothesis
 
 The `rejected/` directory preserves the exact 2x and 3x graphs that dilated

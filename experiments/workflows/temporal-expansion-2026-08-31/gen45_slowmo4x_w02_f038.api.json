@@ -1,0 +1,1165 @@
+{
+  "1": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "default"
+    }
+  },
+  "2": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "3": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "4": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "inside-valdivia/temporal-expansion/Gen-4_5.gen-4_5 (5).mp4"
+    }
+  },
+  "5": {
+    "class_type": "GetVideoComponents",
+    "inputs": {
+      "video": [
+        "4",
+        0
+      ]
+    }
+  },
+  "6": {
+    "class_type": "MiniMaxH3ImageToVideo",
+    "inputs": {
+      "clip": [
+        "1",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "prompt": "Create smooth continuous slow motion through the supplied ordered temporal anchors. Preserve the exact scene, camera path, forest geometry, lighting, water flow, vegetation and exposure. Synthesize only coherent motion between anchors. No cuts, resets, morphing, temporal echoes, new events, people, text or generated audio.",
+      "width": 960,
+      "height": 960,
+      "length": 124
+    }
+  },
+  "20": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 38,
+      "frame_count": 1
+    }
+  },
+  "21": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "6",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "20",
+        0
+      ],
+      "frame_idx": 0
+    }
+  },
+  "22": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 39,
+      "frame_count": 1
+    }
+  },
+  "23": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "21",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "22",
+        0
+      ],
+      "frame_idx": 4
+    }
+  },
+  "24": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 40,
+      "frame_count": 1
+    }
+  },
+  "25": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "23",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "24",
+        0
+      ],
+      "frame_idx": 8
+    }
+  },
+  "26": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 41,
+      "frame_count": 1
+    }
+  },
+  "27": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "25",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "26",
+        0
+      ],
+      "frame_idx": 12
+    }
+  },
+  "28": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 42,
+      "frame_count": 1
+    }
+  },
+  "29": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "27",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "28",
+        0
+      ],
+      "frame_idx": 16
+    }
+  },
+  "30": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 43,
+      "frame_count": 1
+    }
+  },
+  "31": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "29",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "30",
+        0
+      ],
+      "frame_idx": 20
+    }
+  },
+  "32": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 44,
+      "frame_count": 1
+    }
+  },
+  "33": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "31",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "32",
+        0
+      ],
+      "frame_idx": 24
+    }
+  },
+  "34": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 45,
+      "frame_count": 1
+    }
+  },
+  "35": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "33",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "34",
+        0
+      ],
+      "frame_idx": 28
+    }
+  },
+  "36": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 46,
+      "frame_count": 1
+    }
+  },
+  "37": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "35",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "36",
+        0
+      ],
+      "frame_idx": 32
+    }
+  },
+  "38": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 47,
+      "frame_count": 1
+    }
+  },
+  "39": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "37",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "38",
+        0
+      ],
+      "frame_idx": 36
+    }
+  },
+  "40": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 48,
+      "frame_count": 1
+    }
+  },
+  "41": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "39",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "40",
+        0
+      ],
+      "frame_idx": 40
+    }
+  },
+  "42": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 49,
+      "frame_count": 1
+    }
+  },
+  "43": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "41",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "42",
+        0
+      ],
+      "frame_idx": 44
+    }
+  },
+  "44": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 50,
+      "frame_count": 1
+    }
+  },
+  "45": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "43",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "44",
+        0
+      ],
+      "frame_idx": 48
+    }
+  },
+  "46": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 51,
+      "frame_count": 1
+    }
+  },
+  "47": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "45",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "46",
+        0
+      ],
+      "frame_idx": 52
+    }
+  },
+  "48": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 52,
+      "frame_count": 1
+    }
+  },
+  "49": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "47",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "48",
+        0
+      ],
+      "frame_idx": 56
+    }
+  },
+  "50": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 53,
+      "frame_count": 1
+    }
+  },
+  "51": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "49",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "50",
+        0
+      ],
+      "frame_idx": 60
+    }
+  },
+  "52": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 54,
+      "frame_count": 1
+    }
+  },
+  "53": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "51",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "52",
+        0
+      ],
+      "frame_idx": 64
+    }
+  },
+  "54": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 55,
+      "frame_count": 1
+    }
+  },
+  "55": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "53",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "54",
+        0
+      ],
+      "frame_idx": 68
+    }
+  },
+  "56": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 56,
+      "frame_count": 1
+    }
+  },
+  "57": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "55",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "56",
+        0
+      ],
+      "frame_idx": 72
+    }
+  },
+  "58": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 57,
+      "frame_count": 1
+    }
+  },
+  "59": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "57",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "58",
+        0
+      ],
+      "frame_idx": 76
+    }
+  },
+  "60": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 58,
+      "frame_count": 1
+    }
+  },
+  "61": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "59",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "60",
+        0
+      ],
+      "frame_idx": 80
+    }
+  },
+  "62": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 59,
+      "frame_count": 1
+    }
+  },
+  "63": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "61",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "62",
+        0
+      ],
+      "frame_idx": 84
+    }
+  },
+  "64": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 60,
+      "frame_count": 1
+    }
+  },
+  "65": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "63",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "64",
+        0
+      ],
+      "frame_idx": 88
+    }
+  },
+  "66": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 61,
+      "frame_count": 1
+    }
+  },
+  "67": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "65",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "66",
+        0
+      ],
+      "frame_idx": 92
+    }
+  },
+  "68": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 62,
+      "frame_count": 1
+    }
+  },
+  "69": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "67",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "68",
+        0
+      ],
+      "frame_idx": 96
+    }
+  },
+  "70": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 63,
+      "frame_count": 1
+    }
+  },
+  "71": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "69",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "70",
+        0
+      ],
+      "frame_idx": 100
+    }
+  },
+  "72": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 64,
+      "frame_count": 1
+    }
+  },
+  "73": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "71",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "72",
+        0
+      ],
+      "frame_idx": 104
+    }
+  },
+  "74": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 65,
+      "frame_count": 1
+    }
+  },
+  "75": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "73",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "74",
+        0
+      ],
+      "frame_idx": 108
+    }
+  },
+  "76": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 66,
+      "frame_count": 1
+    }
+  },
+  "77": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "75",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "76",
+        0
+      ],
+      "frame_idx": 112
+    }
+  },
+  "78": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "5",
+        0
+      ],
+      "start_frame": 67,
+      "frame_count": 1
+    }
+  },
+  "79": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "positive": [
+        "77",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "latent": [
+        "6",
+        1
+      ],
+      "image": [
+        "78",
+        0
+      ],
+      "frame_idx": 116
+    }
+  },
+  "200": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 310944
+    }
+  },
+  "201": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "conditioning": [
+        "79",
+        0
+      ]
+    }
+  },
+  "202": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1.0
+    }
+  },
+  "203": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "res_multistep"
+    }
+  },
+  "204": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "200",
+        0
+      ],
+      "guider": [
+        "201",
+        0
+      ],
+      "sampler": [
+        "203",
+        0
+      ],
+      "sigmas": [
+        "202",
+        0
+      ],
+      "latent_image": [
+        "6",
+        1
+      ]
+    }
+  },
+  "205": {
+    "class_type": "CauceSaveAVLatent",
+    "inputs": {
+      "latent": [
+        "204",
+        0
+      ],
+      "filename_prefix": "cauce/latents/2026-08-31/gen45_slowmo4x_w02_f038",
+      "artifact_index": 38
+    }
+  },
+  "206": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "204",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ]
+    }
+  },
+  "207": {
+    "class_type": "CauceAcceptDecodedRange",
+    "inputs": {
+      "images": [
+        "206",
+        0
+      ],
+      "start_frame": 0,
+      "frame_count": 117
+    }
+  },
+  "208": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "207",
+        0
+      ],
+      "fps": 24,
+      "bit_depth": 8
+    }
+  },
+  "209": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "208",
+        0
+      ],
+      "filename_prefix": "video/2026-08-31/gen45_slowmo4x_w02_f038",
+      "format": "auto",
+      "codec": "auto"
+    }
+  }
+}

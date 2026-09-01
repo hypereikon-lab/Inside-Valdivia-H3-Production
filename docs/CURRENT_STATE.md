@@ -37,7 +37,7 @@ Production data
   1 offline rolling-chain plan
   2 runtime requirements profiles
   12 acceptance profiles covering all 32 variants
-  15 executed live project invocations, 17 API graphs and immutable run receipts
+  19 executed live project invocations, 21 API graphs and immutable run receipts
   3 explicit rejected visual assessment records
   1 eight-phase live materialization gate
   1 fail-closed storage policy
@@ -86,7 +86,7 @@ at `runtime/verifications/2026-08-31-post-restart.json`. No CUDA, PyTorch,
 driver, model, ComfyUI core, frontend, Windows or Cloudflare mutation occurred.
 
 The first characterization batch is retained in
-[`LIVE_BATCH_2026-08-31.md`](LIVE_BATCH_2026-08-31.md). All seventeen submitted
+[`LIVE_BATCH_2026-08-31.md`](LIVE_BATCH_2026-08-31.md). All twenty-one submitted
 graphs completed and wrote resolvable `SaveVideo` artifacts plus native-state
 paths where declared. The remaining platform checks are physical: free disk on
 the actual model/output volume, Windows sleep policy, host/tunnel recovery, and
@@ -156,7 +156,7 @@ diagnostic must pass before tab or graph automation begins.
 | `regenerate.spatial` | latent resize and H3-VAE visual-stream graft unit-validated; three offline topologies | 1792×1024 latent second pass fits the 5090 and executes; 0.35 gains detail but drifts too far for a baseline |
 
 `implemented`, `materialized`, `executes`, and `visually accepted` are separate
-states. Seventeen exact API graphs now have prompt-id receipts and saved artifacts;
+states. Twenty-one exact API graphs now have prompt-id receipts and saved artifacts;
 the native temporal-dilation path is explicitly rejected. No generative variant has yet met its
 minimum repeat count and visual promotion rule, so none is called
 production-ready.

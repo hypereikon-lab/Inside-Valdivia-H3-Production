@@ -1,0 +1,38 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "2026-08-31-21-gen45-temporal-expand-4x-w04",
+  "operation": "generate.with_guides",
+  "operation_version": 3,
+  "operation_contract_hash": "49aa03c63837e7cbc3dd09992e6575196dced0061847986f8643b347cbe98dfc",
+  "inputs": {
+    "source_video": {
+      "uri": "comfy-input://inside-valdivia/temporal-expansion/Gen-4_5.gen-4_5 (5).mp4",
+      "sha256": "d7300236e2a395c3c91eb59e05fcc2a0895956b53cb170316ae7480564da16a3"
+    }
+  },
+  "parameters": {
+    "variant": "dense-anchor-temporal-expansion",
+    "factor": 4,
+    "source_start_frame": 115,
+    "source_frames": 30,
+    "guide_count": 30,
+    "guide_stride_frames": 4,
+    "target_frames": 124,
+    "delivery_frames": 117,
+    "delivery_fps": 24,
+    "width": 960,
+    "height": 960,
+    "steps": 20,
+    "sampler": "res_multistep",
+    "scheduler": "simple",
+    "seed": 310944
+  },
+  "status": "executes",
+  "outputs": {
+    "video": "comfy-output://video/2026-08-31/gen45_slowmo4x_w04_f115_00001_.mp4"
+  },
+  "run_receipts": [
+    "runtime/receipts/2026-08-31/gen45-slowmo4x-w04/f1187fce-b97d-4b03-a0a2-cb5fe9b04304.json"
+  ],
+  "notes": "Direct-MP4 dense AddGuide 4x expansion of source frames 115-144. Execution and exact delivery geometry verified; visual review pending."
+}
