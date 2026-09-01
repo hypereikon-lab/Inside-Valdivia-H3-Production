@@ -8,6 +8,10 @@
     {
       "id": "2026-08-31-interior-still-guide-rejected",
       "path": "assessments/records/2026-08-31-interior-still-guide-rejected.json"
+    },
+    {
+      "id": "2026-08-31-temporal-densify-2x-exact-anchors-rejected",
+      "path": "assessments/records/2026-08-31-temporal-densify-2x-exact-anchors-rejected.json"
     }
   ]
 }

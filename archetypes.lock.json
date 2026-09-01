@@ -2,7 +2,7 @@
   "schema": "inside-valdivia.cauce-archetype-lock/1",
   "source": {
     "repository": "https://github.com/hypereikon-lab/ComfyUI-Cauce",
-    "commit": "9172c30b37fc43272473409e6f42eaacc0a10e60",
+    "commit": "5a3d3a23b79712ed07349079b8312da4cd3fe4de",
     "catalog_hash": "3e08e27ceb4fc410b4e76f17b03da10e04e902a6562d90155a418a2002a59503"
   },
   "archetypes": [

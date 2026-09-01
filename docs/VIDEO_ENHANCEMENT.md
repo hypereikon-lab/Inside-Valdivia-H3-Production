@@ -132,7 +132,7 @@ outside the current hardware target. See [Training](TRAINING.md).
 
 ## Live sequence
 
-1. Update CAUCE to locked commit `9172c30b37fc43272473409e6f42eaacc0a10e60`.
+1. Update CAUCE to locked commit `5a3d3a23b79712ed07349079b8312da4cd3fe4de`.
 2. Restart only the ComfyUI process and capture one fresh full runtime manifest.
 3. Confirm the three new CAUCE node types and existing H3 model files.
 4. Materialize temporal 2x and execute one 124-frame fixed-seed baseline.

@@ -40,6 +40,7 @@ artifact is a silent video.
 | 09 | `continue.native_av@masked-overlap` | 376.077 s | `executes` | Produces 243 frames / 10.125 s from a 22-frame native overlap plus 119 new frames. The decoded prefix matches the source exactly (MAD 0). The only new boundary, 123→124, measures 3.52/255 versus ~1.2–1.9 locally. Promising; repeat before promotion. |
 | 10 | `refine.video@full-frame` | 342.556 s | `executes` | At video strength 0.20, sampled edge energy rises from 10.76 to 13.41 (~25%) with composition MAD 7.21/255. Adjacent-frame MAD changes from 2.16 to 2.43. This is a better fidelity/detail tradeoff than spatial 0.35, but still needs a fixed-source ladder. |
 | 11 | `rollback.native_av@branch-suffix` | 16.644 s | `executes` | Split at frame 90 and reappend reconstructs 124/124 decoded frames with mean MAD 0, maximum MAD 0 and zero non-identical frames at the controlled comparison resolution. MP4 byte hashes differ because the artifact was re-encoded. The graph did not persist prefix and suffix as independent checkpoints, so it does not yet satisfy the full acceptance profile. |
+| 12 | `densify.temporal@token-inpaint` exact decoded-anchor delivery | 45.5 s | `rejected` | Restores all 124 source frames exactly before encoding and retains 123 H3-generated gaps, yielding 247 frames at 48 fps. Source-versus-even-anchor PSNR improves from 25.20 to 34.85 dB after independent MP4 encoding, but mean adjacent luma difference rises from 5.65 to 10.65. The generated gaps alternate with a different decoded trajectory, so exact anchors expose rather than solve the cadence discontinuity. |
 
 MAD values are mean absolute RGB-channel differences on controlled, same-size
 canvas samples. They are diagnostics, not perceptual quality scores. The exact
@@ -78,6 +79,10 @@ The browser URL for an artifact is derived from its receipt, for example:
 6. Retain rollback round-trip as deterministic native state management. It
    does not require H3 sampling, but a promotion run must persist and
    content-address the prefix and suffix independently.
+7. Do not treat decoded anchor restoration as a fix for the rejected factor-two
+   token-inpaint result. It proves exact source placement, but H3's four-frame
+   temporal VAE groups cannot encode an independent alternating decoded-frame
+   preserve/generate mask.
 
 ## Immediate next characterization set
 
@@ -86,5 +91,6 @@ The browser URL for an artifact is derived from its receipt, for example:
 - run the fixed-source refinement ladder at 0.10/0.15/0.20/0.25;
 - run the spatial ladder at 0.10/0.20/0.30;
 - replace the rejected still anchor with a 5- or 22-frame guide clip;
-- redesign temporal densification around stricter source-token preservation
-  before spending another 16-minute sample.
+- pause the current temporal-densification binding until a native H3
+  conditioning path can constrain decoded cadence, rather than spending another
+  16-minute sample on post-decode anchor substitution.

@@ -1,0 +1,85 @@
+{
+  "1": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "2": {
+    "class_type": "CauceLoadAVLatent",
+    "inputs": {
+      "path_or_folder": "cauce/latents/2026-08-31/03_fl2va_first_a_last_b_00001.safetensors",
+      "artifact_index": 0
+    }
+  },
+  "3": {
+    "class_type": "CauceLoadAVLatent",
+    "inputs": {
+      "path_or_folder": "cauce/latents/2026-08-31/06_temporal_densify_2x_00001.safetensors",
+      "artifact_index": 0
+    }
+  },
+  "4": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "2",
+        0
+      ],
+      "vae": [
+        "1",
+        0
+      ]
+    }
+  },
+  "5": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "3",
+        0
+      ],
+      "vae": [
+        "1",
+        0
+      ]
+    }
+  },
+  "6": {
+    "class_type": "CauceRestoreDecodedAnchors",
+    "inputs": {
+      "generated_images": [
+        "5",
+        0
+      ],
+      "source_images": [
+        "4",
+        0
+      ],
+      "factor": 2
+    }
+  },
+  "7": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "6",
+        0
+      ],
+      "fps": 48,
+      "bit_depth": 8
+    }
+  },
+  "8": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "7",
+        0
+      ],
+      "filename_prefix": "video/2026-08-31/12_temporal_densify_2x_exact_anchors",
+      "format": "auto",
+      "codec": "auto"
+    }
+  }
+}

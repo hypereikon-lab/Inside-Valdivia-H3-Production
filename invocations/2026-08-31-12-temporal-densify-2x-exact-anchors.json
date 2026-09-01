@@ -1,0 +1,30 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "2026-08-31-12-temporal-densify-2x-exact-anchors",
+  "operation": "densify.temporal",
+  "operation_version": 2,
+  "operation_contract_hash": "64251914e9e72a3b5da1c57e2ec9befc477c0fba75acfe3f07fc9e5c4cad6da0",
+  "inputs": {
+    "source_native_state": "comfy-output://cauce/latents/2026-08-31/03_fl2va_first_a_last_b_00001.safetensors",
+    "densified_native_state": "comfy-output://cauce/latents/2026-08-31/06_temporal_densify_2x_00001.safetensors"
+  },
+  "parameters": {
+    "variant": "token-inpaint",
+    "delivery_stage": "exact-decoded-anchor-restore",
+    "factor": 2,
+    "source_frames": 124,
+    "generated_candidate_frames": 260,
+    "delivery_frames": 247,
+    "restored_anchor_frames": 124,
+    "generated_between_frames": 123,
+    "delivery_fps": 48
+  },
+  "status": "rejected",
+  "outputs": {
+    "video": "comfy-output://video/2026-08-31/12_temporal_densify_2x_exact_anchors_00001_.mp4"
+  },
+  "run_receipts": [
+    "runtime/receipts/2026-08-31/12-temporal-densify-2x-exact-anchors.json/c0cf13bd-17a7-47cb-8bb5-df1b468d0869.json"
+  ],
+  "notes": "Deterministic decoded delivery characterization using the native H3 token-inpaint candidate from run 06. Exact source-frame restoration succeeds, but cadence diagnostics reject the result as faithful temporal 2x."
+}

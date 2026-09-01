@@ -6,15 +6,15 @@ This is the authority for present capability claims.
 
 ```text
 CAUCE
-  commit   9172c30b37fc43272473409e6f42eaacc0a10e60
-  version  5.6.0
+  commit   5a3d3a23b79712ed07349079b8312da4cd3fe4de
+  version  5.7.0
   nodes    24
   operations / topology dossiers / graph archetypes  12 / 32 / 29
   local release tests  47 passing, zero skips
 
 Runtime Control
-  commit   6e1f6817d46d02282279c24cb84338e568ae9aea
-  version  0.5.2
+  commit   6751b8fd90b02ef871bc046f228b83b004871d3a
+  version  0.6.0
   local tests  25 passing
 
 Workspace Control
@@ -74,7 +74,7 @@ surface needed by the full profile, so no ComfyUI update is presently required.
 Workspace Control 0.4.2 also reports `readiness.ready = true`; the saved
 canonical text-only graph is clean and persisted. Manager/repository inventory
 shows clean CAUCE, Workspace Control, and Repository Control checkouts at the
-locked public commits. Runtime Control 0.5.2 documents the separate first-install, repository
+locked public commits. Runtime Control 0.6.0 documents the separate first-install, repository
 fast-forward and process-restart planes; it is an external source package and
 is not imported by the laboratory Comfy process.
 
@@ -151,12 +151,12 @@ diagnostic must pass before tab or graph automation begins.
 | `reframe.outpaint_video` | aligned allocation, exact copy, and new-region mask unit-validated | expansion primitive executes live; H3 result unassessed |
 | `rollback.native_av` | synchronized split/branch layer unit-validated | split/reappend executes and matches all 124 decoded comparison frames; promotion still needs independently persisted prefix/suffix checkpoints |
 | `frames.assemble` | deterministic range layer unit-validated | no inference claim |
-| `densify.temporal` | native token-lattice geometry, masks, tail crop, and delivery clock unit-validated | factor-two run delivers exact 247 frames at 48 fps but is rejected as faithful slow motion because anchors drift |
+| `densify.temporal` | native token-lattice geometry, masks, exact decoded-anchor restoration, tail crop, and delivery clock unit-validated | factor-two token inpaint is rejected as faithful slow motion; restoring every decoded source frame exactly removes anchor drift but nearly doubles adjacent-frame luma change because generated gaps follow a different trajectory |
 | `regenerate.spatial` | latent resize and H3-VAE visual-stream graft unit-validated; three offline topologies | 1792×1024 latent second pass fits the 5090 and executes; 0.35 gains detail but drifts too far for a baseline |
 
 `implemented`, `materialized`, `executes`, and `visually accepted` are separate
-states. Eleven exact API graphs now have prompt-id receipts and saved artifacts;
-two bindings are explicitly rejected. No generative variant has yet met its
+states. Twelve exact API graphs now have prompt-id receipts and saved artifacts;
+three bindings are explicitly rejected. No generative variant has yet met its
 minimum repeat count and visual promotion rule, so none is called
 production-ready.
 

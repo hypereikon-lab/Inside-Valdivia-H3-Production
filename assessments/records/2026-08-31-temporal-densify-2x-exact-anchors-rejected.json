@@ -1,0 +1,67 @@
+{
+  "schema": "inside-valdivia.visual-assessment/1",
+  "id": "2026-08-31-temporal-densify-2x-exact-anchors-rejected",
+  "invocation": "2026-08-31-12-temporal-densify-2x-exact-anchors",
+  "operation": "densify.temporal",
+  "operation_version": 2,
+  "variant": "token-inpaint",
+  "run_receipt": "runtime/receipts/2026-08-31/12-temporal-densify-2x-exact-anchors.json/c0cf13bd-17a7-47cb-8bb5-df1b468d0869.json",
+  "artifact": {
+    "filename": "12_temporal_densify_2x_exact_anchors_00001_.mp4",
+    "subfolder": "video\\2026-08-31",
+    "type": "output"
+  },
+  "reviewer": "codex-cadence-diagnostic",
+  "reviewed_at": "2026-09-01T02:38:00Z",
+  "technical_checks": [
+    {
+      "id": "native-source",
+      "result": "pass",
+      "notes": "Decoded both the retained native FL2VA source state and the retained native factor-two H3 token-inpaint state."
+    },
+    {
+      "id": "token-layout",
+      "result": "pass",
+      "notes": "The candidate is the exact output of run 06, whose native factor-two token layout used anchor denoise 0 and gap denoise 1."
+    },
+    {
+      "id": "delivery-clock",
+      "result": "pass",
+      "notes": "CauceRestoreDecodedAnchors delivered 247 frames at 48 fps and 5.145833 seconds, restoring 124 source frames and retaining 123 generated gaps."
+    },
+    {
+      "id": "trained-window",
+      "result": "pass",
+      "notes": "The inherited H3 sample used a legal 260-frame target inside the declared 124–362 trained range."
+    },
+    {
+      "id": "artifact-lineage",
+      "result": "pass",
+      "notes": "The invocation binds the source native state, densified native state, exact API graph, prompt id, receipt and saved delivery artifact."
+    }
+  ],
+  "visual_checks": [
+    {
+      "id": "new-motion",
+      "result": "pass",
+      "notes": "All 123 odd delivery frames come from the H3 temporal-inpaint candidate rather than frame duplication."
+    },
+    {
+      "id": "anchor-drift",
+      "result": "pass",
+      "notes": "Every even pre-encode delivery frame is copied exactly from the source decode. Independent MP4 encoding raises source-versus-even-anchor PSNR from 25.20 dB in run 06 to 34.85 dB."
+    },
+    {
+      "id": "motion-continuity",
+      "result": "fail",
+      "notes": "Mean adjacent-frame luma difference rises from 5.65 in run 06 to 10.65 after exact restoration. The generated gaps belong to the drifted token trajectory and alternate visibly with the restored source trajectory."
+    },
+    {
+      "id": "occlusion-quality",
+      "result": "not-applicable",
+      "notes": "The selected forest shot is not a controlled occlusion benchmark."
+    }
+  ],
+  "verdict": "rejected",
+  "notes": "Exact decoded anchors do not make the current H3 token-inpaint candidate a faithful temporal upscaler. The test isolates the limitation: H3's temporally compressed visual lattice cannot represent an independent alternating preserve/generate mask for every decoded frame."
+}

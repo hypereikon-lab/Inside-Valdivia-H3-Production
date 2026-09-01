@@ -548,6 +548,7 @@ class RepositoryValidationTests(unittest.TestCase):
             {
                 "2026-08-31-temporal-densify-2x-rejected",
                 "2026-08-31-interior-still-guide-rejected",
+                "2026-08-31-temporal-densify-2x-exact-anchors-rejected",
             },
         )
 
@@ -613,9 +614,9 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertEqual(report["counts"]["runtime_readiness_evaluations"], 2)
         self.assertEqual(report["counts"]["paired_workflows"], 1)
         self.assertEqual(report["counts"]["schema_validated_workflows"], 1)
-        self.assertEqual(report["counts"]["visual_assessments"], 2)
+        self.assertEqual(report["counts"]["visual_assessments"], 3)
         self.assertEqual(report["evidence"]["accepted_visual_assessments"], 0)
-        self.assertEqual(report["evidence"]["rejected_visual_assessments"], 2)
+        self.assertEqual(report["evidence"]["rejected_visual_assessments"], 3)
         self.assertEqual(report["evidence"]["offline_ready_topologies"], 31)
         self.assertEqual(
             report["evidence"]["latest_runtime_manifest_hash"],

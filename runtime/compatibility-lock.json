@@ -4,19 +4,19 @@
   "components": {
     "cauce": {
       "repository": "https://github.com/hypereikon-lab/ComfyUI-Cauce",
-      "version": "5.6.0",
-      "commit": "9172c30b37fc43272473409e6f42eaacc0a10e60",
-      "tree": "fdf0a29bbafeeb63cfafa007f833fa84cc4c8af7",
-      "metadata_sha256": "3c819ba0e602d45656d5fd3edabe1f127b2281accf544eca017ba5f8489af0d9",
+      "version": "5.7.0",
+      "commit": "5a3d3a23b79712ed07349079b8312da4cd3fe4de",
+      "tree": "dbe18fc93c7d787b1681421d3e1098009eb63acb",
+      "metadata_sha256": "d56653833dd638087ae8b74d998d3420e2eb2519fc452af694d3528aac267389",
       "distribution": "registry-prepared-unpublished",
       "registry_node_id": "cauce"
     },
     "runtime_control": {
       "repository": "https://github.com/hypereikon-lab/ComfyUI-Runtime-Control",
-      "version": "0.5.2",
-      "commit": "6e1f6817d46d02282279c24cb84338e568ae9aea",
-      "tree": "9d76b727500ec0f9f48f0e6423de965fbac16037",
-      "metadata_sha256": "227d0de0e53d38b18e4891ba57fde210b35fdcbc42599e92f4f2b918f9747d9e",
+      "version": "0.6.0",
+      "commit": "6751b8fd90b02ef871bc046f228b83b004871d3a",
+      "tree": "55d1681d9613724c31960b7cab3dc1f3541aa618",
+      "metadata_sha256": "960c3e77cdfcbf05e8eda40ed43cc6be9200c2b0cffe693c800ba420344f7dd6",
       "distribution": "source-package",
       "registry_node_id": null
     },
