@@ -17,9 +17,9 @@ official ComfyUI H3 nodes
   model conditioning, sampling, decoding
 
 ComfyUI-Cauce
-  24 deterministic low-level nodes
-  12 typed operation contracts
-  32 checked topology dossiers grouped into 29 graph archetypes
+  28 deterministic low-level nodes
+  13 typed operation contracts
+  35 checked topology dossiers grouped into 32 graph archetypes
 
 ComfyUI-Runtime-Control
   HTTP/runtime validation, prompt execution, receipts, durable serial resume
@@ -31,7 +31,7 @@ ComfyUI-Repository-Control
   inventory and exact clean fast-forward of approved public custom-node repos
 
 this repository
-  exact operation/archetype/component locks, 31 offline binding profiles,
+  exact operation/archetype/component locks, 35 offline binding profiles,
   1 schema-validated paired draft, project data,
   runtime readiness profiles, acceptance criteria, storage policy,
   experiments, rolling dependency/checkpoint plans,
@@ -52,6 +52,7 @@ decoded media algebra       exact frame assembly
 generate.keyframed
 generate.from_references
 generate.with_guides
+generate.with_control
 continue.native_av
 complete.native_av
 densify.temporal
@@ -63,8 +64,8 @@ rollback.native_av
 frames.assemble
 ```
 
-Operations are independent typed functions, not workflow stages. Their 32
-variants resolve through [`archetypes.lock.json`](archetypes.lock.json) to 29
+Operations are independent typed functions, not workflow stages. Their 35
+materializable variants resolve through [`archetypes.lock.json`](archetypes.lock.json) to 32
 structurally distinct graphs, then to project binding profiles cataloged in
 [`materialization/catalog.json`](materialization/catalog.json). A topology
 dossier is a checked design, not executable workflow JSON. Each variant becomes
@@ -84,8 +85,9 @@ input binding before Runtime Control can execute and resume them safely.
 
 [`materialization/live-gate.json`](materialization/live-gate.json) owns the
 empirical materialization order independently of stable catalog priority. The
-core and full runtime profiles fail closed on missing nodes, models, hardware,
-or queue availability. [`acceptance/catalog.json`](acceptance/catalog.json)
+core, full, control-experimental, and learned-upscale-experimental runtime
+profiles fail closed on missing nodes, models, hardware, or queue availability.
+[`acceptance/catalog.json`](acceptance/catalog.json)
 requires technical checks and a separate visual verdict before promotion.
 [`runtime/compatibility-lock.json`](runtime/compatibility-lock.json) pins all
 four control components and separates last-observed platform versions from the
@@ -97,6 +99,7 @@ next required compatibility target.
 - [Current state](docs/CURRENT_STATE.md)
 - [Live H3 operation batch — 2026-08-31](docs/LIVE_BATCH_2026-08-31.md)
 - [Current H3 capability map and workflow rebuild](docs/H3_CAPABILITY_MAP.md)
+- [Expanded H3 capability gates](docs/H3_EXPANDED_CAPABILITIES.md)
 - [Native H3/Seedance movement-control research](docs/MOVEMENT_CONTROL_RESEARCH.md)
 - [H3 intent routing and latent operator space](docs/H3_INTENT_ROUTING.md)
 - [Temporal and spatial video enhancement](docs/VIDEO_ENHANCEMENT.md)

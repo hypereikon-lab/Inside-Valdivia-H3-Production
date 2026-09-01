@@ -284,16 +284,28 @@ def _validate_operation_reference(
     registry: dict[str, dict[str, Any]],
     *,
     require_hash: bool,
+    allow_historical: bool = False,
 ) -> list[str]:
     errors: list[str] = []
     operation_id = value.get("operation")
     locked = registry.get(operation_id)
     if locked is None:
         return [f"{path}: unknown operation {operation_id!r}"]
-    if value.get("operation_version") != locked["version"]:
+    referenced_version = value.get("operation_version")
+    is_historical = (
+        allow_historical
+        and isinstance(referenced_version, int)
+        and 0 < referenced_version < locked["version"]
+    )
+    if referenced_version != locked["version"] and not is_historical:
         errors.append(f"{path}: operation version does not match lock")
-    if require_hash and value.get("operation_contract_hash") != locked["contract_hash"]:
-        errors.append(f"{path}: operation contract hash does not match lock")
+    if require_hash:
+        referenced_hash = value.get("operation_contract_hash")
+        if is_historical:
+            if not isinstance(referenced_hash, str) or not SHA256.fullmatch(referenced_hash):
+                errors.append(f"{path}: historical operation contract hash is invalid")
+        elif referenced_hash != locked["contract_hash"]:
+            errors.append(f"{path}: operation contract hash does not match lock")
     return errors
 
 
@@ -305,7 +317,15 @@ def validate_invocation(
     errors: list[str] = []
     if value.get("schema") != "inside-valdivia.operation-invocation/1":
         errors.append(f"{path}: invalid invocation schema")
-    errors.extend(_validate_operation_reference(value, path, registry, require_hash=True))
+    errors.extend(
+        _validate_operation_reference(
+            value,
+            path,
+            registry,
+            require_hash=True,
+            allow_historical=value.get("status") in EVIDENCE,
+        )
+    )
     if value.get("status") not in EVIDENCE | {"materialized", "queued"}:
         errors.append(f"{path}: invalid invocation status")
     if not isinstance(value.get("inputs"), dict) or not isinstance(value.get("parameters"), dict):
@@ -393,7 +413,13 @@ def validate_experiment_catalog(
                     "operation_version": operation.get("version"),
                 }
                 errors.extend(
-                    _validate_operation_reference(normalized, path, registry, require_hash=False)
+                    _validate_operation_reference(
+                        normalized,
+                        path,
+                        registry,
+                        require_hash=False,
+                        allow_historical=True,
+                    )
                 )
         if experiment["status"] not in EVIDENCE:
             errors.append(f"{path}: invalid experiment status {experiment['status']!r}")
@@ -1318,6 +1344,8 @@ def validate_runtime_requirements_catalog(value: Any, path: Path, root: Path) ->
     expected_profiles = {
         "h3-core",
         "h3-full",
+        "h3-control-experimental",
+        "h3-learned-upscale-experimental",
     }
     if set(loaded) != expected_profiles:
         errors.append(f"{path}: runtime profile set is incomplete")
@@ -1328,8 +1356,24 @@ def validate_runtime_requirements_catalog(value: Any, path: Path, root: Path) ->
         if not set(core.get(field, [])).issubset(set(full.get(field, []))):
             errors.append(f"{path}: h3-full must include every h3-core {field}")
     cauce_nodes = {name for name in core.get("required_node_types", []) if name.startswith("Cauce")}
-    if len(cauce_nodes) != 24:
-        errors.append(f"{path}: h3-core must require all 24 locked CAUCE nodes")
+    if len(cauce_nodes) != 28:
+        errors.append(f"{path}: h3-core must require all 28 locked CAUCE nodes")
+    for profile_id in ("h3-control-experimental", "h3-learned-upscale-experimental"):
+        experimental = loaded[profile_id]
+        for field in ("required_endpoints", "required_node_types", "required_models"):
+            if not set(full.get(field, [])).issubset(set(experimental.get(field, []))):
+                errors.append(f"{path}: {profile_id} must include every h3-full {field}")
+    control = loaded["h3-control-experimental"]
+    for node_type in ("MiniMaxH3FunControlNetApply", "ModelPatchLoader"):
+        if node_type not in control.get("required_node_types", []):
+            errors.append(f"{path}: h3-control-experimental must require {node_type}")
+    if "MiniMax-H3-Fun-Controlnet-Union.safetensors" not in control.get("required_models", []):
+        errors.append(f"{path}: h3-control-experimental must require the union model patch")
+    learned = loaded["h3-learned-upscale-experimental"]
+    if "MinimaxH3LatentUpscaler3D" not in learned.get("required_node_types", []):
+        errors.append(f"{path}: h3-learned-upscale-experimental must require the 3D node")
+    if "minimax_h3_latent_upscaler_3d_fp16.safetensors" not in learned.get("required_models", []):
+        errors.append(f"{path}: h3-learned-upscale-experimental must require the fp16 weight")
     return errors
 
 
@@ -1360,6 +1404,8 @@ def validate_live_gate(
     expected_runtime_profiles = {
         "core": "runtime/requirements/h3-core.json",
         "full": "runtime/requirements/h3-full.json",
+        "control": "runtime/requirements/h3-control-experimental.json",
+        "learned_upscale": "runtime/requirements/h3-learned-upscale-experimental.json",
     }
     if not isinstance(runtime_profiles, dict) or set(runtime_profiles) != set(
         expected_runtime_profiles
@@ -1403,6 +1449,8 @@ def validate_live_gate(
         "bounded-refinement-characterization": "full",
         "native-temporal-densification": "full",
         "native-spatial-regeneration": "full",
+        "official-structural-control": "control",
+        "learned-spatial-regeneration": "learned_upscale",
     }
     for phase in phases:
         if not isinstance(phase, dict) or set(phase) != {"id", "runtime_profile", "topology_keys"}:
@@ -1424,7 +1472,7 @@ def validate_live_gate(
     if set(ordered_keys) != set(expected_keys):
         errors.append(f"{path}: live phases must cover every materialization topology exactly once")
     if phase_ids != set(expected_phase_profiles):
-        errors.append(f"{path}: live gate must use the eight canonical evidence phases")
+        errors.append(f"{path}: live gate must use the ten canonical evidence phases")
     return errors
 
 

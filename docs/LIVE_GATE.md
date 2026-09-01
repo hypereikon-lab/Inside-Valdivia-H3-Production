@@ -67,7 +67,7 @@ comfy-runtime check-requirements runtime/requirements/h3-core.json \
 The automated gate checks:
 
 - required routes;
-- all 24 locked CAUCE nodes;
+- all 28 locked CAUCE nodes;
 - official FL2VA, sampler, decode, `CreateVideo`, and `SaveVideo` nodes;
 - exact expected FL2VA, Qwen, and video-VAE filenames;
 - at least 60 GB total RAM and 30 GB total VRAM;

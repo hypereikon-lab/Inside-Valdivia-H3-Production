@@ -55,6 +55,7 @@ class RepositoryValidationTests(unittest.TestCase):
                 "frames.assemble",
                 "generate.from_references",
                 "generate.keyframed",
+                "generate.with_control",
                 "generate.with_guides",
                 "densify.temporal",
                 "reframe.outpaint_video",
@@ -78,6 +79,19 @@ class RepositoryValidationTests(unittest.TestCase):
             validate_invocation(wrong, invocation_path, registry),
         )
 
+    def test_executed_historical_invocation_remains_immutable(self):
+        lock_path = ROOT / "operations.lock.json"
+        _, registry = validate_operation_lock(load_json(lock_path), lock_path)
+        invocation_path = (
+            ROOT / "invocations" / "2026-08-31-07-spatial-regenerate-1792x1024.json"
+        )
+        invocation = load_json(invocation_path)
+        self.assertLess(
+            invocation["operation_version"],
+            registry[invocation["operation"]]["version"],
+        )
+        self.assertEqual(validate_invocation(invocation, invocation_path, registry), [])
+
     def test_segment_references_invocation_output(self):
         segment_path = ROOT / "segments" / "example.json"
         segment = load_json(segment_path)
@@ -93,7 +107,9 @@ class RepositoryValidationTests(unittest.TestCase):
             for operation in experiment["operations"]:
                 self.assertIn("id", operation)
                 self.assertIn("version", operation)
-                self.assertEqual(operation["version"], registry[operation["id"]]["version"])
+                self.assertLessEqual(
+                    operation["version"], registry[operation["id"]]["version"]
+                )
 
     def test_training_recipes_are_explicitly_gated(self):
         catalog_path = ROOT / "training" / "catalog.json"
@@ -200,6 +216,9 @@ class RepositoryValidationTests(unittest.TestCase):
                 "regenerate.spatial@latent-second-pass",
                 "regenerate.spatial@pixel-vae-second-pass",
                 "regenerate.spatial@tiled-pixel-vae",
+                "generate.with_control@structural-video",
+                "generate.with_control@masked-inpaint",
+                "regenerate.spatial@learned-latent-second-pass",
             ],
         )
         for entry in catalog["plans"]:
@@ -219,13 +238,13 @@ class RepositoryValidationTests(unittest.TestCase):
             ),
             [],
         )
-        self.assertEqual(len(lock["archetypes"]), 29)
+        self.assertEqual(len(lock["archetypes"]), 32)
         covered = [
             key
             for archetype in lock["archetypes"]
             for key in archetype["topology_keys"]
         ]
-        self.assertEqual(len(covered), 32)
+        self.assertEqual(len(covered), 35)
         references = next(value for value in lock["archetypes"] if value["id"] == "references-image")
         self.assertEqual(len(references["topology_keys"]), 2)
 
@@ -447,7 +466,7 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertTrue(set(core["required_models"]) <= set(full["required_models"]))
         self.assertEqual(
             len([name for name in core["required_node_types"] if name.startswith("Cauce")]),
-            24,
+            28,
         )
         self.assertIn("CreateVideo", core["required_node_types"])
         self.assertIn("SaveVideo", core["required_node_types"])
@@ -470,9 +489,9 @@ class RepositoryValidationTests(unittest.TestCase):
         )
         ordered = [key for phase in gate["phases"] for key in phase["topology_keys"]]
         self.assertEqual(ordered[0], "generate.keyframed@text-only")
-        self.assertEqual(len(ordered), 32)
-        self.assertEqual(len(set(ordered)), 32)
-        self.assertEqual(len(gate["phases"]), 8)
+        self.assertEqual(len(ordered), 35)
+        self.assertEqual(len(set(ordered)), 35)
+        self.assertEqual(len(gate["phases"]), 10)
         self.assertEqual(gate["phases"][0]["runtime_profile"], "core")
         self.assertTrue(
             all(
@@ -480,8 +499,8 @@ class RepositoryValidationTests(unittest.TestCase):
                 for key in gate["phases"][0]["topology_keys"]
             )
         )
-        self.assertEqual(gate["phases"][-2]["runtime_profile"], "full")
-        self.assertEqual(gate["phases"][-1]["runtime_profile"], "full")
+        self.assertEqual(gate["phases"][-2]["runtime_profile"], "control")
+        self.assertEqual(gate["phases"][-1]["runtime_profile"], "learned_upscale")
 
         broken = copy.deepcopy(gate)
         broken["phases"][2]["topology_keys"][0] = ordered[0]
@@ -606,9 +625,9 @@ class RepositoryValidationTests(unittest.TestCase):
     def test_readiness_report_does_not_promote_offline_plans(self):
         report = build_readiness_report()
         self.assertTrue(report["offline_valid"])
-        self.assertEqual(report["counts"]["materialization_plans"], 32)
-        self.assertEqual(report["counts"]["graph_archetypes"], 29)
-        self.assertEqual(report["counts"]["binding_profiles"], 32)
+        self.assertEqual(report["counts"]["materialization_plans"], 35)
+        self.assertEqual(report["counts"]["graph_archetypes"], 32)
+        self.assertEqual(report["counts"]["binding_profiles"], 35)
         self.assertEqual(report["counts"]["locked_control_components"], 4)
         self.assertEqual(report["counts"]["runtime_manifests"], 1)
         self.assertEqual(report["counts"]["runtime_readiness_evaluations"], 2)
@@ -617,7 +636,7 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertEqual(report["counts"]["visual_assessments"], 3)
         self.assertEqual(report["evidence"]["accepted_visual_assessments"], 0)
         self.assertEqual(report["evidence"]["rejected_visual_assessments"], 3)
-        self.assertEqual(report["evidence"]["offline_ready_topologies"], 31)
+        self.assertEqual(report["evidence"]["offline_ready_topologies"], 34)
         self.assertEqual(
             report["evidence"]["latest_runtime_manifest_hash"],
             "e97aa6c8e6f449e0f3d0f51fd3921e66c51f763de6d64de3ed9f2474019ba9c9",

@@ -1,8 +1,8 @@
 {
   "schema": "inside-valdivia.materialization-plan/1",
   "operation": "regenerate.spatial",
-  "operation_version": 2,
-  "operation_contract_hash": "40a801bf58ab20e2757725f961298ba48078d241517f596c7215de4efe7e267d",
+  "operation_version": 3,
+  "operation_contract_hash": "49ed8cf299cbcf3b44c7b61641e0427d71d0d8ffd9010002197dc0f9070f77fa",
   "variant": "tiled-pixel-vae",
   "topology_key": "regenerate.spatial@tiled-pixel-vae",
   "priority": 32,

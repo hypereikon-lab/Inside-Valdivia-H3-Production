@@ -1,0 +1,42 @@
+{
+  "schema": "inside-valdivia.materialization-plan/1",
+  "operation": "generate.with_control",
+  "operation_version": 1,
+  "operation_contract_hash": "54420901a719ea708848ff24c8c61c0268fa578cfc14c498064aba49687a69fd",
+  "variant": "structural-video",
+  "topology_key": "generate.with_control@structural-video",
+  "priority": 33,
+  "status": "offline-ready",
+  "runtime_manifest_hash": null,
+  "sources": { "workspace_export": null, "parameterization": null, "runtime_manifest": null, "operation_ref": null },
+  "bindings": {
+    "model_variant": "H3-Base-FL2VA-plus-Fun-Control",
+    "model_files": {
+      "diffusion_model": "diffusion_models/minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+      "control_patch": "model_patches/MiniMax-H3-Fun-Controlnet-Union.safetensors",
+      "text_encoder": "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "video_vae": "vae/minimax_h3_video_vae_fp16.safetensors"
+    },
+    "control_kind": null,
+    "control_video": null,
+    "resolution": [768, 1344],
+    "target_frames": 124,
+    "control_strength": 1.0,
+    "control_start_percent": 0.0,
+    "control_end_percent": 1.0,
+    "characterization": {
+      "control_kinds": ["pose", "depth", "canny"],
+      "strengths": [0.6, 0.8, 1.0],
+      "end_percents": [0.6, 0.8, 1.0]
+    },
+    "prompt": null,
+    "seed": null,
+    "sampler": null,
+    "scheduler": null,
+    "steps": null,
+    "artifact": { "frame_rate": 24, "filename_prefix": null, "format": "auto", "codec": "auto", "history_resolvable": true, "retain_native_state": true },
+    "inputs": { "control_video": null }
+  },
+  "outputs": { "ui_graph": null, "api_template": null, "bindings": null, "materialization_manifest": null, "ui_graph_hash": null, "api_template_hash": null, "bindings_hash": null },
+  "validation": { "schema_status": "pending", "missing_node_types": ["MiniMaxH3FunControlNetApply"], "notes": ["Do not materialize until the control experimental runtime profile passes and the union patch hash is captured."] }
+}

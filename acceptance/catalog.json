@@ -125,6 +125,25 @@
       "promotion": {"minimum_successful_runs": 2, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
     },
     {
+      "operation": "generate.with_control",
+      "operation_version": 1,
+      "variants": ["masked-inpaint", "structural-video"],
+      "technical_checks": [
+        {"id": "official-control-path", "description": "The graph uses the official MiniMaxH3FunControlNetApply path and the exact locked union model patch."},
+        {"id": "control-normalization", "description": "The control plan records exact source and target lengths, repeat-last or truncate behavior, bilinear spatial fit, and center crop."},
+        {"id": "control-schedule", "description": "Strength plus start and end percentages are captured exactly and remain the only changed variables in characterization ladders."},
+        {"id": "runtime-gates", "description": "The installed ComfyUI revision contains the required control implementation and every applicable upstream correctness gate is recorded before execution."},
+        {"id": "artifact-lineage", "description": "The receipt binds the control clip, optional mask, union patch, graph, prompt, parameters, output video, and retained native state."}
+      ],
+      "visual_checks": [
+        {"id": "structural-adherence", "description": "Motion and geometry follow the requested control signal without unacceptable collapse or prompt suppression."},
+        {"id": "temporal-stability", "description": "Control does not introduce objectionable flicker, frozen tails, repeated terminal motion, or abrupt control release."},
+        {"id": "mask-preservation", "description": "For masked inpaint, preserved regions remain stable and the generated region has no unacceptable halo, seam, or binary-mask scar."},
+        {"id": "control-balance", "description": "The selected strength and schedule produce a useful balance between structural guidance and H3 generative freedom."}
+      ],
+      "promotion": {"minimum_successful_runs": 2, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
+    },
+    {
       "operation": "generate.with_guides",
       "operation_version": 3,
       "variants": ["first-last-interior", "guide-clip", "multi-anchor", "single-anchor"],
@@ -194,10 +213,11 @@
     },
     {
       "operation": "regenerate.spatial",
-      "operation_version": 2,
-      "variants": ["latent-second-pass", "pixel-vae-second-pass", "tiled-pixel-vae"],
+      "operation_version": 3,
+      "variants": ["latent-second-pass", "learned-latent-second-pass", "pixel-vae-second-pass", "tiled-pixel-vae"],
       "technical_checks": [
-        {"id": "same-h3", "description": "The second pass uses the same locked H3 checkpoint and H3 VAE without an auxiliary learned upscaler."},
+        {"id": "same-h3", "description": "Every variant uses the same locked H3 checkpoint for the generative second pass; native variants use only the locked H3 VAE, while the learned variant declares its separately pinned external initializer."},
+        {"id": "initializer-lineage", "description": "The selected initial-state path is explicit: native latent interpolation, pixel/VAE round trip, tiled pixel/VAE round trip, or the exact pinned learned 3D latent upscaler and weight."},
         {"id": "clock-preservation", "description": "Frame count and 24 fps clock are exactly unchanged."},
         {"id": "geometry", "description": "Target width and height match the declared 32-pixel-aligned geometry."},
         {"id": "audio-pin", "description": "Structural-audio denoise remains zero throughout spatial regeneration."},
@@ -207,7 +227,8 @@
         {"id": "detail-gain", "description": "The H3 pass creates useful definition beyond a deterministic resize control."},
         {"id": "temporal-stability", "description": "New texture does not shimmer, boil, crawl, or change discontinuously across frames."},
         {"id": "identity-drift", "description": "Important forms, composition, appearance, and gesture timing remain acceptable."},
-        {"id": "tile-seams", "description": "The tiled variant contains no unacceptable overlap seam; this check is not applicable to full-frame variants."}
+        {"id": "tile-seams", "description": "The tiled variant contains no unacceptable overlap seam; this check is not applicable to full-frame variants."},
+        {"id": "learned-terminal-stability", "description": "The learned variant contains no terminal-frame collapse, shape discontinuity, flicker, or motion drift; this check is not applicable to native variants."}
       ],
       "promotion": {"minimum_successful_runs": 2, "require_all_technical_checks": true, "require_explicit_visual_verdict": true}
     }

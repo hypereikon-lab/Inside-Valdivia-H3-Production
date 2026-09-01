@@ -10,6 +10,16 @@
       "id": "h3-full",
       "path": "runtime/requirements/h3-full.json",
       "purpose": "Materialize the complete H3 and CAUCE-native surface including Ref2VA, AddGuide, masked editing, outpainting, refinement, decoded video persistence, and native-state operations."
+    },
+    {
+      "id": "h3-control-experimental",
+      "path": "runtime/requirements/h3-control-experimental.json",
+      "purpose": "Fail closed unless official H3 Fun Control nodes, the union patch, CAUCE preflight, and the required core correctness gates are present."
+    },
+    {
+      "id": "h3-learned-upscale-experimental",
+      "path": "runtime/requirements/h3-learned-upscale-experimental.json",
+      "purpose": "Isolate the external learned 3D visual-latent upscaler for a pinned A/B without making it a base production dependency."
     }
   ]
 }

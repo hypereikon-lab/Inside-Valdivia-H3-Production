@@ -1,0 +1,42 @@
+{
+  "schema": "comfy.runtime-requirements/1",
+  "id": "inside-valdivia-h3-learned-upscale-experimental",
+  "required_endpoints": ["features", "system_stats", "object_info", "queue"],
+  "required_node_types": [
+    "BasicGuider", "BasicScheduler", "CLIPLoader", "CauceAcceptDecodedRange",
+    "CauceH3AddAVSpanGuide", "CauceH3ApplyVideoDenoiseMask", "CauceH3AllocateAVWindow",
+    "CauceH3AppendAVSpan", "CauceH3ClearAVDenoiseMask", "CauceH3DilateVisualTokens",
+    "CauceH3ExpandAVCanvas", "CauceH3ExtractAVSpan", "CauceH3ExtractVisualStream",
+    "CauceH3InspectAVLatent", "CauceH3InspectConditioning", "CauceH3InspectPackedSequence",
+    "CauceH3PlaceAVSpan", "CauceH3PlanAVWindow", "CauceH3PlanControlClip",
+    "CauceH3PrepareGuideClip", "CauceH3PrepareReferenceClip", "CauceH3ReplaceAVSpan",
+    "CauceH3ReplaceVisualStream", "CauceH3ResizeAVLatent", "CauceH3ResolveTargetShape",
+    "CauceH3SetAVDenoiseInterval", "CauceH3SplitAVLatent", "CauceLoadAVLatent",
+    "CaucePlanH3GuideRetime", "CauceRestoreDecodedAnchors", "CauceSaveAVLatent",
+    "CreateVideo", "ImageBatch", "KSamplerSelect", "LoadImage", "LoadVideo",
+    "MiniMaxH3AddGuide", "MiniMaxH3ImageToVideo", "MiniMaxH3ReferenceToVideo",
+    "MinimaxH3LatentUpscaler3D", "RandomNoise", "SamplerCustomAdvanced", "SaveVideo",
+    "UNETLoader", "VAEDecode", "VAELoader"
+  ],
+  "node_type_groups": [],
+  "required_models": [
+    "minimax_h3_audio_vae_fp32.safetensors",
+    "minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+    "minimax_h3_latent_upscaler_3d_fp16.safetensors",
+    "minimax_h3_ref2va_pruned_fp8_scaled.safetensors",
+    "minimax_h3_video_vae_fp16.safetensors",
+    "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors"
+  ],
+  "hardware": {
+    "minimum_total_ram_bytes": 60000000000,
+    "minimum_total_vram_bytes": 30000000000,
+    "device_name_contains": "5090"
+  },
+  "require_queue_idle": true,
+  "manual_checks": [
+    "Install only public LBH-123-AI/Comfyui_Minimax_h3_latent_Upscaler at d7c01b9011f2e8439493f6c02c29995a27df276f.",
+    "Hash the fp16 upscaler weight and confirm the visual-only CAUCE adapter avoids nested FL2VA shape failures.",
+    "Run the identical-seed native-latent, pixel/VAE, and learned-latent A/B at native pixel bounds.",
+    "Reject the learned path on terminal-frame flicker, temporal shimmer, motion drift, or memory regression."
+  ]
+}

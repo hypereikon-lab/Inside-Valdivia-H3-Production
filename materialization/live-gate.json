@@ -1,14 +1,16 @@
 {
   "schema": "inside-valdivia.live-materialization-gate/1",
   "source_locks": {
-    "cauce_commit": "5a3d3a23b79712ed07349079b8312da4cd3fe4de",
+    "cauce_commit": "42f0f95ce405276a2ecbf7af2cefad1de034fb6e",
     "runtime_commit": "6751b8fd90b02ef871bc046f228b83b004871d3a",
     "workspace_commit": "65d6612d1cbeae3e35c664873a2aa1088ac3e7d2",
     "repository_control_commit": "49d50644173c62d74b799099fee2a2eddbfdf642"
   },
   "runtime_profiles": {
     "core": "runtime/requirements/h3-core.json",
-    "full": "runtime/requirements/h3-full.json"
+    "full": "runtime/requirements/h3-full.json",
+    "control": "runtime/requirements/h3-control-experimental.json",
+    "learned_upscale": "runtime/requirements/h3-learned-upscale-experimental.json"
   },
   "workspace_gate": {
     "required_diagnostic_schema": "comfy.workspace-diagnostic/1",
@@ -106,6 +108,21 @@
         "regenerate.spatial@latent-second-pass",
         "regenerate.spatial@pixel-vae-second-pass",
         "regenerate.spatial@tiled-pixel-vae"
+      ]
+    },
+    {
+      "id": "official-structural-control",
+      "runtime_profile": "control",
+      "topology_keys": [
+        "generate.with_control@structural-video",
+        "generate.with_control@masked-inpaint"
+      ]
+    },
+    {
+      "id": "learned-spatial-regeneration",
+      "runtime_profile": "learned_upscale",
+      "topology_keys": [
+        "regenerate.spatial@learned-latent-second-pass"
       ]
     }
   ]

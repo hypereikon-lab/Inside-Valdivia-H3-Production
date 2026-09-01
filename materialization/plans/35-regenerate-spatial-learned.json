@@ -3,25 +3,29 @@
   "operation": "regenerate.spatial",
   "operation_version": 3,
   "operation_contract_hash": "49ed8cf299cbcf3b44c7b61641e0427d71d0d8ffd9010002197dc0f9070f77fa",
-  "variant": "latent-second-pass",
-  "topology_key": "regenerate.spatial@latent-second-pass",
-  "priority": 30,
+  "variant": "learned-latent-second-pass",
+  "topology_key": "regenerate.spatial@learned-latent-second-pass",
+  "priority": 35,
   "status": "offline-ready",
   "runtime_manifest_hash": null,
   "sources": { "workspace_export": null, "parameterization": null, "runtime_manifest": null, "operation_ref": null },
   "bindings": {
-    "model_variant": "FL2VA",
+    "model_variant": "FL2VA-plus-external-learned-3D-latent-initialization",
     "model_files": {
       "diffusion_model": "diffusion_models/minimax_h3_fl2va_pruned_fp8_scaled.safetensors",
+      "latent_upscaler": "latent_upscale_models/minimax_h3_latent_upscaler_3d_fp16.safetensors",
       "text_encoder": "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
       "video_vae": "vae/minimax_h3_video_vae_fp16.safetensors"
+    },
+    "nodepack": {
+      "repository": "https://github.com/LBH-123-AI/Comfyui_Minimax_h3_latent_Upscaler",
+      "commit": "d7c01b9011f2e8439493f6c02c29995a27df276f"
     },
     "source_resolution": [768, 1344],
     "target_resolution": [1024, 1792],
     "target_frames": 124,
-    "resize_method": "bicubic",
     "video_denoise": null,
-    "characterization_values": [0.15, 0.25, 0.35, 0.5, 0.65],
+    "characterization_values": [0.15, 0.25, 0.35],
     "audio_denoise": 0.0,
     "prompt": null,
     "seed": null,
@@ -32,5 +36,5 @@
     "inputs": { "source_native_av_latent": null }
   },
   "outputs": { "ui_graph": null, "api_template": null, "bindings": null, "materialization_manifest": null, "ui_graph_hash": null, "api_template_hash": null, "bindings_hash": null },
-  "validation": { "schema_status": "pending", "missing_node_types": [], "notes": ["Resize only the H3 visual latent; keep time unchanged and structural audio pinned while characterizing the same-H3 second pass."] }
+  "validation": { "schema_status": "pending", "missing_node_types": ["MinimaxH3LatentUpscaler3D"], "notes": ["External learned model: A/B only against native latent and pixel/VAE paths; reject on shape incompatibility, flicker, terminal-frame instability, or motion drift."] }
 }
