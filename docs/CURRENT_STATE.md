@@ -37,7 +37,7 @@ Production data
   1 offline rolling-chain plan
   2 runtime requirements profiles
   12 acceptance profiles covering all 32 variants
-  19 executed live project invocations, 21 API graphs and immutable run receipts
+  22 executed live project invocations, 24 API graphs and immutable run receipts
   3 explicit rejected visual assessment records
   1 eight-phase live materialization gate
   1 fail-closed storage policy
@@ -85,8 +85,9 @@ Control still clean at their locked revisions. The bounded receipt is retained
 at `runtime/verifications/2026-08-31-post-restart.json`. No CUDA, PyTorch,
 driver, model, ComfyUI core, frontend, Windows or Cloudflare mutation occurred.
 
-The first characterization batch is retained in
-[`LIVE_BATCH_2026-08-31.md`](LIVE_BATCH_2026-08-31.md). All twenty-one submitted
+The first characterization batch and its sparse-anchor extension are retained in
+[`LIVE_BATCH_2026-08-31.md`](LIVE_BATCH_2026-08-31.md) and the temporal-expansion
+experiment README. All twenty-one batch graphs plus three retained sparse-anchor
 graphs completed and wrote resolvable `SaveVideo` artifacts plus native-state
 paths where declared. The remaining platform checks are physical: free disk on
 the actual model/output volume, Windows sleep policy, host/tunnel recovery, and
@@ -144,7 +145,7 @@ diagnostic must pass before tab or graph automation begins.
 | --- | --- | --- |
 | `generate.keyframed` | official H3 contract + checked variants | first-frame, last-frame and first/last execute at 1344×768 × 124; one run each, not promoted |
 | `generate.from_references` | official H3 contract + checked variants | ordered two-image `match` binding executes; one run, not promoted |
-| `generate.with_guides` | official H3/AddGuide contract + checked variants | single interior still is rejected; dense 2x/3x target-time guide ladders execute with positive operator review, while 4x executes and awaits review |
+| `generate.with_guides` | official H3/AddGuide contract + checked variants | single interior still is rejected; dense 2x/3x target-time guide ladders execute with positive operator review; direct-MP4 4x executes; sparse stride-8 2x/4x execute and await operator review, while stride-16 4x is rejected after visual collapse between anchors |
 | `continue.native_av` | CAUCE layout/span/mask paths unit-validated | masked-overlap executes to 243 frames with exact decoded prefix preservation; promising, not promoted |
 | `complete.native_av` | placement/mask/replacement layer unit-validated | two-source connection executes with preserved left/right contexts; measurable boundary rise remains |
 | `edit.masked_video` | static/animated mask projection and composition unit-validated | static mask primitive executes live; H3 result unassessed |
@@ -156,7 +157,7 @@ diagnostic must pass before tab or graph automation begins.
 | `regenerate.spatial` | latent resize and H3-VAE visual-stream graft unit-validated; three offline topologies | 1792×1024 latent second pass fits the 5090 and executes; 0.35 gains detail but drifts too far for a baseline |
 
 `implemented`, `materialized`, `executes`, and `visually accepted` are separate
-states. Twenty-one exact API graphs now have prompt-id receipts and saved artifacts;
+states. Twenty-four retained exact API graphs now have prompt-id receipts and saved artifacts;
 the native temporal-dilation path is explicitly rejected. No generative variant has yet met its
 minimum repeat count and visual promotion rule, so none is called
 production-ready.

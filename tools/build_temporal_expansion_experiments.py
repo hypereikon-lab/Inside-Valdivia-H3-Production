@@ -27,10 +27,11 @@ CLIP = "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors"
 VAE = "minimax_h3_video_vae_fp16.safetensors"
 MODEL = "minimax_h3_fl2va_pruned_fp8_scaled.safetensors"
 PROMPT = (
-    "Create smooth continuous slow motion through the supplied ordered temporal "
-    "anchors. Preserve the exact scene, camera path, forest geometry, lighting, "
-    "water flow, vegetation and exposure. Synthesize only coherent motion between "
-    "anchors. No cuts, resets, morphing, temporal echoes, new events, people, text "
+    "Generate a single continuous slow-motion trajectory through the supplied "
+    "temporally ordered visual anchors. Preserve the subjects, scene geometry, "
+    "camera path, lighting, exposure, textures, motion direction and causal "
+    "continuity. Generate coherent motion only between the anchors. No cuts, "
+    "resets, duplicated gestures, temporal echoes, morphing, new objects, text "
     "or generated audio."
 )
 
@@ -156,6 +157,7 @@ def addguide_video_graph(
     width: int,
     height: int,
     output_label: str,
+    source_stride: int = 1,
 ) -> dict[str, dict]:
     source_frames = {2: 60, 3: 40, 4: 30}[factor]
     delivery_frames = (source_frames - 1) * factor + 1
@@ -185,15 +187,19 @@ def addguide_video_graph(
         },
     }
 
+    source_offsets = list(range(0, source_frames, source_stride))
+    if source_offsets[-1] != source_frames - 1:
+        source_offsets.append(source_frames - 1)
+
     previous = ["6", 0]
-    for local_index in range(source_frames):
-        select_id = str(20 + local_index * 2)
-        guide_id = str(21 + local_index * 2)
+    for guide_ordinal, source_offset in enumerate(source_offsets):
+        select_id = str(20 + guide_ordinal * 2)
+        guide_id = str(21 + guide_ordinal * 2)
         graph[select_id] = {
             "class_type": "CauceAcceptDecodedRange",
             "inputs": {
                 "images": ["5", 0],
-                "start_frame": source_start + local_index,
+                "start_frame": source_start + source_offset,
                 "frame_count": 1,
             },
         }
@@ -204,7 +210,7 @@ def addguide_video_graph(
                 "vae": ["2", 0],
                 "latent": ["6", 1],
                 "image": [select_id, 0],
-                "frame_idx": local_index * factor,
+                "frame_idx": source_offset * factor,
             },
         }
         previous = [guide_id, 0]
@@ -281,9 +287,10 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--uploaded-video")
     parser.add_argument("--window-starts", default="0,38,77,115")
+    parser.add_argument("--source-strides", default="8,16")
     parser.add_argument("--factor", type=int, choices=(2, 3, 4), default=4)
-    parser.add_argument("--width", type=int, default=960)
-    parser.add_argument("--height", type=int, default=960)
+    parser.add_argument("--width", type=int, default=672)
+    parser.add_argument("--height", type=int, default=672)
     parser.add_argument("--output-label", default="gen45_slowmo4x")
     return parser.parse_args()
 
@@ -293,26 +300,33 @@ def main() -> None:
     OUTPUT.mkdir(parents=True, exist_ok=True)
     if args.uploaded_video:
         starts = [int(value.strip()) for value in args.window_starts.split(",")]
+        strides = [int(value.strip()) for value in args.source_strides.split(",")]
+        if any(stride < 1 for stride in strides):
+            raise ValueError("source strides must be positive integers")
         for ordinal, start in enumerate(starts, start=1):
-            label = f"{args.output_label}_w{ordinal:02d}_f{start:03d}"
-            path = OUTPUT / f"{label}.api.json"
-            path.write_text(
-                json.dumps(
-                    addguide_video_graph(
-                        factor=args.factor,
-                        source_start=start,
-                        input_file=args.uploaded_video,
-                        width=args.width,
-                        height=args.height,
-                        output_label=label,
-                    ),
-                    ensure_ascii=False,
-                    indent=2,
+            for stride in strides:
+                label = (
+                    f"{args.output_label}_w{ordinal:02d}_f{start:03d}_s{stride:02d}"
                 )
-                + "\n",
-                encoding="utf-8",
-            )
-            print(path.relative_to(ROOT))
+                path = OUTPUT / f"{label}.api.json"
+                path.write_text(
+                    json.dumps(
+                        addguide_video_graph(
+                            factor=args.factor,
+                            source_start=start,
+                            input_file=args.uploaded_video,
+                            width=args.width,
+                            height=args.height,
+                            output_label=label,
+                            source_stride=stride,
+                        ),
+                        ensure_ascii=False,
+                        indent=2,
+                    )
+                    + "\n",
+                    encoding="utf-8",
+                )
+                print(path.relative_to(ROOT))
         return
     for factor in (2, 3, 4):
         source_frames = {2: 60, 3: 40, 4: 30}[factor]

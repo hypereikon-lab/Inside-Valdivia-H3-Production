@@ -8,7 +8,7 @@ upscaler model is part of the locked production surface.
 
 | Function | Topology | Initial state | Evidence |
 | --- | --- | --- | --- |
-| guided duration expansion | `generate.with_guides@dense-anchor-temporal-expansion` | every retained decoded source frame becomes an official target-time AddGuide | 2x and 3x execute with positive operator review; 4x executes and awaits review |
+| guided duration expansion | `generate.with_guides@dense-anchor-temporal-expansion` or `@sparse-anchor-temporal-expansion` | retained decoded source frames become official target-time AddGuides | dense 2x and 3x execute with positive operator review; sparse stride-8 2x/4x execute and await review; stride-16 4x is rejected |
 | native token dilation | `densify.temporal@token-inpaint` | packed H3 visual tokens dilated onto a longer time lattice | rejected across same-duration and duration-expansion tests |
 | fast spatial candidate | `regenerate.spatial@latent-second-pass` | bicubic resized native H3 visual latent | shape/masks unit-validated; visuals pending |
 | VAE-manifold candidate | `regenerate.spatial@pixel-vae-second-pass` | decoded resize re-encoded by H3 VAE | visual graft unit-validated; visuals pending |
@@ -45,6 +45,14 @@ observations and synthesizes a new coherent trajectory through them. The 2x
 and 3x results received positive operator review; 4x has execution evidence but
 still needs full-motion review. See the exact graphs and arithmetic in
 `experiments/workflows/temporal-expansion-2026-08-31/`.
+
+Sparse variants retain absolute source time. With factor `f`, a retained source
+offset `i` is placed at `i * f`; the final source frame is always forced into
+the guide set. In the direct-MP4 tests, stride-8 2x uses nine guides across 60
+source frames and stride-8 4x uses five guides across 30 source frames. Both
+execute coherently in sampled inspection. Stride-16 4x uses only three guides
+at target indices `[0, 64, 116]` and visibly collapses between them, so it is a
+rejected boundary result rather than a production candidate.
 
 The experiment runs at 896×512 because 60 independent guide encodes approached
 the measured system-RAM limit. Resolution regeneration remains a separate pass;

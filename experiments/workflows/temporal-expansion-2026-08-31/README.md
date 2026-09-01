@@ -1,4 +1,4 @@
-# Dense-AddGuide temporal expansion — 2026-08-31
+# AddGuide temporal expansion — 2026-08-31 / 2026-09-01
 
 This characterization turns a short prefix of one 24 fps H3 source into a new
 timeline close to five seconds. It does not alter container playback speed.
@@ -54,6 +54,55 @@ decoded ranges feed the ordinary dense AddGuide chain. A 145-frame, 24 fps,
 All four graphs validated live with zero issues and completed serially. They
 used identical model, prompt, seed, sampler, scheduler, steps and geometry; only
 the source start frame changed. Their visual verdict remains pending.
+
+## Sparse-anchor 4x characterization
+
+The builder also supports sparse source-anchor strides while preserving target
+time. For a source offset `i`, the official AddGuide remains at
+`target_index = i * factor`; reducing guide count therefore creates genuinely
+larger intervals for H3 to synthesize rather than compressing the surviving
+guides toward the start of the target.
+
+The retained comparison uses the first 30 decoded frames of the same direct
+MP4, a 124-frame target, a deterministic 117-frame delivery crop, seed 310944,
+and 672×672 geometry. Both runs use the same generalized prompt and differ only
+in source stride:
+
+| Source stride | Source offsets | Target guide indices | Guides | Runtime | Technical result |
+| ---: | --- | --- | ---: | ---: | --- |
+| 8 | 0, 8, 16, 24, 29 | 0, 32, 64, 96, 116 | 5 | 102.109 s | executes; sampled trajectory remains visually coherent; operator review pending |
+| 16 | 0, 16, 29 | 0, 64, 116 | 3 | 95.649 s | rejected by technical visual inspection: large unguided spans collapse to white frames and pseudo-text |
+
+Both deliveries are exactly 672×672, 117 frames, 24 fps and 4.875 seconds.
+Stride 16 therefore saves only 6.460 seconds relative to stride 8 on this
+cached run while losing the scene between anchors. It is retained as a boundary
+result, not a recommended workflow. Stride 8 is the only sparse candidate that
+continues to visual review.
+
+The prompt is deliberately content-independent:
+
+```text
+Generate a single continuous slow-motion trajectory through the supplied
+temporally ordered visual anchors. Preserve the subjects, scene geometry,
+camera path, lighting, exposure, textures, motion direction and causal
+continuity. Generate coherent motion only between the anchors. No cuts,
+resets, duplicated gestures, temporal echoes, morphing, new objects, text
+or generated audio.
+```
+
+The default builder now emits only stride 8 and stride 16. Arbitrary positive
+strides remain available for explicit characterization, but intermediate
+stride-2/4 graphs are not retained in the repository.
+
+## Sparse stride-8 2x pass
+
+The first 60 decoded frames of the direct MP4 were also expanded 2x with source
+offsets `[0, 8, 16, 24, 32, 40, 48, 56, 59]` at target indices
+`[0, 16, 32, 48, 64, 80, 96, 112, 118]`. The graph uses the same generalized
+prompt, 672×672 geometry, seed and sampler as the 4x sparse comparison. It
+completed in 118.598 seconds and delivered exactly 119 frames at 24 fps
+(4.958 seconds). Sampled technical inspection is coherent; full-motion operator
+review remains pending.
 
 ## Rejected native-token hypothesis
 

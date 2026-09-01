@@ -1,0 +1,41 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "2026-09-01-22-gen45-temporal-expand-4x-s08",
+  "operation": "generate.with_guides",
+  "operation_version": 3,
+  "operation_contract_hash": "49aa03c63837e7cbc3dd09992e6575196dced0061847986f8643b347cbe98dfc",
+  "inputs": {
+    "source_video": {
+      "uri": "comfy-input://inside-valdivia/temporal-expansion/Gen-4_5.gen-4_5 (5).mp4",
+      "sha256": "d7300236e2a395c3c91eb59e05fcc2a0895956b53cb170316ae7480564da16a3"
+    }
+  },
+  "parameters": {
+    "variant": "sparse-anchor-temporal-expansion",
+    "factor": 4,
+    "source_start_frame": 0,
+    "source_frames": 30,
+    "source_stride_frames": 8,
+    "source_guide_offsets": [0, 8, 16, 24, 29],
+    "target_guide_indices": [0, 32, 64, 96, 116],
+    "guide_count": 5,
+    "target_frames": 124,
+    "delivery_frames": 117,
+    "delivery_fps": 24,
+    "width": 672,
+    "height": 672,
+    "steps": 20,
+    "sampler": "res_multistep",
+    "scheduler": "simple",
+    "seed": 310944,
+    "runtime_seconds": 102.109
+  },
+  "status": "executes",
+  "outputs": {
+    "video": "comfy-output://video/2026-08-31/gen45_slowmo4x_density_w01_f000_s08_00001_.mp4"
+  },
+  "run_receipts": [
+    "runtime/receipts/2026-09-01/gen45-density-s08/4ab1908e-76e0-4906-8ccd-03f44efb4b64.json"
+  ],
+  "notes": "Sparse official AddGuide 4x expansion. Exact delivery geometry is verified and sampled frames retain a coherent trajectory; operator review remains pending."
+}
