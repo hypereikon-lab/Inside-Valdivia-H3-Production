@@ -1,44 +1,28 @@
 # H3 acceleration profiles
 
-Checked on 2026-09-01. Acceleration is an execution profile applied to an
-existing operation. It is not a new CAUCE operation, sampler implementation or
-workflow family.
+Live-checked on 2026-09-02. Acceleration is an execution profile applied to an
+existing H3 operation. It is not a new CAUCE operation, sampler, or workflow
+family.
 
-## Current state versus chosen target
+## Current runtime
 
-The 2026-08-31 capture proves these trunks are present:
-
-```text
-minimax_h3_fl2va_pruned_fp8_scaled.safetensors
-minimax_h3_ref2va_pruned_fp8_scaled.safetensors
-```
-
-Those files are incidental installation state, not an architectural decision.
-The host already runs an RTX 5090, PyTorch `2.13.0+cu130` and
-`comfy-kitchen 0.2.31`. Comfy-Org explicitly recommends `int8_convrot` when the
-CUDA 13 path is available and reserves `fp8_scaled` as a fallback. The selected
-target trunks are therefore:
+The production trunks are now the pruned CUDA-13 `int8_convrot` variants:
 
 ```text
 minimax_h3_fl2va_pruned_int8_convrot.safetensors   20,970,379,616 bytes
 minimax_h3_ref2va_pruned_int8_convrot.safetensors  20,970,379,616 bytes
 ```
 
-They replace rather than supplement the two 20,958,205,608-byte FP8-scaled
-files after one-at-a-time verification. Net steady-state storage growth is only
-about 24 MB across both trunks. The existing Qwen3-VL NVFP4 encoder and H3
-video/audio VAEs remain appropriate.
+The former FP8-scaled trunks were retired only after one-at-a-time download,
+digest verification, model refresh, and H3 sampling. They are no longer on the
+host. The Qwen3-VL NVFP4 encoder and H3 video/audio VAEs remain unchanged.
 
-`pruned` is intentional: the approximately 21 GB trunks fit the 32 GB device
-and retain the required FL2VA/Ref2VA surfaces. Full dense trunks are not needed
-for this production runtime. Experimental W4A8/GGUF alternatives may save more
-memory but add loaders and uncertainty without solving a current constraint.
+`pruned` is intentional: the approximately 21 GB trunks fit the RTX 5090's
+34.19 GB reported VRAM while retaining the FL2VA and Ref2VA surfaces. The live
+runtime is ComfyUI `0.34.0`, frontend `1.51.9`, PyTorch `2.13.0+cu130`, and
+`comfy-kitchen 0.2.31`.
 
-Current project graphs use `simple`, 20 steps and `res_multistep`. The target
-`int8_convrot` 20-step graph becomes the quality baseline before any fast LoRA
-is accepted.
-
-The same semantic operation may select one execution profile:
+The same semantic operation may select exactly one profile:
 
 ```text
 operation + inputs + seed + geometry
@@ -50,173 +34,145 @@ operation + inputs + seed + geometry
   -> pdd-ref2va-8
 ```
 
-Changing profile must be visible in the invocation and receipt. A fast result
-cannot silently overwrite or masquerade as a quality-baseline artifact.
+The selected profile must be explicit in the invocation, output prefix, and
+receipt. A fast result must never masquerade as a 20-step quality result.
 
-## Tier 1: LightX2V Turbo
+## Installed artifacts
 
-Turbo is the lowest-risk acceleration route for the target host:
+All files below were independently downloaded and SHA-256 verified by Model
+Control. Turbo and PDD are family-specific and must never be stacked.
 
-- it uses the ordinary ComfyUI LoRA loader;
-- the official ComfyUI templates demonstrate Turbo LoRAs with the selected
-  pruned `int8_convrot` H3 strategy;
-- it requires no custom sampler or nodepack;
-- FL2VA and Ref2VA have separate compatible weights;
-- model strength must remain an explicit graph parameter.
-
-Observed Comfy-Org model revision:
-
-```text
-repository  Comfy-Org/MiniMax-H3
-revision    4cc1d817b6184899b41293954329f576cb5ae86b
-```
-
-| Profile | File | Size | Intended use |
+| Profile | Artifact | Bytes | SHA-256 |
 | --- | --- | ---: | --- |
-| `turbo-fl2va-8` | `minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors` | 1,956,193,000 bytes | default fast FL2VA iteration with a better quality/speed compromise |
-| `turbo-fl2va-4` | `minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors` | 1,956,192,992 bytes | fastest FL2VA scouting at the native 768-class training geometry |
-| `turbo-ref2va-4` | `minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors` | 1,956,193,000 bytes | fast reference-driven scouting |
+| `quality-20` FL2VA | `minimax_h3_fl2va_pruned_int8_convrot.safetensors` | 20,970,379,616 | `e889202c41dafb67b10d67b97f0d8541508036a6090af23425a5c2615d03c47a` |
+| `quality-20` Ref2VA | `minimax_h3_ref2va_pruned_int8_convrot.safetensors` | 20,970,379,616 | `9255f52b6677845ad238f20dfaafa94727053694127ab7f255c048f0f9365779` |
+| `turbo-fl2va-8` | `minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors` | 1,956,193,000 | `2339acdf19bfe123f46b971ea35d367a84adb85de43627e1eceafa5a5b2b111e` |
+| `turbo-fl2va-4` | `minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors` | 1,956,192,992 | `c396a9a06f58399e9df9754b18299818d84a2ddd371724ba48fe4a41221437dc` |
+| `turbo-ref2va-4` | `minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors` | 1,956,193,000 | `5b9ab5ade15d0775676d01a907268a69a1468dc6033b3b0d3ded5502f3ebb84c` |
+| `pdd-fl2va-8` | `MiniMax-H3-FL2VA-Acc-8Step_pruned_comfy.safetensors` | 1,725,921,392 | `e97b813a6f857b9dab310f31ec30a8334f63a3e7dcb5d07c0c91933d3447a897` |
+| `pdd-ref2va-8` | `MiniMax-H3-Ref2VA-Acc-8Step_pruned_comfy.safetensors` | 1,725,921,392 | `6f18e1c2eccb14b37322607730f26b16bf1169b56cd098ea006cffaec43d1e39` |
 
-The FL2VA Turbo files must not be applied to the Ref2VA trunk, or vice versa.
-The nominal step count is part of the profile and should match the selected
-weight in the first accepted baseline. Alternative step counts are research
-variants, not production defaults.
+The trunks and Turbo files use Comfy-Org revision
+`4cc1d817b6184899b41293954329f576cb5ae86b`. The pruned PDD conversions
+use Kijai revision `f4cac997f880e93cf6940af61ee8d58ef31ff7f3`.
 
-### Recommended Turbo use
+## Profile topology
 
-```text
-idea search / broad ladders       turbo-4
-ordinary workflow iteration       turbo-8 when available
-reference-composition iteration   turbo-ref2va-4
-acceptance candidate              quality-20 comparison
-final or uncertain material       quality-20
-```
-
-The approximate speed gain cannot be inferred from step count alone because
-text encoding, VAE work, model loading, control preprocessing and saving are
-fixed costs. Sampler work should nevertheless fall substantially from 20 to 8
-or 4 evaluations.
-
-## Tier 2: official PDD acceleration LoRAs
-
-Alibaba PAI's Parallel Decoding Distillation weights combine a rank-64 trunk
-LoRA with a bank of 32 interval-specific output heads. ComfyUI support was
-merged in commit:
+### `quality-20`
 
 ```text
-2504e68d4d9dedb514e172692f13436623f25aed
+selected INT8 trunk
+  -> official H3 conditioning
+  -> BasicScheduler(simple, 20, denoise=1)
+  -> KSamplerSelect(res_multistep)
+  -> SamplerCustomAdvanced
 ```
 
-The laboratory capture predates that commit, so PDD is not currently available
-even if a weight is copied to disk. Core must be updated and baseline-smoked
-first.
+This is the comparison baseline for final or uncertain material. A successful
+Ref2VA INT8 smoke was retained as prompt
+`c5c08436-f19f-43f0-8f3b-caaef8d9e3bb`; the 22-frame 512×288 technical run
+took approximately 17.7 seconds end to end.
 
-The original Alibaba files use Diffusers layout. Current stock ComfyUI expects
-a converted Comfy-format file containing both the trunk LoRA and head bank.
-The observed public conversion source is:
+### Turbo
+
+Turbo uses ordinary `LoraLoaderModelOnly` at strength `1.0`, the matching
+family trunk, `simple`, the nominal 8 or 4 steps, and `res_multistep`.
 
 ```text
-repository  Kijai/MiniMax-H3-experimental
-revision    f4cac997f880e93cf6940af61ee8d58ef31ff7f3
+FL2VA INT8 -> FL2VA Turbo 8 or 4
+Ref2VA INT8 -> Ref2VA Turbo 4
 ```
 
-| Profile | File for selected pruned trunks | Size |
-| --- | --- | ---: |
-| `pdd-fl2va-8` | `MiniMax-H3-FL2VA-Acc-8Step_pruned_comfy.safetensors` | 1,725,921,392 bytes |
-| `pdd-ref2va-8` | `MiniMax-H3-Ref2VA-Acc-8Step_pruned_comfy.safetensors` | 1,725,921,392 bytes |
+Never apply an FL2VA Turbo file to Ref2VA or the reverse. Alternative step
+counts and strengths are experiments, not defaults.
 
-The unpruned PDD conversions are not correct choices for the selected
-`*_pruned_int8_convrot` trunks. Upstream testing specifically reported the
-pruned conversions working on pruned `int8_convrot`, `fp8_scaled` and `nvfp4`
-layouts on an RTX 5090.
+Recommended use:
 
-### PDD invariants
+```text
+broad scouting                   turbo-fl2va-4
+ordinary FL2VA iteration         turbo-fl2va-8
+reference-driven iteration       turbo-ref2va-4
+acceptance/final comparison      quality-20
+```
 
-The first profile is deliberately narrow:
+### PDD
+
+The PDD files combine a trunk LoRA with interval-specific output heads. The
+accepted technical profile is deliberately narrow:
 
 ```text
 steps          8
 scheduler      simple
-sampler        euler or res_multistep, tested separately
-LoRA strength  1.0
-family         FL2VA weight on FL2VA trunk; Ref2VA weight on Ref2VA trunk
+sampler        res_multistep
+strength       1.0
+family         matching pruned FL2VA or Ref2VA trunk
 ```
 
-The output-head bank was trained for 8-step interval coverage. Lower LoRA
-strength can partially populate the resized heads and produce artifacts;
-off-grid schedules or other step counts are not accepted defaults. PDD must
-not be combined with Turbo or an internal KJ H3 model patch in its first test.
+Do not lower strength, use off-grid schedules, or stack PDD with Turbo or a KJ
+model patch. Those changes confound the output-head behavior.
 
-Upstream testing on an RTX 5090 reported PDD functioning with pruned
-`int8_convrot`, `fp8_scaled` and `nvfp4` trunks, but that is compatibility
-evidence, not proof for this exact portable runtime. A live paired smoke remains
-mandatory.
+## Live technical smoke matrix
 
-## Tier 3: memory and kernel optimizations
+All rows used one 512×288, 22-frame graph at 24 fps, seed `20260902`, the
+matching INT8 trunk, `simple`, and `res_multistep`. Times include model/cache
+effects and are not a controlled benchmark.
 
-These mechanisms are not synonymous with faster sampling:
+| Profile | Prompt id | Result | Approx. end-to-end |
+| --- | --- | --- | ---: |
+| `turbo-fl2va-8` | `5e6d4384-c5f4-48a5-9ff9-8864f654929e` | success | 20 s cold |
+| `turbo-fl2va-4` | `94c99dad-ba3e-4f60-a7da-8be0b0208537` | success | 3.4 s hot |
+| `turbo-ref2va-4` | `efcaf613-0427-46c4-84cc-ab666c11aa21` | success | 13 s |
+| `pdd-fl2va-8` | `3f292788-5c4f-4528-a5c5-c2d9b20ed180` | success | 13.6 s |
+| `pdd-ref2va-8` | `926ea996-8eeb-458e-ad37-2da187427c83` | success | 13.4 s |
 
-- `MiniMaxChunkFeedForward` lowers peak memory but adds calls and can be slower;
+`success` means the exact graph loaded, sampled, decoded, and saved without an
+exception. It does not mean the image quality, motion, identity, or prompt
+adherence has passed human review. No fast profile is promoted over
+`quality-20` until a fixed-input visual ladder is judged.
+
+Exact executable smoke graphs are retained under
+`workflows/smoke/2026-09-02/` and the runtime evidence is in
+`runtime/smokes/2026-09-02-h3-runtime.json`.
+
+## Evaluation protocol
+
+Every comparison holds constant:
+
+- semantic operation and graph topology;
+- input hashes and ordering;
+- seed, legal frame count, and native pixel geometry;
+- prompt, references, endpoints, and guides;
+- output fps and codec settings.
+
+Record end-to-end and sampler-only time when available, first-run versus hot
+state, peak VRAM/RAM, motion continuity, conditioning adherence, texture,
+fine structure, and terminal-frame stability. A useful production comparison
+must include the same `quality-20` output.
+
+## Memory and kernel patches
+
+KJNodes is installed for generic utilities and diagnostics, but its H3 memory
+patches are not acceleration defaults:
+
+- `MiniMaxChunkFeedForward` may lower peak memory while adding calls;
 - `MiniMaxLowVRAMAttention` trades memory for overhead;
-- SageAttention/VSA paths depend on current CUDA, PyTorch and Blackwell kernels
-  and have unresolved compatibility reports;
-- replacing `fp8_scaled` with the official preferred `int8_convrot` path is a
-  baseline migration, not an accelerator to mix into a LoRA A/B.
+- SageAttention/VSA paths remain coupled to Blackwell/CUDA/PyTorch kernels.
 
-Do not combine these with Turbo/PDD during initial characterization. Otherwise
-the cause of a speed, quality or stability difference becomes ambiguous.
+Activate one only after a measured OOM or peak-memory problem, then compare it
+against the unchanged graph. The current trunks fit; no resource failure
+justifies speculative kernel mutation.
 
-## Paired evaluation design
+## Storage and rollback
 
-Every candidate uses the same:
+The three Turbo files consume approximately 5.87 GB and the two PDD files about
+3.45 GB. Model Control provides exact inventory, digest verification, and
+bounded deletion for every listed file. Generated media and temporary assets
+still share the host's limited storage, so preserve the declared reserve.
 
-- semantic operation and topology;
-- input hashes;
-- seed;
-- legal frame count and native pixel geometry;
-- prompt and references/guides;
-- output codec settings.
+Rollback is a profile selection, not a CUDA/PyTorch rollback:
 
-Record:
-
-- end-to-end wall time;
-- sampler-only time if available;
-- peak VRAM and RAM;
-- first-run versus hot-model time;
-- motion continuity;
-- prompt/reference/guide adherence;
-- texture and fine structure;
-- terminal-frame stability;
-- any audio-state or masked-edit regression even when audio is not delivered.
-
-The initial ladder is:
-
-```text
-quality-20 / simple / res_multistep
-turbo matching family / nominal steps / simple / res_multistep
-pdd matching pruned family / 8 / simple / res_multistep
-```
-
-For FL2VA, test Turbo 8 before Turbo 4. For Ref2VA, the available official
-Turbo candidate is 4-step. PDD enters only after the updated core reproduces
-the unchanged quality baseline.
-
-## Installation order
-
-1. reconcile clean queue, free disk and current model list;
-2. update core alone to a pinned commit containing PDD and current H3 fixes;
-3. restart and reproduce the unchanged FP8 20-step baselines;
-4. stage one FL2VA `pruned_int8_convrot` trunk while retaining its FP8 fallback;
-5. run the unchanged 20-step graph and record quality/time/memory;
-6. only after success retire the old FL2VA FP8 file;
-7. repeat the same isolated replacement for Ref2VA;
-8. add one Turbo LoRA only; no simultaneous code mutation;
-9. restart/reload model inventory and run the paired FL2VA smoke;
-10. add the matching Ref2VA Turbo file only after FL2VA evidence;
-11. run the unchanged 20-step baseline before adding any PDD weight;
-12. add one pruned PDD conversion and run exactly 8-step `simple`;
-13. retain only profiles whose measured time savings justify their visual cost.
-
-Downloading all three Turbo files consumes about 5.87 GB. Both pruned PDD
-files add about 3.45 GB. Start with one file per active conditioning family and
-preserve the host's disk reserve.
+1. select `quality-20` and remove the LoRA edge from the graph;
+2. verify the queue is idle;
+3. delete an unused accelerator only through Model Control;
+4. never reinstall the retired FP8 trunks unless a measured INT8 regression
+   requires an explicit A/B.

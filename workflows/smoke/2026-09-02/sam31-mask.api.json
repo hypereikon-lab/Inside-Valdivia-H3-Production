@@ -1,0 +1,7 @@
+{
+  "1": {"class_type": "CheckpointLoaderSimple", "inputs": {"ckpt_name": "sam3.1_multiplex_fp16.safetensors"}},
+  "2": {"class_type": "LoadImage", "inputs": {"image": "inside-valdivia-frame-a.png"}},
+  "3": {"class_type": "SAM3_Detect", "inputs": {"model": ["1", 0], "image": ["2", 0], "threshold": 0.5, "refine_iterations": 2, "individual_masks": false, "positive_coords": "[{\"x\":500,\"y\":500}]"}},
+  "4": {"class_type": "MaskToImage", "inputs": {"mask": ["3", 0]}},
+  "5": {"class_type": "SaveImage", "inputs": {"images": ["4", 0], "filename_prefix": "runtime-smoke/2026-09-02/sam31-mask"}}
+}

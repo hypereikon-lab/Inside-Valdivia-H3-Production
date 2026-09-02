@@ -1,6 +1,6 @@
 # Modular ComfyUI extension ecosystem
 
-Checked on 2026-09-01. This document decides which external ComfyUI
+Live-checked on 2026-09-02. This document decides which external ComfyUI
 extensions, official auxiliary weights and optional runtime patches may extend
 the laboratory. It is deliberately organized by capability and data contract,
 not by repository popularity.
@@ -17,18 +17,20 @@ official ComfyUI + official H3 implementation
   -> project graphs, receipts and acceptance evidence
 ```
 
-The 2026-08-31 laboratory capture already exposes official Canny, Depth
-Anything 3, SAM3 video tracking and SDPose nodes. Consequently:
+The live laboratory now exposes official Canny, Depth Anything 3, SAM3 video
+tracking, SDPose, RT-DETR, H3 Fun Control, and current PDD support. KJNodes
+`1.5.0` is enabled and exposes 248 nodes. Consequently:
 
 - do not install another nodepack merely to obtain Canny, depth, pose or video
   mask tracking;
-- add the required official weight only when a workflow is ready to use it;
+- use the already installed, digest-verified official weights through narrow
+  workflow graphs rather than adding duplicate detector packs;
 - use KJNodes for bounded generic mask, batch and diagnostic
   utilities;
 - make compatible Turbo/PDD profiles first-class iteration modes while
   retaining the ordinary 20-step quality baseline;
-- update core in isolation before adopting the newly merged H3 Fun Control
-  model patch;
+- keep the technically validated H3 Fun Control route isolated until its
+  Canny/depth/pose and masked-inpaint outputs receive visual verdicts;
 - consider `comfyui_controlnet_aux` only for a modality absent from core, such
   as HED, MLSD or DWPose, and only after native Canny/depth/pose tests;
 - keep VideoHelperSuite and rgthree outside the first installation wave;
@@ -42,27 +44,24 @@ audited most reliably: official ComfyUI and small CAUCE data operations.
 
 ## Current official baseline
 
-The following nodes are present in the saved live `/object_info` capture from
-2026-08-31. A node being present proves its schema is available; it does not
-prove that its optional model weight is already on disk.
+The following nodes are present in the live `/object_info` surface. The model
+column distinguishes schema presence from the now verified local artifact.
 
-| Capability | Live official nodes | Data produced | Additional nodepack needed? |
+| Capability | Live official nodes | Verified local model | Additional nodepack? |
 | --- | --- | --- | --- |
-| H3 FL2VA | `MiniMaxH3ImageToVideo` | native H3 conditioning/state | no |
-| H3 Ref2VA | `MiniMaxH3ReferenceToVideo` | native H3 conditioning/state | no |
-| exact visual guides | `MiniMaxH3AddGuide` | target-aligned H3 guide | no |
-| Qwen image references | `MiniMaxH3AddQwenImageReference` | semantic conditioning | no |
-| timed Qwen references | `MiniMaxH3AddTimedImageReference`, `MiniMaxH3AddTimedVideoReference` | time-addressed semantic conditioning | no |
-| edge map | `Canny` | `IMAGE` | no |
-| depth/geometry | `LoadDA3Model`, `DA3Inference`, `DA3Render` | `DA3_GEOMETRY`, then `IMAGE` | no; weight required |
-| object mask detection | `SAM3_Detect` | `MASK`, bounding boxes | no; weight required |
-| video mask propagation | `SAM3_VideoTrack`, `SAM3_TrackToMask`, `SAM3_TrackPreview` | tracked `MASK` batch | no; weight required |
-| human pose map | `SDPoseKeypointExtractor`, `SDPoseDrawKeypoints`, `SDPoseFaceBBoxes` | keypoints, bounding boxes, then `IMAGE` | no; weights required |
-| video load/save/slicing | core video nodes plus `Video Slice` | `VIDEO`, `IMAGE`, audio | no |
+| H3 FL2VA | `MiniMaxH3ImageToVideo` | pruned INT8 trunk | no |
+| H3 Ref2VA | `MiniMaxH3ReferenceToVideo` | pruned INT8 trunk | no |
+| exact visual guides | `MiniMaxH3AddGuide` | none | no |
+| Qwen image/timed references | official H3 Qwen reference nodes | existing Qwen encoder | no |
+| edge map | `Canny` | none | no |
+| depth/geometry | `LoadDA3Model`, `DA3Inference`, `DA3Render` | DA3 mono-large | no |
+| object/video mask | `SAM3_Detect`, `SAM3_VideoTrack`, `SAM3_TrackToMask` | SAM 3.1 multiplex FP16 | no |
+| human pose | `RTDETR_detect`, `SDPoseKeypointExtractor`, `SDPoseDrawKeypoints` | RT-DETR + SDPose FP16 | no |
+| structural control/inpaint | `ModelPatchLoader`, `MiniMaxH3FunControlNetApply` | pruned INT8 Fun Control | no |
+| video load/save/slicing | core video nodes, `Video Slice`, `VideoTrim`, `VideoCrop` | none | no |
 
-Current upstream core also contains `VideoTrim` and `VideoCrop`; they were
-merged after the captured laboratory revision. Their absence is a core-version
-gate, not a reason by itself to install an additional video suite.
+`VideoTrim` and `VideoCrop` are present in the live core. Their ordinary media
+semantics remain separate from CAUCE exact native-state range operations.
 
 ## Responsibility and datatype boundaries
 
@@ -126,20 +125,22 @@ use explicit links and ordinary Comfy datatypes.
 | HED/MLSD/DWPose structural generation | control-map `IMAGE` not supplied by current core | `comfyui_controlnet_aux` or externally prepared control video | late optional pack |
 | exact frame/index batch assembly | indexed `IMAGE` batch operations | core first, selected KJNodes if materially clearer | bounded whitelist |
 | lower peak H3 memory | FFN or attention chunking | KJ H3 experimental patches | conditional, never default |
-| faster sampling | Turbo or PDD LoRA matched to trunk and FL2VA/Ref2VA family | ordinary core LoRA path; PDD requires newer core | named iteration profile, no nodepack |
+| faster sampling | Turbo or PDD LoRA matched to trunk and FL2VA/Ref2VA family | ordinary live core LoRA path | named iteration profile, no nodepack |
 | remote authoring ergonomics | previews, selection, graph navigation | core first; KJ UI helpers; VHS/rgthree only after measured need | defer broad UI packs |
 
 ## Module A: KJNodes, bounded adoption
 
 Repository: <https://github.com/kijai/ComfyUI-KJNodes>
 
-Observed source lock:
+Live package identity:
 
 ```text
-repository  kijai/ComfyUI-KJNodes
-commit      e8e88f7c88e3f6205b122f5de87e69a09fbce5ac
-license     GPL-3.0
-package     1.5.0
+repository   kijai/ComfyUI-KJNodes
+distribution Manager registry
+package      1.5.0
+state        enabled
+live nodes   248
+license      GPL-3.0
 ```
 
 KJNodes is the strongest first community addition because it supplies several
@@ -287,8 +288,9 @@ different cost/outputs:
 | mono large | 1,336,748,056 | higher-detail relative depth and sky |
 | metric large | 1,336,748,056 | metric-depth specialization |
 
-Start with `base` for structural-control evaluation unless the official H3
-example requires a different variant. Do not download all four. DA3's
+The live host uses only `mono large`; it loaded, inferred, and rendered depth
+successfully. Do not download the other variants without a measured need.
+DA3's
 multi-view geometry is interesting research data but is not automatically an
 H3 motion-control mechanism; the immediate production interface is the
 rendered depth `IMAGE`.
@@ -310,12 +312,21 @@ zero-weight Canny baseline or the more general depth experiment.
 
 ## Module C: official H3 Fun Control model patch
 
-Model: <https://huggingface.co/alibaba-pai/MiniMax-H3-Fun-Controlnet-Union>
+The live model is Kijai's curve-form pruned INT8 conversion of the Alibaba PAI
+Fun Control Union checkpoint:
 
-The single 6,806,843,904-byte checkpoint supports Canny, depth, HED, MLSD,
-pose and masked video inpainting. It attaches a control branch to five of H3's
-50 transformer blocks. In current ComfyUI it is applied as an H3 model patch,
-not as a generic classic ControlNet.
+```text
+file      minimax_h3_fun_controlnet_union_pruned_int8_convrot.safetensors
+bytes     2,296,635,360
+revision  c79bdb788d0f77460c3952a4c1ae3b3b7d71a4c8
+sha256    9c645c0a308c8af361efd43b409710f6f8fec0db297c29503e141a84991fed0c
+```
+
+The original 6,806,843,904-byte full-width AdaLN artifact is incompatible with
+the selected pruned curve-form trunks and the current loader. Its smoke failed
+inside `ModelPatchLoader`; it was removed and must not be reintroduced. The
+correct pruned INT8 artifact loaded and sampled successfully through the
+official H3 model-patch route.
 
 The official node accepts:
 
@@ -349,9 +360,10 @@ source video -> core SDPose -> pose IMAGE -----------┘   -> ordinary official 
 Control video is not a semantic reference and not a preservation mask. It
 constrains spatial/temporal structure while H3 still generates appearance.
 References, first/last frames and guides remain separate conditioning channels.
-The recently merged upstream compatibility fix means combined reference plus
-Fun Control is plausible, but it still needs a live graph on the exact updated
-core before entering the canonical profile.
+The current core exposes the combined surface. Reference plus control still
+needs its own fixed-seed visual characterization before entering a canonical
+profile; the successful control smoke proves compatibility, not useful control
+adherence.
 
 ### Masked-inpaint composition
 
@@ -434,17 +446,14 @@ execution profile over an existing operation, not a new operation or nodepack.
 
 - official workflow templates already expose compatible 4-step/8-step H3
   Turbo LoRAs;
-- ComfyUI merged support for H3 PDD LoRAs;
+- ComfyUI exposes support for H3 PDD LoRAs on the live host;
 - Alibaba PAI publishes separate official 8-step PDD LoRAs for FL2VA and
   Ref2VA.
 
-The installed FP8-scaled trunks are incidental, not a constraint. Given the
-captured RTX 5090, PyTorch `2.13.0+cu130` and `comfy-kitchen 0.2.31`, the target
-baseline replaces both with the official preferred pruned `int8_convrot`
-FL2VA/Ref2VA trunks. Turbo is the first acceleration adoption because it uses
-the ordinary LoRA loader and official templates demonstrate it with that
-quantized trunk strategy. PDD enters after a pinned core update because its
-output-head bank support was merged after the captured runtime.
+Both FP8-scaled trunks have been replaced by the pruned `int8_convrot` FL2VA
+and Ref2VA trunks. All three Turbo and both pruned PDD files are installed,
+digest-verified, and have passed exact-family technical sampling. They remain
+profiles over official nodes, not a nodepack dependency.
 
 Every operation may select a visible profile:
 
@@ -504,18 +513,19 @@ mutation.
 
 ### `h3-fast-pdd`
 
-- pinned core containing PDD output-head-bank support;
+- live core containing PDD output-head-bank support;
 - matching pruned Comfy-format FL2VA or Ref2VA PDD LoRA;
 - exactly 8 steps, `simple`, LoRA strength 1.0;
 - no simultaneous Turbo or KJ model patch.
 
-Purpose: second fast candidate after core update and unchanged-baseline smoke.
+Purpose: second fast candidate; visual comparison with `quality-20` is still
+required.
 
 ### `h3-structural-canny`
 
-- updated/pinned core containing official H3 Fun Control support and reference
-  compatibility fix;
-- 6.8 GB H3 Fun Control Union model patch;
+- live core containing official H3 Fun Control support and reference
+  compatibility fixes;
+- 2.30 GB pruned INT8 H3 Fun Control Union model patch;
 - existing core Canny.
 
 Purpose: lowest-dependency proof that structural control works.
@@ -523,7 +533,7 @@ Purpose: lowest-dependency proof that structural control works.
 ### `h3-structural-depth`
 
 - `h3-structural-canny`;
-- one pinned DA3 weight, preferably `base` for the first cost/quality test.
+- the installed DA3 mono-large weight.
 
 Purpose: geometry-following motion/camera structure without hard edges.
 
@@ -565,14 +575,12 @@ Approximate incremental model storage:
 | one Comfy-format Turbo LoRA | 1.96 GB |
 | one pruned Comfy-format PDD LoRA | 1.73 GB |
 | SAM3 tracked masks | 1.75 GB |
-| H3 Fun Control Union | 6.81 GB |
-| DA3 base | 0.54 GB |
-| DA3 mono large instead of base | 1.34 GB |
+| H3 Fun Control Union, pruned INT8 | 2.30 GB |
+| DA3 mono large | 1.34 GB |
 | SDPose + RT-DETR | 2.04 GB |
 
-A useful structural stack of SAM3 + Fun Control + DA3 base costs roughly 9.1 GB
-before filesystem overhead. One Turbo file brings that to roughly 11.1 GB; one
-PDD profile instead brings it to roughly 10.8 GB. All three Turbo files consume
+A useful structural stack of SAM3 + pruned Fun Control + DA3 mono-large costs
+roughly 5.38 GB before filesystem overhead. All three Turbo files consume
 about 5.87 GB, while both pruned PDD files consume about 3.45 GB. Do not stage
 every accelerator before its conditioning family is actually used: model
 storage, input assets, temporary frames and outputs share the same disk.
@@ -591,43 +599,23 @@ Each wave is independently reversible and produces evidence before the next.
 4. distinguish available node schema from actual weight presence;
 5. retain one known-good core H3 smoke.
 
-### Wave 1: isolated core update
+### Waves 1–4: completed technical installation
 
-1. update core to one pinned public commit containing PDD, H3 Fun Control and
-   reference/control compatibility support;
-2. do not add or replace a model in the same mutation;
-3. restart, capture `/object_info` and import errors;
-4. reproduce the existing FP8 20-step FL2VA and Ref2VA baseline.
+Completed independently and reconciled after each mutation: current core,
+INT8 FL2VA/Ref2VA trunks, Turbo/PDD files, KJNodes, SAM3, DA3 mono-large,
+SDPose/RT-DETR, and the compatible pruned Fun Control patch. Every model has a
+matching digest and at least one bounded technical load/execute smoke. The
+first full-width Fun Control attempt failed compatibility validation and was
+removed before the corrected artifact was installed.
 
-### Wave 2: chosen trunks and Turbo/PDD
+### Next wave: visual characterization
 
-1. stage FL2VA pruned `int8_convrot`, reproduce the 20-step graph, then retire
-   its FP8 predecessor;
-2. repeat independently for Ref2VA;
-3. add only the FL2VA Turbo 8-step Comfy-format LoRA;
-4. run a paired 20-step versus nominal 8-step graph with identical inputs;
-5. add FL2VA 4-step only after the 8-step result is understood;
-6. add the separate Ref2VA 4-step weight only when a Ref2VA graph is ready;
-7. add matching pruned PDD 8-step weights in later one-file windows;
-8. retain execution time, peak memory and visual assessment for every profile.
-
-### Wave 3: KJ utilities and tracked-mask operation
-
-1. install pinned KJNodes without its preview path;
-2. verify only mask, selected batch/index and diagnostic nodes;
-3. run one animated continuous-mask graph into CAUCE inspection;
-4. add the SAM3 weight independently;
-5. track a short source clip from a manual first-frame mask;
-6. feed the standard mask through KJ cleanup and CAUCE projection;
-7. compare native masked edit against untracked/static-mask baseline.
-
-### Wave 4: official H3 structural control
-
-1. add the 6.8 GB Fun Control checkpoint in its own weight window;
-2. run Canny control first because it needs no detector weight;
-3. evaluate control strength and start/end ladders;
-4. only after acceptance add DA3 base and test depth control;
-5. test references plus control as a separate graph.
+1. run `quality-20`, Turbo, and PDD with identical production inputs;
+2. test Fun Control no-control/Canny/depth ladders at fixed seed;
+3. test SAM3 propagation on a short real video, then mask cleanup/projection;
+4. test RT-DETR/SDPose on actual human material;
+5. test reference plus structural control separately;
+6. promote nothing from technical smoke without a human visual verdict.
 
 ### Wave 5: production-specific modalities
 
@@ -710,15 +698,9 @@ repo:ckinpdx/ComfyUI-MMH3Tools sort:updated-desc
 
 ## Final recommendation
 
-The next model window should first replace FL2VA FP8 with the pruned
-`int8_convrot` trunk and reproduce the current 20-step graph. After that, add
-only the FL2VA Turbo 8-step LoRA and compare it with the new 20-step baseline.
-This provides immediate iteration speed without installing a nodepack. Repeat
-the trunk/LoRA process independently for Ref2VA. KJNodes follows for generic
-masks/batches/diagnostics; no TAE preview is adopted. SAM3 is the next
-independent weight-only module if tracked edits are immediately useful.
-
-PDD and H3 Fun Control follow after one isolated core update, but as separate
-weight/evidence windows. Control begins with core Canny and then DA3 depth.
-Pose, extra preprocessors, VHS and rgthree remain opt-in modules triggered by a
-named production need, not parts of a default full install.
+Installation is no longer the bottleneck. The host now has the selected INT8
+trunks, every named Turbo/PDD profile, KJ utilities, tracked masks, depth, pose,
+and compatible Fun Control. The next work is fixed-input visual evaluation and
+canonical paired workflow export. Extra preprocessors, VHS, rgthree, preview
+TAEs, and speculative kernel patches remain opt-in responses to a measured
+need, not default dependencies.

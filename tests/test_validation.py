@@ -653,6 +653,7 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertEqual(report["counts"]["locked_control_components"], 5)
         self.assertEqual(report["counts"]["runtime_manifests"], 1)
         self.assertEqual(report["counts"]["runtime_readiness_evaluations"], 2)
+        self.assertEqual(report["counts"]["runtime_smoke_batches"], 1)
         self.assertEqual(report["counts"]["paired_workflows"], 1)
         self.assertEqual(report["counts"]["schema_validated_workflows"], 1)
         self.assertEqual(report["counts"]["visual_assessments"], 3)
@@ -663,14 +664,13 @@ class RepositoryValidationTests(unittest.TestCase):
             report["evidence"]["latest_runtime_manifest_hash"],
             "e97aa6c8e6f449e0f3d0f51fd3921e66c51f763de6d64de3ed9f2474019ba9c9",
         )
-        self.assertEqual(
-            report["evidence"]["ready_runtime_profiles"],
-            ["inside-valdivia-h3-core", "inside-valdivia-h3-full"],
-        )
+        self.assertFalse(report["evidence"]["latest_runtime_manifest_is_current"])
+        self.assertEqual(report["evidence"]["technical_runtime_smokes"], 11)
+        self.assertEqual(report["evidence"]["ready_runtime_profiles"], [])
         self.assertFalse(report["production_ready"])
         self.assertEqual(
             report["next_gate"],
-            "repeat-and-earn-first-accepted-workflow",
+            "capture-content-addressed-runtime-manifest",
         )
 
 

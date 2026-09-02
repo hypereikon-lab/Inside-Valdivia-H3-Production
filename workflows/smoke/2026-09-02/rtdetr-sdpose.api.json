@@ -1,0 +1,9 @@
+{
+  "1": {"class_type": "UNETLoader", "inputs": {"unet_name": "rt_detr_v4-x-hgnet_fp16.safetensors", "weight_dtype": "default"}},
+  "2": {"class_type": "CheckpointLoaderSimple", "inputs": {"ckpt_name": "sdpose_wholebody_fp16.safetensors"}},
+  "3": {"class_type": "LoadImage", "inputs": {"image": "inside-valdivia-frame-a.png"}},
+  "4": {"class_type": "RTDETR_detect", "inputs": {"model": ["1", 0], "image": ["3", 0], "threshold": 0.25, "class_name": "person", "max_detections": 10}},
+  "5": {"class_type": "SDPoseKeypointExtractor", "inputs": {"model": ["2", 0], "vae": ["2", 2], "image": ["3", 0], "batch_size": 1, "bboxes": ["4", 0]}},
+  "6": {"class_type": "SDPoseDrawKeypoints", "inputs": {"keypoints": ["5", 0], "draw_body": true, "draw_hands": true, "draw_face": true, "draw_feet": false, "stick_width": 4, "face_point_size": 3, "score_threshold": 0.3, "draw_head": true}},
+  "7": {"class_type": "SaveImage", "inputs": {"images": ["6", 0], "filename_prefix": "runtime-smoke/2026-09-02/rtdetr-sdpose"}}
+}

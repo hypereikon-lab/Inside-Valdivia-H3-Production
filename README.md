@@ -102,6 +102,7 @@ next required compatibility target.
 - [Expanded H3 capability gates](docs/H3_EXPANDED_CAPABILITIES.md)
 - [Modular ComfyUI extension ecosystem](docs/NODEPACK_ECOSYSTEM.md)
 - [H3 acceleration profiles](docs/ACCELERATION_PROFILES.md)
+- [2026-09-02 live H3 runtime smoke batch](runtime/smokes/2026-09-02-h3-runtime.json)
 - [Native H3/Seedance movement-control research](docs/MOVEMENT_CONTROL_RESEARCH.md)
 - [H3 intent routing and latent operator space](docs/H3_INTENT_ROUTING.md)
 - [Temporal and spatial video enhancement](docs/VIDEO_ENHANCEMENT.md)

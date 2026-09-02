@@ -43,10 +43,12 @@ another preprocessor nodepack. `masked-inpaint` accepts decoded source frames
 and a standard continuous `MASK`. Both remain distinct from semantic
 references, target-aligned guides and native-state denoise masks.
 
-The required core support and 6.8 GB model patch were not present in the
-2026-08-31 live capture. The operation is therefore contract- and
-topology-valid but runtime-gated until an isolated core update, model lock and
-live smoke prove the exact surface.
+The live 2026-09-02 runtime now exposes both official nodes and uses the
+2,296,635,360-byte pruned INT8 curve-form patch compatible with the selected
+INT8 trunks. An exact `control_video` graph loaded, sampled, decoded, and saved
+successfully. This clears the technical runtime gate only: Canny, depth, pose,
+decoded masked-inpaint, and reference-plus-control still require separate
+fixed-input visual verdicts before promotion.
 
 ## Native H3 AV state algebra
 

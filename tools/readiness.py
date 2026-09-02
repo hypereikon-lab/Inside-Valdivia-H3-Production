@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime
 from pathlib import Path
 import sys
 from typing import Any
@@ -23,6 +24,16 @@ def _load_directory(directory: str) -> list[dict[str, Any]]:
         if isinstance(value, dict):
             values.append(value)
     return values
+
+
+def _captured_at(value: dict[str, Any] | None) -> datetime | None:
+    raw = (value or {}).get("captured_at")
+    if not isinstance(raw, str) or not raw:
+        return None
+    try:
+        return datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    except ValueError:
+        return None
 
 
 def build_readiness_report(root: Path = ROOT) -> dict[str, Any]:
@@ -54,16 +65,25 @@ def build_readiness_report(root: Path = ROOT) -> dict[str, Any]:
     compatibility = load_json(root / "runtime" / "compatibility-lock.json")
     runtime_manifests = _load_directory("runtime/manifests")
     runtime_evaluations = _load_directory("runtime/evaluations")
+    runtime_smokes = _load_directory("runtime/smokes")
     latest_runtime_manifest = max(
         runtime_manifests,
         key=lambda value: str(value.get("captured_at", "")),
         default=None,
+    )
+    manifest_time = _captured_at(latest_runtime_manifest)
+    compatibility_time = _captured_at(compatibility)
+    latest_manifest_is_current = bool(
+        manifest_time is not None
+        and compatibility_time is not None
+        and manifest_time >= compatibility_time
     )
     ready_runtime_profiles = sorted(
         value.get("requirements_id")
         for value in runtime_evaluations
         if value.get("schema") == "comfy.runtime-readiness/1"
         and value.get("ready") is True
+        and latest_manifest_is_current
         and value.get("runtime_manifest_hash")
         == (latest_runtime_manifest or {}).get("manifest_hash")
     )
@@ -81,7 +101,7 @@ def build_readiness_report(root: Path = ROOT) -> dict[str, Any]:
         "inside-valdivia-h3-full",
     }
     runtime_ready = required_runtime_profiles <= set(ready_runtime_profiles)
-    if latest_runtime_manifest is None:
+    if latest_runtime_manifest is None or not latest_manifest_is_current:
         next_gate = "capture-content-addressed-runtime-manifest"
     elif not runtime_ready:
         next_gate = "resolve-runtime-requirements"
@@ -114,6 +134,7 @@ def build_readiness_report(root: Path = ROOT) -> dict[str, Any]:
             "live_gate_phases": len(live_gate.get("phases", [])),
             "runtime_manifests": len(runtime_manifests),
             "runtime_readiness_evaluations": len(runtime_evaluations),
+            "runtime_smoke_batches": len(runtime_smokes),
         },
         "evidence": {
             "offline_ready_topologies": sum(plan.get("status") == "offline-ready" for plan in plans),
@@ -129,6 +150,12 @@ def build_readiness_report(root: Path = ROOT) -> dict[str, Any]:
             "rejected_visual_assessments": len(rejected_assessments),
             "latest_runtime_manifest_hash": (latest_runtime_manifest or {}).get(
                 "manifest_hash"
+            ),
+            "latest_runtime_manifest_is_current": latest_manifest_is_current,
+            "technical_runtime_smokes": sum(
+                len(value.get("smokes", []))
+                for value in runtime_smokes
+                if value.get("schema") == "inside-valdivia.runtime-smoke-batch/1"
             ),
             "ready_runtime_profiles": ready_runtime_profiles,
         },

@@ -1,6 +1,6 @@
 # Expanded H3 capability gates
 
-This document records the 2026-09-01 expansion review. It separates native,
+This document records the 2026-09-02 live expansion review. It separates native,
 official, and external H3 capabilities so a promising repository never becomes
 an implicit production dependency.
 
@@ -9,10 +9,10 @@ an implicit production dependency.
 | Capability | Implementation owner | Production status |
 | --- | --- | --- |
 | Keyframes, references, guides, packed AV continuation/completion/editing | Official ComfyUI H3 plus deterministic CAUCE planning/state primitives | Existing core/full gates |
-| Structural video control and masked control inpaint | Official ComfyUI `MiniMaxH3FunControlNetApply` plus Alibaba PAI union model patch | Offline-defined; runtime-gated characterization only |
+| Structural video control and masked control inpaint | Official ComfyUI `MiniMaxH3FunControlNetApply` plus compatible pruned INT8 union model patch | Nodes/model technically smoke-tested; visual characterization pending |
 | Exact packed-sequence inspection | CAUCE, reproducing official `PackedLayout` row arithmetic | Implemented and testable without GPU |
 | Learned 3D latent initialization before an H3 second pass | External public nodepack and separately pinned weight | Isolated A/B only; never a core requirement |
-| Reference plus structural control in one graph | Official ComfyUI work merged through #16020 | Upstream-supported; laboratory core update, schema capture and live characterization pending |
+| Reference plus structural control in one graph | Official ComfyUI work merged through #16020 | Live schema present; exact combined graph and visual characterization pending |
 | Context-window continuation with absolute global position | Unresolved upstream behavior | Do not represent as solved |
 
 CAUCE remains a deterministic low-level layer. It does not vendor the official
@@ -64,19 +64,19 @@ Masked inpaint is a separate characterization. The current merged path treats
 the mask as binary at a `0.5` threshold, so a grayscale mask must not be
 described as continuous influence unless a captured runtime proves otherwise.
 
-Execution is blocked until the `h3-control-experimental` profile validates:
+Technical execution is now unblocked because the `h3-control-experimental`
+profile validates:
 
 - `ModelPatchLoader`;
 - `MiniMaxH3FunControlNetApply`;
-- the exact union model patch;
+- the exact pruned INT8 union model patch;
 - the required CAUCE deterministic nodes;
 - the installed ComfyUI revision and applicable upstream correctness gates.
 
 References/keyframes plus control remain excluded from the materializable
-catalog only because the captured laboratory runtime predates #16020. Current
-upstream supports the combination and also corrects a dynamic-VRAM prefetch
-race. It may enter the catalog after one isolated core update, fresh schema
-capture, mask-correctness checks and a bounded live run.
+catalog because only the individual surfaces have been technically exercised.
+They may enter after an exact combined live run, mask-correctness checks, and a
+separate visual verdict.
 
 ## Learned latent upscale characterization
 
@@ -130,9 +130,8 @@ become part of CAUCE automatically:
   mechanism passes licensing, schema, fixed-seed and visual gates.
 
 Fast iteration uses family-matched Turbo/PDD LoRA profiles through official
-Comfy loading, not a custom-node sampler. Turbo is compatible with the current
-pruned quantized trunk strategy; PDD requires an updated core and the matching
-pruned 8-step conversion. See
+Comfy loading, not a custom-node sampler. All five selected fast profiles are
+installed and technically smoke-tested against the pruned INT8 trunks. See
 [H3 acceleration profiles](ACCELERATION_PROFILES.md).
 
 The exact module classes, observed source locks, whitelist and safe mutation

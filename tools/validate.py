@@ -1508,8 +1508,10 @@ def validate_runtime_requirements_catalog(
     for node_type in ("MiniMaxH3FunControlNetApply", "ModelPatchLoader"):
         if node_type not in control.get("required_node_types", []):
             errors.append(f"{path}: h3-control-experimental must require {node_type}")
-    if "MiniMax-H3-Fun-Controlnet-Union.safetensors" not in control.get("required_models", []):
-        errors.append(f"{path}: h3-control-experimental must require the union model patch")
+    if "minimax_h3_fun_controlnet_union_pruned_int8_convrot.safetensors" not in control.get("required_models", []):
+        errors.append(
+            f"{path}: h3-control-experimental must require the pruned INT8 union model patch"
+        )
     learned = loaded["h3-learned-upscale-experimental"]
     if "MinimaxH3LatentUpscaler3D" not in learned.get("required_node_types", []):
         errors.append(f"{path}: h3-learned-upscale-experimental must require the 3D node")
@@ -2052,6 +2054,153 @@ def validate_rolling_catalog(
     return errors
 
 
+def validate_api_smoke_graph(value: Any, path: Path) -> list[str]:
+    """Validate the portable API graph shape retained for a live smoke."""
+
+    if not isinstance(value, dict) or not value:
+        return [f"{path}: smoke workflow must be a non-empty API graph"]
+    errors: list[str] = []
+    output_nodes = 0
+    for node_id, node in value.items():
+        if not isinstance(node_id, str) or not node_id:
+            errors.append(f"{path}: smoke node ids must be non-empty strings")
+            continue
+        if not isinstance(node, dict):
+            errors.append(f"{path}: smoke node {node_id!r} must be an object")
+            continue
+        class_type = node.get("class_type")
+        inputs = node.get("inputs")
+        if not isinstance(class_type, str) or not class_type:
+            errors.append(f"{path}: smoke node {node_id!r} needs class_type")
+        if not isinstance(inputs, dict):
+            errors.append(f"{path}: smoke node {node_id!r} needs inputs")
+            continue
+        if class_type in {"SaveImage", "SaveVideo"}:
+            output_nodes += 1
+        for input_name, input_value in inputs.items():
+            if not isinstance(input_name, str) or not input_name:
+                errors.append(f"{path}: smoke node {node_id!r} has invalid input name")
+            if (
+                isinstance(input_value, list)
+                and len(input_value) == 2
+                and isinstance(input_value[0], str)
+                and isinstance(input_value[1], int)
+            ):
+                if input_value[0] not in value:
+                    errors.append(
+                        f"{path}: smoke node {node_id!r} links missing node {input_value[0]!r}"
+                    )
+                if input_value[1] < 0:
+                    errors.append(f"{path}: smoke node {node_id!r} has negative output index")
+    if output_nodes != 1:
+        errors.append(f"{path}: smoke graph must have exactly one SaveImage or SaveVideo node")
+    return errors
+
+
+def validate_runtime_smoke_batch(value: Any, path: Path, root: Path) -> list[str]:
+    if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.runtime-smoke-batch/1":
+        return [f"{path}: invalid runtime smoke batch"]
+    errors: list[str] = []
+    runtime = value.get("runtime")
+    if not isinstance(runtime, dict) or runtime.get("queue_idle_at_close") is not True:
+        errors.append(f"{path}: smoke batch must close with an idle queue")
+
+    artifacts = value.get("artifacts")
+    artifact_ids: set[str] = set()
+    artifact_files: set[str] = set()
+    if not isinstance(artifacts, list) or not artifacts:
+        errors.append(f"{path}: smoke batch needs verified artifacts")
+    else:
+        for artifact in artifacts:
+            if not isinstance(artifact, dict):
+                errors.append(f"{path}: malformed smoke artifact")
+                continue
+            artifact_id = artifact.get("id")
+            filename = artifact.get("filename")
+            if not isinstance(artifact_id, str) or not artifact_id or artifact_id in artifact_ids:
+                errors.append(f"{path}: duplicate or invalid smoke artifact id {artifact_id!r}")
+            else:
+                artifact_ids.add(artifact_id)
+            if not isinstance(filename, str) or not filename or filename in artifact_files:
+                errors.append(f"{path}: duplicate or invalid smoke artifact filename {filename!r}")
+            else:
+                artifact_files.add(filename)
+            if not isinstance(artifact.get("bytes"), int) or artifact["bytes"] <= 0:
+                errors.append(f"{path}: artifact {artifact_id!r} needs a positive byte size")
+            if not isinstance(artifact.get("sha256"), str) or not SHA256.fullmatch(
+                artifact["sha256"]
+            ):
+                errors.append(f"{path}: artifact {artifact_id!r} needs a SHA-256 digest")
+            if artifact.get("installed") is not True:
+                errors.append(f"{path}: listed smoke artifact {artifact_id!r} must be installed")
+
+    smokes = value.get("smokes")
+    smoke_ids: set[str] = set()
+    prompt_ids: set[str] = set()
+    workflow_paths: set[Path] = set()
+    uuid_pattern = re.compile(
+        r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+    )
+    if not isinstance(smokes, list) or not smokes:
+        errors.append(f"{path}: smoke batch needs executed smokes")
+    else:
+        for smoke in smokes:
+            if not isinstance(smoke, dict):
+                errors.append(f"{path}: malformed smoke record")
+                continue
+            smoke_id = smoke.get("id")
+            prompt_id = smoke.get("prompt_id")
+            if not isinstance(smoke_id, str) or not smoke_id or smoke_id in smoke_ids:
+                errors.append(f"{path}: duplicate or invalid smoke id {smoke_id!r}")
+            else:
+                smoke_ids.add(smoke_id)
+            if not isinstance(prompt_id, str) or not uuid_pattern.fullmatch(prompt_id):
+                errors.append(f"{path}: smoke {smoke_id!r} needs a prompt UUID")
+            elif prompt_id in prompt_ids:
+                errors.append(f"{path}: duplicate prompt id {prompt_id!r}")
+            else:
+                prompt_ids.add(prompt_id)
+            if smoke.get("status") != "success":
+                errors.append(f"{path}: retained smoke {smoke_id!r} must be successful")
+            if not isinstance(smoke.get("output"), str) or not smoke["output"]:
+                errors.append(f"{path}: smoke {smoke_id!r} needs an output artifact")
+            if not isinstance(smoke.get("evidence"), str) or not smoke["evidence"].startswith(
+                "technical"
+            ):
+                errors.append(f"{path}: smoke {smoke_id!r} must not imply visual acceptance")
+            workflow_value = smoke.get("workflow")
+            if workflow_value is None:
+                continue
+            workflow_path, path_errors = _safe_project_path(
+                workflow_value, path, root, ("workflows", "smoke")
+            )
+            errors.extend(path_errors)
+            if workflow_path is None:
+                continue
+            if not workflow_path.is_file():
+                errors.append(f"{path}: missing smoke workflow {workflow_value!r}")
+                continue
+            workflow_paths.add(workflow_path.resolve())
+            try:
+                workflow = load_json(workflow_path)
+            except (OSError, json.JSONDecodeError) as exc:
+                errors.append(f"{workflow_path}: invalid JSON: {exc}")
+                continue
+            errors.extend(validate_api_smoke_graph(workflow, workflow_path))
+
+    expected_workflows = {
+        item.resolve() for item in (root / "workflows" / "smoke").rglob("*.api.json")
+    }
+    if workflow_paths != expected_workflows:
+        errors.append(f"{path}: smoke batch and smoke workflow directory differ")
+    interpretation = value.get("interpretation")
+    if not isinstance(interpretation, dict) or set(interpretation) != {
+        "technical_success", "visual_acceptance"
+    }:
+        errors.append(f"{path}: smoke evidence boundary is incomplete")
+    return errors
+
+
 def validate_repository(root: Path = ROOT) -> list[str]:
     errors: list[str] = []
     for schema_path in sorted((root / "schemas").glob("*.json")):
@@ -2163,6 +2312,13 @@ def validate_repository(root: Path = ROOT) -> list[str]:
             ),
         )
     )
+    for smoke_path in sorted((root / "runtime" / "smokes").glob("*.json")):
+        try:
+            smoke_batch = load_json(smoke_path)
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(f"{smoke_path}: invalid JSON: {exc}")
+            continue
+        errors.extend(validate_runtime_smoke_batch(smoke_batch, smoke_path, root))
     acceptance_path = root / "acceptance" / "catalog.json"
     acceptance_catalog = load_json(acceptance_path)
     errors.extend(

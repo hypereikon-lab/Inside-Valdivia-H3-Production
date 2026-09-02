@@ -254,18 +254,19 @@ evidence:
 | ComfyUI PR #15972 | open | audio VAE crop correction; relevant to runtime correctness even though project delivery discards H3 audio |
 
 The Fun ControlNet checkpoint adds Canny, depth, HED, MLSD, pose and
-video-inpainting control. One upstream route is now merged, including the
-reference/keyframe compatibility follow-up, but the 2026-08-31 laboratory
-capture does not expose that surface. No canonical graph or model download is
-committed until the shared core is updated in isolation and mask behavior is
-verified against #15988, #15978 and #15981.
+video-inpainting control. The 2026-09-02 laboratory exposes the official nodes
+and has technically sampled the compatible pruned INT8 curve-form patch. The
+original full-width AdaLN artifact was proven incompatible and removed. No
+control variant becomes canonical until its exact conditioning path and mask
+behavior receive fixed-input visual review.
 
 ## Community references requiring separate evaluation
 
-The following mechanisms are plausible additions, not present capabilities:
+The following mechanisms remain plausible additions or unpromoted capabilities:
 
 - Qwen-only time-addressed image/video references that do not consume native
-  H3 reference slots;
+  H3 reference slots; their optional nodepack is installed but is not a
+  production dependency after the rejected workflow experiment;
 - learned H3 latent spatial upscaling followed by a second sampling pass;
 - direct NestedTensor-aware latent upscaling/re-noising;
 - motion-context continuation that carries exact latent tail state;
@@ -280,8 +281,8 @@ because it exists.
 Generic external capabilities are classified separately in
 [Modular ComfyUI extension ecosystem](NODEPACK_ECOSYSTEM.md). The captured core
 already exposes Canny, Depth Anything 3, SAM3 video tracking and SDPose, so
-those capabilities require selected official weights rather than additional
-nodepacks. KJNodes supplies a bounded mask/preview/diagnostic layer.
+those capabilities use the selected official weights rather than additional
+nodepacks. KJNodes `1.5.0` supplies a bounded mask/batch/diagnostic layer.
 `controlnet_aux` is reserved for absent modalities such as HED, MLSD or DWPose;
 VHS and rgthree remain optional authoring helpers. None is promoted into the
 core H3 data model.
