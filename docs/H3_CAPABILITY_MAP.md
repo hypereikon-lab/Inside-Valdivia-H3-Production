@@ -132,8 +132,12 @@ that sampler logic; it may only construct exact masks and native target state.
 ### Prompt embeddings and PDD
 
 Prompt embedding syntax is released, but no project workflow currently needs
-it. PDD acceleration LoRAs were merged after `v0.34.0`; acceleration is not a
-current project goal and is not part of the canonical suite.
+it. Fast iteration is now an explicit execution concern. Turbo uses ordinary
+LoRA loading on the current pruned trunks; PDD acceleration support was merged
+after `v0.34.0` and therefore remains gated by a core update. Neither creates a
+new operation: invocations select a visible quality/Turbo/PDD profile while the
+20-step graph remains the acceptance baseline. Exact compatibility rules are in
+[H3 acceleration profiles](ACCELERATION_PROFILES.md).
 
 ## CAUCE's remaining role
 
@@ -294,7 +298,8 @@ The canonical suite does not include:
 - trained adapters, style LoRAs, identity LoRAs, or full fine-tuning as present
   production capabilities; two explicitly gated H3 enhancement-LoRA research
   recipes are retained separately in [`TRAINING.md`](TRAINING.md);
-- acceleration, streaming or step-skipping as production goals;
+- streaming or arbitrary step-skipping. Acceleration is allowed only through
+  named, family-matched Turbo/PDD profiles with a retained quality baseline;
 - procedural latent warps, sigma transport, depth advection or other failed
   sampler-forcing experiments;
 - a second timeline or visual application outside ComfyUI;

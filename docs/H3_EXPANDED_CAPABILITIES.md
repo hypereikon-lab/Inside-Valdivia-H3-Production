@@ -114,9 +114,9 @@ content-addressed model, clean queue, sufficient disk reserve, and a fresh
 External packs extend standard Comfy datatypes around this surface; they do not
 become part of CAUCE automatically:
 
-- KJNodes may supply generic continuous-mask authoring and a low-cost H3
-  preview. Its attention and feed-forward patches are conditional OOM tools,
-  never defaults;
+- KJNodes may supply generic continuous-mask authoring, selected batch/index
+  transforms and diagnostics. TAE preview is intentionally not adopted. Its
+  attention and feed-forward patches are conditional OOM tools, never defaults;
 - the captured core already supplies Canny, official Depth Anything 3, SAM3
   video mask tracking and SDPose nodes. Their optional official weights are
   admitted independently of any community nodepack;
@@ -128,6 +128,12 @@ become part of CAUCE automatically:
   graph dependencies;
 - broad or rapidly changing H3 packs remain research sources until one narrow
   mechanism passes licensing, schema, fixed-seed and visual gates.
+
+Fast iteration uses family-matched Turbo/PDD LoRA profiles through official
+Comfy loading, not a custom-node sampler. Turbo is compatible with the current
+pruned quantized trunk strategy; PDD requires an updated core and the matching
+pruned 8-step conversion. See
+[H3 acceleration profiles](ACCELERATION_PROFILES.md).
 
 The exact module classes, observed source locks, whitelist and safe mutation
 sequence are defined in [Modular ComfyUI nodepack ecosystem](NODEPACK_ECOSYSTEM.md).

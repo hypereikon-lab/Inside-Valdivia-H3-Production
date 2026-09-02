@@ -50,7 +50,9 @@ changes, not inferred from workflow screenshots:
 - [Official Comfy Registry publishing guide](https://docs.comfy.org/registry/publishing)
 - [KJNodes](https://github.com/kijai/ComfyUI-KJNodes)
 - [KJNodes MiniMax H3 implementation](https://github.com/kijai/ComfyUI-KJNodes/blob/main/nodes/minimax_nodes.py)
-- [Kijai MiniMax H3 TAE](https://huggingface.co/Kijai/MiniMax-H3-TAE/tree/main)
+- [Comfy-Org MiniMax H3 repack and Comfy-format Turbo LoRAs](https://huggingface.co/Comfy-Org/MiniMax-H3)
+- [LightX2V MiniMax H3 Turbo LoRAs](https://huggingface.co/lightx2v/Minimax-h3-Turbo)
+- [Kijai converted pruned PDD LoRAs](https://huggingface.co/Kijai/MiniMax-H3-experimental/tree/main/loras)
 - [ComfyUI ControlNet Auxiliary Preprocessors](https://github.com/Fannovel16/comfyui_controlnet_aux)
 - [VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite)
 - [rgthree-comfy](https://github.com/rgthree/rgthree-comfy)
@@ -112,6 +114,8 @@ See [H3 intent routing and latent operator space](H3_INTENT_ROUTING.md) for the
 architecture-derived operator grammar and the boundary between released,
 near-native, model-patch, training-required and rejected interventions.
 
-See [Modular ComfyUI nodepack ecosystem](NODEPACK_ECOSYSTEM.md) for the
-external-pack adoption classes, exact observed KJNodes/TAE locks, node
-whitelist, installation protocol and developer watch list.
+See [Modular ComfyUI extension ecosystem](NODEPACK_ECOSYSTEM.md) for the
+external-pack adoption classes, KJNodes whitelist, official auxiliary weights,
+installation protocol and developer watch list. See
+[H3 acceleration profiles](ACCELERATION_PROFILES.md) for family-matched
+Turbo/PDD execution modes.
