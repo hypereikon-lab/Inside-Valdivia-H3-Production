@@ -1,12 +1,12 @@
 {
   "schema": "inside-valdivia.compatibility-lock/1",
-  "captured_at": "2026-09-01T19:35:45-04:00",
+  "captured_at": "2026-09-01T21:19:57-04:00",
   "components": {
     "cauce": {
       "repository": "https://github.com/hypereikon-lab/ComfyUI-Cauce",
       "version": "6.1.0",
-      "commit": "b3559f564304f8793bfba4db15782dfb5cc25add",
-      "tree": "67fcc66393c081e6892ab186ae11a78e15ce71cc",
+      "commit": "c83cb162e39b6594c371b445af70388d9db892b4",
+      "tree": "8a9d49a62db8327bf0615c591d98979e2a6f7342",
       "metadata_sha256": "66c5af45df007b2234c0685e9d55c0208e05665352cbccaf899c342b66445697",
       "distribution": "registry-prepared-unpublished",
       "registry_node_id": "cauce"
@@ -37,19 +37,28 @@
       "metadata_sha256": "d34880b767b711457229c3ab1b2325fee4fae6ca6437107ae780509833374dfd",
       "distribution": "public-git-extension",
       "registry_node_id": null
+    },
+    "model_control": {
+      "repository": "https://github.com/hypereikon-lab/ComfyUI-Model-Control",
+      "version": "1.1.0",
+      "commit": "ab6c378a4453e558a599ccd6fc6a2318bd2af351",
+      "tree": "9ade9f5e1fd3a32a93159050689ab4408fafda79",
+      "metadata_sha256": "9dc66c3e8600d2c0a754aa40261abbf28d27fa0792f3736df4e53846693e6db1",
+      "distribution": "public-git-extension",
+      "registry_node_id": null
     }
   },
   "platform": {
     "core_profile": {
-      "minimum_comfyui": "0.33.0",
-      "basis": "last-live-schema"
+      "minimum_comfyui": "0.34.0",
+      "basis": "2026-09-01-live-schema-and-smoke"
     },
     "full_profile": {
-      "minimum_comfyui": "0.33.0",
-      "basis": "2026-08-31-live-schema-and-requirements-evaluation"
+      "minimum_comfyui": "0.34.0",
+      "basis": "2026-09-01-live-schema-and-int8-smoke"
     },
     "frontend": {
-      "last_live_tested": "1.49.6",
+      "last_live_tested": "1.51.9",
       "next_compatibility_target": "1.53.2",
       "target_state": "requires-live-diagnostic"
     },

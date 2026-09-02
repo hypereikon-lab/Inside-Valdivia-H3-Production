@@ -65,6 +65,6 @@ python3 tools/verify_cauce_lock.py ../ComfyUI-Cauce
 python3 tools/sync_cauce_contracts.py ../ComfyUI-Cauce --check
 python3 tools/verify_component_locks.py \
   ../ComfyUI-Cauce ../ComfyUI-Runtime-Control ../ComfyUI-Workspace-Control \
-  ../ComfyUI-Repository-Control
+  ../ComfyUI-Repository-Control ../ComfyUI-Model-Control
 git diff --check
 ```

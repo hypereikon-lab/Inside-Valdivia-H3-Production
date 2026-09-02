@@ -292,6 +292,7 @@ def validate_compatibility_lock(
     runtime_commit: str,
     workspace_commit: str,
     repository_control_commit: str,
+    model_control_commit: str,
 ) -> list[str]:
     if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.compatibility-lock/1":
         return [f"{path}: invalid compatibility lock"]
@@ -306,11 +307,12 @@ def validate_compatibility_lock(
         "runtime_control": runtime_commit,
         "workspace_control": workspace_commit,
         "repository_control": repository_control_commit,
+        "model_control": model_control_commit,
     }
     if not isinstance(components, dict) or set(components) != set(expected_commits):
         errors.append(
             f"{path}: compatibility components must be cauce, runtime_control, "
-            "workspace_control, repository_control"
+            "workspace_control, repository_control, model_control"
         )
     else:
         expected_fields = {
@@ -1530,13 +1532,17 @@ def validate_live_gate(
     errors: list[str] = []
     source_locks = value.get("source_locks")
     if not isinstance(source_locks, dict) or set(source_locks) != {
-        "cauce_commit", "runtime_commit", "workspace_commit", "repository_control_commit"
+        "cauce_commit", "runtime_commit", "workspace_commit", "repository_control_commit",
+        "model_control_commit"
     }:
         errors.append(f"{path}: live gate source locks are incomplete")
     else:
         if source_locks["cauce_commit"] != cauce_commit:
             errors.append(f"{path}: live gate CAUCE commit does not match operation lock")
-        for name in ("runtime_commit", "workspace_commit", "repository_control_commit"):
+        for name in (
+            "runtime_commit", "workspace_commit", "repository_control_commit",
+            "model_control_commit"
+        ):
             if not isinstance(source_locks[name], str) or not GIT_SHA.fullmatch(source_locks[name]):
                 errors.append(f"{path}: {name} must be a full Git SHA")
     runtime_profiles = value.get("runtime_profiles")
@@ -2151,6 +2157,9 @@ def validate_repository(root: Path = ROOT) -> list[str]:
             workspace_commit=live_gate.get("source_locks", {}).get("workspace_commit"),
             repository_control_commit=live_gate.get("source_locks", {}).get(
                 "repository_control_commit"
+            ),
+            model_control_commit=live_gate.get("source_locks", {}).get(
+                "model_control_commit"
             ),
         )
     )

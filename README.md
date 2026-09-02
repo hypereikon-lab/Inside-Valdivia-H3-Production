@@ -125,6 +125,6 @@ python3 -m unittest discover -s tests -v
 python3 tools/verify_cauce_lock.py ../ComfyUI-Cauce
 python3 tools/verify_component_locks.py \
   ../ComfyUI-Cauce ../ComfyUI-Runtime-Control ../ComfyUI-Workspace-Control \
-  ../ComfyUI-Repository-Control
+  ../ComfyUI-Repository-Control ../ComfyUI-Model-Control
 git diff --check
 ```

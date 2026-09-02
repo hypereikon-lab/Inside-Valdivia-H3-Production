@@ -281,13 +281,17 @@ class RepositoryValidationTests(unittest.TestCase):
                 repository_control_commit=live_gate["source_locks"][
                     "repository_control_commit"
                 ],
+                model_control_commit=live_gate["source_locks"]["model_control_commit"],
             ),
             [],
         )
-        self.assertEqual(lock["platform"]["full_profile"]["minimum_comfyui"], "0.33.0")
+        self.assertEqual(lock["platform"]["full_profile"]["minimum_comfyui"], "0.34.0")
         self.assertEqual(
             set(lock["components"]),
-            {"cauce", "runtime_control", "workspace_control", "repository_control"},
+            {
+                "cauce", "runtime_control", "workspace_control",
+                "repository_control", "model_control"
+            },
         )
         self.assertEqual(
             lock["components"]["workspace_control"]["distribution"],
@@ -646,7 +650,7 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertEqual(report["counts"]["materialization_plans"], 35)
         self.assertEqual(report["counts"]["graph_archetypes"], 32)
         self.assertEqual(report["counts"]["binding_profiles"], 35)
-        self.assertEqual(report["counts"]["locked_control_components"], 4)
+        self.assertEqual(report["counts"]["locked_control_components"], 5)
         self.assertEqual(report["counts"]["runtime_manifests"], 1)
         self.assertEqual(report["counts"]["runtime_readiness_evaluations"], 2)
         self.assertEqual(report["counts"]["paired_workflows"], 1)

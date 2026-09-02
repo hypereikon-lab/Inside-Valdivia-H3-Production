@@ -69,11 +69,11 @@ def verify_components(
 
 
 def main(argv: list[str]) -> int:
-    if len(argv) != 5:
+    if len(argv) != 6:
         print(
             "usage: verify_component_locks.py /path/to/ComfyUI-Cauce "
             "/path/to/ComfyUI-Runtime-Control /path/to/ComfyUI-Workspace-Control "
-            "/path/to/ComfyUI-Repository-Control",
+            "/path/to/ComfyUI-Repository-Control /path/to/ComfyUI-Model-Control",
             file=sys.stderr,
         )
         return 2
@@ -82,6 +82,7 @@ def main(argv: list[str]) -> int:
         "runtime_control": Path(argv[2]).resolve(),
         "workspace_control": Path(argv[3]).resolve(),
         "repository_control": Path(argv[4]).resolve(),
+        "model_control": Path(argv[5]).resolve(),
     }
     errors = verify_components(ROOT, checkouts)
     if errors:

@@ -1,0 +1,11 @@
+{
+  "schema": "inside-valdivia.remote-install-journal/1",
+  "component": "ComfyUI-Model-Control",
+  "source_url": "https://github.com/hypereikon-lab/ComfyUI-Model-Control",
+  "source_visibility": "public",
+  "default_branch": "main",
+  "expected_commit": "cd8ed3811720c05b26675f824e43dd6212b44a83",
+  "recovery_channel": "external-operator",
+  "state": "reconciled-installed",
+  "notes": "Single first-install request only. Reconcile Manager inventory after any timeout; never auto-retry."
+}
