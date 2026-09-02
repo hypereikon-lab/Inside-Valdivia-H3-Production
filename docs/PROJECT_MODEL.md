@@ -5,13 +5,14 @@ operations. It does not add an image ontology or interpret media content.
 
 ## Capability families
 
-The twelve locked operations form three non-sequential families:
+The thirteen locked operations form three non-sequential families:
 
 ```text
 H3 conditioning grammar
   generate.keyframed
   generate.from_references
   generate.with_guides
+  generate.with_control
 
 native H3 AV state algebra
   continue.native_av

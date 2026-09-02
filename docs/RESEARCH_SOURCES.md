@@ -11,8 +11,12 @@ changes, not inferred from workflow screenshots:
 - [ComfyUI PR #15697: MiniMax H3 prompt embeddings](https://github.com/Comfy-Org/ComfyUI/pull/15697)
 - [ComfyUI PR #15908: MiniMax H3 PDD LoRA support](https://github.com/Comfy-Org/ComfyUI/pull/15908)
 - [ComfyUI PR #15735: proposed native H3 AV latent builder](https://github.com/Comfy-Org/ComfyUI/pull/15735)
-- [ComfyUI PR #15860: proposed H3 Fun ControlNet support](https://github.com/Comfy-Org/ComfyUI/pull/15860)
-- [ComfyUI PR #15975: proposed H3 ControlNet model-patch path](https://github.com/Comfy-Org/ComfyUI/pull/15975)
+- [ComfyUI PR #15860: superseded H3 Fun ControlNet proposal](https://github.com/Comfy-Org/ComfyUI/pull/15860)
+- [ComfyUI PR #15975: merged H3 ControlNet model-patch path](https://github.com/Comfy-Org/ComfyUI/pull/15975)
+- [ComfyUI PR #16020: merged reference/keyframe control support and dynamic-VRAM prefetch correction](https://github.com/Comfy-Org/ComfyUI/pull/16020)
+- [ComfyUI PR #15988: pending H3 mask-velocity conversion correction](https://github.com/Comfy-Org/ComfyUI/pull/15988)
+- [ComfyUI issue #15978: H3 masking regression report](https://github.com/Comfy-Org/ComfyUI/issues/15978)
+- [ComfyUI issue #15981: H3 mask grid-artifact report](https://github.com/Comfy-Org/ComfyUI/issues/15981)
 - [ComfyUI PR #15808: merged H3 special-token fix](https://github.com/Comfy-Org/ComfyUI/pull/15808)
 - [ComfyUI issue #15805: prompt-dependence failure report](https://github.com/Comfy-Org/ComfyUI/issues/15805)
 - [ComfyUI PR #15983: proposed H3 memory-estimation correction](https://github.com/Comfy-Org/ComfyUI/pull/15983)
@@ -39,6 +43,12 @@ changes, not inferred from workflow screenshots:
 - [ComfyUI frontend workflow service](https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/platform/workflow/core/services/workflowService.ts)
 - [Official Comfy Registry metadata specification](https://docs.comfy.org/registry/specifications)
 - [Official Comfy Registry publishing guide](https://docs.comfy.org/registry/publishing)
+- [KJNodes](https://github.com/kijai/ComfyUI-KJNodes)
+- [KJNodes MiniMax H3 implementation](https://github.com/kijai/ComfyUI-KJNodes/blob/main/nodes/minimax_nodes.py)
+- [Kijai MiniMax H3 TAE](https://huggingface.co/Kijai/MiniMax-H3-TAE/tree/main)
+- [ComfyUI ControlNet Auxiliary Preprocessors](https://github.com/Fannovel16/comfyui_controlnet_aux)
+- [VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite)
+- [rgthree-comfy](https://github.com/rgthree/rgthree-comfy)
 
 Inspected community implementations are design references, never runtime
 dependencies or behavioral proof:
@@ -65,9 +75,11 @@ primitives. Community techniques become production capabilities only after
 their mechanism is reproduced transparently and live evidence is retained.
 
 Learned latent upscalers remain research references, not dependencies of the
-current 24-node CAUCE surface. The still-open H3 Fun ControlNet integrations
-are likewise deferred; neither is represented as an implemented production
-operation.
+current 28-node CAUCE surface. H3 Fun ControlNet and reference/keyframe-plus-
+control support are merged upstream through #15975 and #16020, but the captured
+laboratory runtime predates those changes. They remain runtime-gated rather
+than claimed as installed production capabilities; the open mask-correctness
+gates also require live characterization.
 
 The official source was rechecked on 2026-08-31. The released H3 surface exposes
 `MiniMaxH3ImageToVideo`, `MiniMaxH3ReferenceToVideo`, `MiniMaxH3AddGuide`, and
@@ -94,3 +106,7 @@ and controlled H3/Seedance experiment queue.
 See [H3 intent routing and latent operator space](H3_INTENT_ROUTING.md) for the
 architecture-derived operator grammar and the boundary between released,
 near-native, model-patch, training-required and rejected interventions.
+
+See [Modular ComfyUI nodepack ecosystem](NODEPACK_ECOSYSTEM.md) for the
+external-pack adoption classes, exact observed KJNodes/TAE locks, node
+whitelist, installation protocol and developer watch list.

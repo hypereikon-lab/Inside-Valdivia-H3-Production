@@ -6,11 +6,11 @@ This is the authority for present capability claims.
 
 ```text
 CAUCE
-  commit   5a3d3a23b79712ed07349079b8312da4cd3fe4de
-  version  5.7.0
-  nodes    24
-  operations / topology dossiers / graph archetypes  12 / 32 / 29
-  local release tests  47 passing, zero skips
+  commit   b3559f564304f8793bfba4db15782dfb5cc25add
+  version  6.1.0
+  nodes    28
+  operations / topology dossiers / graph archetypes  13 / 35 / 32
+  local release tests  60 passing, zero skips
 
 Runtime Control
   commit   6751b8fd90b02ef871bc046f228b83b004871d3a
@@ -30,24 +30,24 @@ Repository Control
 Production data
   exact component commit/tree/version/metadata locks
   exact CAUCE operation and graph-archetype locks
-  32 offline binding/materialization profiles over 29 graph archetypes
+  35 offline binding/materialization profiles over 32 graph archetypes
   1 retained paired UI/API graph validated against the captured live schema
-  16 controlled experiment definitions
+  17 controlled experiment definitions
   2 schema-validated, explicitly gated H3 LoRA research recipes
   1 offline rolling-chain plan
-  2 runtime requirements profiles
-  12 acceptance profiles covering all 32 variants
-  24 executed live project invocations, 26 API graphs and immutable run receipts
+  4 runtime requirements profiles
+  13 acceptance profiles covering all 35 variants
+  25 executed live project invocations, 26 API graphs and immutable run receipts
   3 explicit rejected visual assessment records
   1 eight-phase live materialization gate
   1 fail-closed storage policy
-  local tests  27 passing
+  local tests  28 passing
 ```
 
-All 47 CAUCE tests pass under the bundled local Python runtime with NumPy. A
+All 60 CAUCE tests pass under the bundled local Python runtime with NumPy. A
 reduced interpreter without NumPy is not release evidence. Across the four
 control repositories plus this production repository, the complete offline
-suites currently contain 114 passing
+suites currently contain 128 passing
 checks.
 
 The local source repositories are complete, public, pushed, and
@@ -79,7 +79,7 @@ fast-forward and process-restart planes; it is an external source package and
 is not imported by the laboratory Comfy process.
 
 After one guarded Comfy-only restart, the origin returned in 12 seconds with
-the GPU queue idle, all 24 required CAUCE node types imported from
+the GPU queue idle, all 24 nodes required by that captured pre-expansion profile imported from
 `custom_nodes.ComfyUI-Cauce`, and CAUCE, Workspace Control and Repository
 Control still clean at their locked revisions. The bounded receipt is retained
 at `runtime/verifications/2026-08-31-post-restart.json`. No CUDA, PyTorch,
@@ -119,7 +119,7 @@ The current official template and the characterized laboratory FL2VA graph use
 the direct model-to-guider/scheduler path. `MiniMaxH3SigmaShift` remains a
 native opt-in experiment, not a canonical dependency.
 
-The twelve operations are grouped as H3 conditioning grammar, native H3 AV
+The thirteen operations are grouped as H3 conditioning grammar, native H3 AV
 state algebra, and decoded media algebra. They are
 orthogonal functions, not workflow stages. See [Project model](PROJECT_MODEL.md).
 
@@ -164,8 +164,8 @@ production-ready.
 
 ## Materialization assets
 
-The 32 materialization plans cover the entire CAUCE topology catalog and map
-through the locked archetype catalog to 29 distinct node/edge structures. Their
+The 35 materialization plans cover the entire CAUCE topology catalog and map
+through the locked archetype catalog to 32 distinct node/edge structures. Their
 static operation hashes, variants, model filenames, geometry, frame arithmetic,
 input cardinality, mask semantics, and output slots are checked. Live-owned
 values remain null until pairing. The text-only control is the first

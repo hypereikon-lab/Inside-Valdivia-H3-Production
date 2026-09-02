@@ -701,7 +701,7 @@ ComfyUI-native and data-oriented.
 
 ### Later: structural control
 
-1. pin one merged Fun ControlNet route;
+1. update and capture a core revision containing merged #15975 and #16020;
 2. compare reference versus structural adherence;
 3. test sparse structural keyposes;
 4. combine structural control with local target masks;
@@ -727,8 +727,9 @@ released route cannot express the same useful effect.
 - [MiniMax H3 official repository](https://github.com/MiniMax-AI/MiniMax-H3)
 - [MiniMax H3 Timed References](https://github.com/ethanfel/ComfyUI-MiniMaxH3-Timed-References)
 - [H3 Fun ControlNet Union](https://huggingface.co/alibaba-pai/MiniMax-H3-Fun-Controlnet-Union)
-- [ComfyUI H3 Fun ControlNet PR #15860](https://github.com/Comfy-Org/ComfyUI/pull/15860)
-- [Alternative H3 ControlNet model-patch PR #15975](https://github.com/Comfy-Org/ComfyUI/pull/15975)
+- [Superseded ComfyUI H3 Fun ControlNet PR #15860](https://github.com/Comfy-Org/ComfyUI/pull/15860)
+- [Merged H3 ControlNet model-patch PR #15975](https://github.com/Comfy-Org/ComfyUI/pull/15975)
+- [Merged H3 reference/keyframe control and dynamic-VRAM PR #16020](https://github.com/Comfy-Org/ComfyUI/pull/16020)
+- [Pending H3 mask-velocity correction PR #15988](https://github.com/Comfy-Org/ComfyUI/pull/15988)
 - [VGI-Bench](https://arxiv.org/abs/2608.19583)
 - [Warped Diffusion](https://arxiv.org/abs/2410.16152)
-

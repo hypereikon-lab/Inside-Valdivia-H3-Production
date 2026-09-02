@@ -6,7 +6,8 @@ not restoration targets. A new workflow starts with the smallest current
 official ComfyUI H3 graph and adds CAUCE only when an operation needs native
 AV-state algebra that upstream does not expose.
 
-Checked on 2026-08-31 against:
+Initially checked on 2026-08-31 and upstream status rechecked on 2026-09-01
+against:
 
 - ComfyUI `v0.34.0`, commit
   `12d5279438bfefc058a269eae805ceab6047777f`;
@@ -28,11 +29,13 @@ Every capability belongs to exactly one level:
    canonical workflow;
 2. **project-primitive**: deterministic CAUCE state manipulation backed by
    tests, but still requiring live H3 execution and visual evidence;
-3. **upstream-pending**: implemented in an open ComfyUI pull request and not a
+3. **upstream-merged**: merged after the captured laboratory build, but not a
+   live capability until the core update and schema capture are complete;
+4. **upstream-pending**: implemented in an open ComfyUI pull request and not a
    production dependency;
-4. **community-reference**: useful external evidence or an optional future
+5. **community-reference**: useful external evidence or an optional future
    dependency, never silently treated as installed;
-5. **excluded**: outside the current project scope or empirically rejected.
+6. **excluded**: outside the current project scope or empirically rejected.
 
 `implemented`, `materialized`, `executes`, and `visually accepted` remain
 separate states.
@@ -228,24 +231,30 @@ They require fixed-source denoise ladders and explicit visual comparison.
 - persist the paired UI/API graph, runtime manifest, run receipt, output and
   native state when continuation remains possible.
 
-## Upstream work to watch
+## Upstream work to deploy or watch
 
-These do not enter the suite until merged, released, present in the laboratory
-manifest and separately accepted:
+These do not enter the suite until present in the laboratory manifest and
+separately accepted. A merged pull request is source evidence, not live runtime
+evidence:
 
-| Upstream work | Current state on 2026-08-31 | Potential workflow surface |
+| Upstream work | Current state on 2026-09-01 | Potential workflow surface |
 | --- | --- | --- |
 | ComfyUI PR #15735 | open, non-draft | official builder for separately encoded H3 video/audio latents; may replace a CAUCE allocation/assembly primitive |
-| ComfyUI PR #15860 | open, non-draft | Fun ControlNet Union support |
-| ComfyUI PR #15975 | open, non-draft | alternative Fun ControlNet implementation as model patches |
+| ComfyUI PR #15860 | closed/superseded | earlier Fun ControlNet implementation; do not deploy |
+| ComfyUI PR #15975 | merged on 2026-08-31 | official H3 Fun ControlNet Union model-patch route |
+| ComfyUI PR #16020 | merged on 2026-09-01 | references/keyframes with Fun Control plus dynamic-VRAM prefetch correction |
+| ComfyUI PR #15988 | open | correct mask-velocity conversion for H3 control/inpaint paths |
 | ComfyUI PR #15983 | open | correct H3 memory estimation; runtime planning rather than a workflow capability |
 | ComfyUI PR #15270 | open | attention patch hooks; infrastructure, not a user workflow by itself |
 | ComfyUI PR #15958 | draft | FastVideo VSA acceleration; outside present scope |
 | ComfyUI PR #15972 | open | audio VAE crop correction; relevant to runtime correctness even though project delivery discards H3 audio |
 
-The Fun ControlNet checkpoint would add Canny, depth, HED, MLSD, pose and
-video-inpainting control. Its current ComfyUI integrations are competing open
-pull requests, so no canonical graph or model download is committed yet.
+The Fun ControlNet checkpoint adds Canny, depth, HED, MLSD, pose and
+video-inpainting control. One upstream route is now merged, including the
+reference/keyframe compatibility follow-up, but the 2026-08-31 laboratory
+capture does not expose that surface. No canonical graph or model download is
+committed until the shared core is updated in isolation and mask behavior is
+verified against #15988, #15978 and #15981.
 
 ## Community references requiring separate evaluation
 
@@ -263,6 +272,12 @@ The following mechanisms are plausible additions, not present capabilities:
 Their code, weights, storage cost, license, compatibility strategy and visible
 benefit must be evaluated one at a time. None becomes a CAUCE dependency merely
 because it exists.
+
+Generic external capabilities are classified separately in
+[Modular ComfyUI nodepack ecosystem](NODEPACK_ECOSYSTEM.md). KJNodes mask and
+preview utilities, `controlnet_aux` preprocessors, VHS remote-authoring tools
+and rgthree frontend helpers may be composed around canonical graphs without
+being promoted into the core H3 data model.
 
 The project-specific distinction between semantic references, target-aligned
 temporal guides, preservation masks and pending structural control is developed in

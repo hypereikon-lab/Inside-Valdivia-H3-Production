@@ -12,7 +12,7 @@ an implicit production dependency.
 | Structural video control and masked control inpaint | Official ComfyUI `MiniMaxH3FunControlNetApply` plus Alibaba PAI union model patch | Offline-defined; runtime-gated characterization only |
 | Exact packed-sequence inspection | CAUCE, reproducing official `PackedLayout` row arithmetic | Implemented and testable without GPU |
 | Learned 3D latent initialization before an H3 second pass | External public nodepack and separately pinned weight | Isolated A/B only; never a core requirement |
-| Reference plus structural control in one graph | Upstream ComfyUI work | Declared unsupported until the relevant core change is merged and captured |
+| Reference plus structural control in one graph | Official ComfyUI work merged through #16020 | Upstream-supported; laboratory core update, schema capture and live characterization pending |
 | Context-window continuation with absolute global position | Unresolved upstream behavior | Do not represent as solved |
 
 CAUCE remains a deterministic low-level layer. It does not vendor the official
@@ -73,7 +73,10 @@ Execution is blocked until the `h3-control-experimental` profile validates:
 - the installed ComfyUI revision and applicable upstream correctness gates.
 
 References/keyframes plus control remain excluded from the materializable
-catalog while the merged core rejects that combination.
+catalog only because the captured laboratory runtime predates #16020. Current
+upstream supports the combination and also corrects a dynamic-VRAM prefetch
+race. It may enter the catalog after one isolated core update, fresh schema
+capture, mask-correctness checks and a bounded live run.
 
 ## Learned latent upscale characterization
 
@@ -105,3 +108,21 @@ These references are evidence inputs, not automatic installation authority.
 Every live adoption still requires an exact public repository, pinned commit,
 content-addressed model, clean queue, sufficient disk reserve, and a fresh
 `/object_info` capture.
+
+## Optional nodepack boundary
+
+External packs extend standard Comfy datatypes around this surface; they do not
+become part of CAUCE automatically:
+
+- KJNodes may supply generic continuous-mask authoring and a low-cost H3
+  preview. Its attention and feed-forward patches are conditional OOM tools,
+  never defaults;
+- `comfyui_controlnet_aux` may produce Canny, depth, HED, MLSD and pose control
+  images after the official H3 control path is deployed;
+- VideoHelperSuite and rgthree are authoring conveniences, not canonical API
+  graph dependencies;
+- broad or rapidly changing H3 packs remain research sources until one narrow
+  mechanism passes licensing, schema, fixed-seed and visual gates.
+
+The exact module classes, observed source locks, whitelist and safe mutation
+sequence are defined in [Modular ComfyUI nodepack ecosystem](NODEPACK_ECOSYSTEM.md).
