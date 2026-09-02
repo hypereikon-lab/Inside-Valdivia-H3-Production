@@ -6,7 +6,9 @@
   "default_branch": "main",
   "expected_commit": "e8e88f7c88e3f6205b122f5de87e69a09fbce5ac",
   "recovery_channel": "external-operator",
-  "state": "submission-intent-recorded",
+  "state": "reconciled-installed",
   "submission_route": "/customnode/install/git_url",
-  "notes": "One first-install request only. Reconcile Manager inventory after any timeout; never auto-retry."
+  "manager_package_version": "1.5.0",
+  "loaded_node_count": 248,
+  "notes": "Manager acknowledged the single public Git install. After a Comfy-only restart, inventory reported the package enabled and object_info exposed 248 KJNodes. First startup took about two minutes; no retry was issued."
 }
