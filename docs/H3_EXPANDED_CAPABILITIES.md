@@ -117,8 +117,13 @@ become part of CAUCE automatically:
 - KJNodes may supply generic continuous-mask authoring and a low-cost H3
   preview. Its attention and feed-forward patches are conditional OOM tools,
   never defaults;
-- `comfyui_controlnet_aux` may produce Canny, depth, HED, MLSD and pose control
-  images after the official H3 control path is deployed;
+- the captured core already supplies Canny, official Depth Anything 3, SAM3
+  video mask tracking and SDPose nodes. Their optional official weights are
+  admitted independently of any community nodepack;
+- `comfyui_controlnet_aux` is considered only for an absent modality such as
+  HED, MLSD or DWPose after core Canny/depth/pose control is evaluated. Its
+  broad OpenCV/ONNX/MediaPipe dependency surface makes it a late module on the
+  shared portable runtime;
 - VideoHelperSuite and rgthree are authoring conveniences, not canonical API
   graph dependencies;
 - broad or rapidly changing H3 packs remain research sources until one narrow

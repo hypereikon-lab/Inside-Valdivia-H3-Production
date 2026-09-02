@@ -31,6 +31,23 @@ places every frame at a factor-spaced target index while preserving the 24 fps
 delivery clock. H3 generates only the unoccupied temporal positions. Live 2x
 and 3x results received positive operator review; 4x executes and awaits review.
 
+### `generate.with_control`
+
+Applies the official H3 Fun Control model patch to either a structural control
+video or a source-video/mask inpainting pair. CAUCE only plans explicit fitting,
+duration and packed-row cost; it does not implement the learned control branch.
+
+`structural-video` accepts an ordinary control `IMAGE` batch. Core Canny,
+Depth Anything 3 and SDPose can produce the first supported modalities without
+another preprocessor nodepack. `masked-inpaint` accepts decoded source frames
+and a standard continuous `MASK`. Both remain distinct from semantic
+references, target-aligned guides and native-state denoise masks.
+
+The required core support and 6.8 GB model patch were not present in the
+2026-08-31 live capture. The operation is therefore contract- and
+topology-valid but runtime-gated until an isolated core update, model lock and
+live smoke prove the exact surface.
+
 ## Native H3 AV state algebra
 
 ### `continue.native_av`
@@ -65,6 +82,21 @@ each native visual token. `local-retake` intersects an exact temporal interval
 with the video mask. The complement and structural-audio stream remain
 preserved in the baseline.
 
+### `densify.temporal`
+
+Dilates a native visual-token lattice, preserves the original token positions
+and asks official H3 temporal inpainting to generate the inserted positions.
+The output is cropped to a legal exact tail and delivered at a multiplied
+clock, so its intended semantic is more generated motion samples over the same
+editorial duration.
+
+The deterministic token placement is unit-validated. Its first live use as a
+slow-motion synthesis method was rejected because the visible result did not
+establish correct motion interpolation. It remains a low-level characterization
+operation, not an accepted production workflow. The accepted slow-motion
+baseline is currently dense factor-spaced AddGuide composition under
+`generate.with_guides`.
+
 ### `refine.video`
 
 Runs a bounded second H3 pass from the original native AV state. `full-frame`
@@ -79,6 +111,24 @@ Copies an existing visual latent without interpolation into a larger
 32-pixel-aligned canvas, preserves structural audio and duration, and samples
 only newly allocated regions. Variants distinguish exact centered placement
 from an explicit aligned offset.
+
+### `regenerate.spatial`
+
+Runs a bounded same-H3 second pass at a larger spatial lattice. Its explicit
+variants separate four materially different initial states:
+
+- `latent-second-pass`: resize native visual state directly;
+- `pixel-vae-second-pass`: decode, resize in pixels and re-encode with H3 VAE;
+- `tiled-pixel-vae`: apply the pixel/VAE route in overlapping tiles when memory
+  requires it;
+- `learned-latent-second-pass`: use a separately locked external learned
+  visual-latent initializer before the same H3 sampler.
+
+The native deterministic primitives and an enlarged-latent live execution are
+available, but no spatial-regeneration variant has an accepted production
+default. Each needs fixed-source/seed comparisons for texture, flicker, motion
+drift and terminal-frame stability. The learned variant remains research-only
+and is not part of the normal runtime profile.
 
 ### `rollback.native_av`
 
@@ -106,7 +156,10 @@ native state + explicit interval -> complete.native_av -> rollback.native_av
 
 native state + continuous mask -> edit.masked_video
 
-native state -> refine.video or reframe.outpaint_video
+native state -> refine.video, reframe.outpaint_video,
+                densify.temporal or regenerate.spatial
+
+control IMAGE or source IMAGE + MASK -> generate.with_control
 
 accepted decoded ranges -> frames.assemble
 

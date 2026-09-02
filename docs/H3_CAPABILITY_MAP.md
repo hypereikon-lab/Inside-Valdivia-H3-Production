@@ -274,10 +274,13 @@ benefit must be evaluated one at a time. None becomes a CAUCE dependency merely
 because it exists.
 
 Generic external capabilities are classified separately in
-[Modular ComfyUI nodepack ecosystem](NODEPACK_ECOSYSTEM.md). KJNodes mask and
-preview utilities, `controlnet_aux` preprocessors, VHS remote-authoring tools
-and rgthree frontend helpers may be composed around canonical graphs without
-being promoted into the core H3 data model.
+[Modular ComfyUI extension ecosystem](NODEPACK_ECOSYSTEM.md). The captured core
+already exposes Canny, Depth Anything 3, SAM3 video tracking and SDPose, so
+those capabilities require selected official weights rather than additional
+nodepacks. KJNodes supplies a bounded mask/preview/diagnostic layer.
+`controlnet_aux` is reserved for absent modalities such as HED, MLSD or DWPose;
+VHS and rgthree remain optional authoring helpers. None is promoted into the
+core H3 data model.
 
 The project-specific distinction between semantic references, target-aligned
 temporal guides, preservation masks and pending structural control is developed in
