@@ -651,8 +651,8 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertEqual(report["counts"]["graph_archetypes"], 32)
         self.assertEqual(report["counts"]["binding_profiles"], 35)
         self.assertEqual(report["counts"]["locked_control_components"], 5)
-        self.assertEqual(report["counts"]["runtime_manifests"], 1)
-        self.assertEqual(report["counts"]["runtime_readiness_evaluations"], 2)
+        self.assertEqual(report["counts"]["runtime_manifests"], 2)
+        self.assertEqual(report["counts"]["runtime_readiness_evaluations"], 5)
         self.assertEqual(report["counts"]["runtime_smoke_batches"], 1)
         self.assertEqual(report["counts"]["paired_workflows"], 1)
         self.assertEqual(report["counts"]["schema_validated_workflows"], 1)
@@ -662,15 +662,22 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertEqual(report["evidence"]["offline_ready_topologies"], 34)
         self.assertEqual(
             report["evidence"]["latest_runtime_manifest_hash"],
-            "e97aa6c8e6f449e0f3d0f51fd3921e66c51f763de6d64de3ed9f2474019ba9c9",
+            "a3cc30305d3a82b78142aaa149d54e804b2a5841dd150c84637d03212ed3f392",
         )
-        self.assertFalse(report["evidence"]["latest_runtime_manifest_is_current"])
+        self.assertTrue(report["evidence"]["latest_runtime_manifest_is_current"])
         self.assertEqual(report["evidence"]["technical_runtime_smokes"], 11)
-        self.assertEqual(report["evidence"]["ready_runtime_profiles"], [])
+        self.assertEqual(
+            report["evidence"]["ready_runtime_profiles"],
+            [
+                "inside-valdivia-h3-control-experimental",
+                "inside-valdivia-h3-core",
+                "inside-valdivia-h3-full",
+            ],
+        )
         self.assertFalse(report["production_ready"])
         self.assertEqual(
             report["next_gate"],
-            "capture-content-addressed-runtime-manifest",
+            "repeat-and-earn-first-accepted-workflow",
         )
 
 

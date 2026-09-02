@@ -1,0 +1,126 @@
+{
+  "schema": "inside-valdivia.visual-characterization-batch/1",
+  "captured_at": "2026-09-02T01:39:49-04:00",
+  "runtime_manifest_hash": "a3cc30305d3a82b78142aaa149d54e804b2a5841dd150c84637d03212ed3f392",
+  "status": "executed-pending-human-review",
+  "quality_ladder": {
+    "held_constant": {
+      "operation": "MiniMaxH3ImageToVideo",
+      "input": "inside-valdivia-frame-a.png",
+      "input_sha256": "c1e448e2a28dd259d31e78f59fb4bd4778229424b678410af1b7c6bab37ec07e",
+      "input_dimensions": [2560, 1440],
+      "generation_dimensions": [1344, 768],
+      "frames": 73,
+      "fps": 24,
+      "duration_seconds": 3.041667,
+      "seed": 20260902,
+      "scheduler": "simple",
+      "sampler": "res_multistep",
+      "denoise": 1.0
+    },
+    "runs": [
+      {
+        "profile": "quality-20",
+        "workflow": "workflows/evaluations/2026-09-02/fl2va-quality20.api.json",
+        "prompt_id": "626398bb-279c-499d-9401-ac5ac7133397",
+        "duration_seconds": 133.186,
+        "speedup_vs_quality20": 1.0,
+        "mean_adjacent_luma_delta": 2.048734,
+        "output": "evaluation/2026-09-02/fl2va-quality20_00001_.mp4",
+        "output_sha256": "cc1c5073f1516f75fe6cf124025ceda42a11791ff23cb5b37d98be0df9d5c0b8"
+      },
+      {
+        "profile": "turbo-fl2va-8",
+        "workflow": "workflows/evaluations/2026-09-02/fl2va-turbo8.api.json",
+        "prompt_id": "ae494a5f-7f07-4415-8362-4d78a7cc8b6a",
+        "duration_seconds": 56.658,
+        "speedup_vs_quality20": 2.350701,
+        "mean_adjacent_luma_delta": 2.102687,
+        "ssim_vs_quality20": 0.669033,
+        "output": "evaluation/2026-09-02/fl2va-turbo8_00001_.mp4",
+        "output_sha256": "8010d4fa6809706ad9c44b1077fad14e821fb9f65c4269f6cc299411a205e2be"
+      },
+      {
+        "profile": "pdd-fl2va-8",
+        "workflow": "workflows/evaluations/2026-09-02/fl2va-pdd8.api.json",
+        "prompt_id": "b2d46701-48d7-4428-a7d2-bd59b9805c14",
+        "duration_seconds": 54.629,
+        "speedup_vs_quality20": 2.438009,
+        "mean_adjacent_luma_delta": 1.978352,
+        "ssim_vs_quality20": 0.641949,
+        "output": "evaluation/2026-09-02/fl2va-pdd8_00001_.mp4",
+        "output_sha256": "60efc59f4d3b0dda8cbf7ab21fbc5e2041d4e358440cda68195ce01293bf9484"
+      }
+    ],
+    "pairwise_ssim": {
+      "turbo8_vs_pdd8": 0.579774
+    },
+    "technical_interpretation": [
+      "All three exact graphs validated, executed, decoded, and saved 73-frame artifacts.",
+      "Turbo and PDD are distinct generation trajectories, not interchangeable faster encodes of the quality output.",
+      "SSIM and adjacent-frame delta are characterization descriptors, not aesthetic rankings or acceptance evidence."
+    ]
+  },
+  "structural_control": {
+    "held_constant": {
+      "source": "Gen-4_5.gen-4_5 (5).mp4",
+      "source_sha256": "d7300236e2a395c3c91eb59e05fcc2a0895956b53cb170316ae7480564da16a3",
+      "source_dimensions": [960, 960],
+      "source_total_frames": 145,
+      "source_window": [0, 73],
+      "generation_dimensions": [768, 768],
+      "frames": 73,
+      "fps": 24,
+      "seed": 20260902,
+      "steps": 20,
+      "scheduler": "simple",
+      "sampler": "res_multistep",
+      "control_strength": 1.0,
+      "control_start_percent": 0.0,
+      "control_end_percent": 1.0,
+      "source_mean_adjacent_luma_delta": 12.094216
+    },
+    "runs": [
+      {
+        "carrier": "canny",
+        "workflow": "workflows/evaluations/2026-09-02/fun-control-canny-quality20.api.json",
+        "prompt_id": "7ac7f8d9-0e6a-4abb-b797-1b7dab4a5346",
+        "duration_seconds": 72.495,
+        "mean_adjacent_luma_delta": 9.87151,
+        "motion_delta_ratio_vs_source": 0.816217,
+        "ssim_vs_source": 0.616813,
+        "output": "evaluation/2026-09-02/fun-control-canny-quality20_00001_.mp4",
+        "output_sha256": "9b02b3c896e03f0ef42a8bed7874e5e84d417c010f768ea170124f2b15802e06"
+      },
+      {
+        "carrier": "depth-anything-3",
+        "workflow": "workflows/evaluations/2026-09-02/fun-control-depth-quality20.api.json",
+        "prompt_id": "5eb235d7-c44a-44b2-8ef6-53c2d1462e49",
+        "duration_seconds": 70.052,
+        "da3_resolution": 392,
+        "da3_normalization": "v2_style",
+        "mean_adjacent_luma_delta": 9.198796,
+        "motion_delta_ratio_vs_source": 0.760595,
+        "ssim_vs_source": 0.578479,
+        "output": "evaluation/2026-09-02/fun-control-depth-quality20_00001_.mp4",
+        "output_sha256": "f1b5593dd286b43f34eee1ef2892fa8a81b2efd5774a09173cb0b0d2da7b2f06"
+      }
+    ],
+    "technical_interpretation": [
+      "Both official Fun Control routes validated and executed without OOM, restart, or queue contamination.",
+      "On this domemaster clip Canny retained more decoded source similarity and temporal-change magnitude than DA3 depth.",
+      "This single benchmark supports prioritizing Canny for the next human motion review; it does not reject depth or establish a universal quality ranking."
+    ]
+  },
+  "closeout": {
+    "queue_idle": true,
+    "model_cache_released": true,
+    "ram_free_bytes": 54656933888,
+    "vram_free_bytes": 32261537792
+  },
+  "acceptance": {
+    "verdict": "pending-human-review",
+    "production_promotion": false,
+    "reason": "Execution, timing, hashes, frame geometry, and bounded image metrics are retained, but motion quality and artistic usefulness require review of the delivered comparison videos."
+  }
+}

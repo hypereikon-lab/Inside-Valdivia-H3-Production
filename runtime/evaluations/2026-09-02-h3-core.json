@@ -1,0 +1,48 @@
+{
+  "checks": {
+    "endpoints": {
+      "missing": [],
+      "required": [
+        "features",
+        "system_stats",
+        "object_info",
+        "queue"
+      ]
+    },
+    "hardware": {
+      "failures": [],
+      "observed_device_names": [
+        "cuda:0 NVIDIA GeForce RTX 5090 : cudaMallocAsync"
+      ],
+      "observed_total_ram_bytes": 67768381440,
+      "observed_total_vram_bytes": 34190458880
+    },
+    "models": {
+      "missing": [],
+      "required": [
+        "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+        "minimax_h3_video_vae_fp16.safetensors",
+        "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors"
+      ]
+    },
+    "node_types": {
+      "missing": [],
+      "missing_groups": [],
+      "required_count": 41
+    },
+    "queue": {
+      "failure": false,
+      "observed_idle": true,
+      "required_idle": true
+    }
+  },
+  "manual_checks": [
+    "Confirm at least 30 GB of free local storage before any new model or long render.",
+    "Confirm Windows sleep is disabled for the agreed production window.",
+    "Confirm cloudflared and ComfyUI recovery behavior after process restart without changing the GPU stack."
+  ],
+  "ready": true,
+  "requirements_id": "inside-valdivia-h3-core",
+  "runtime_manifest_hash": "a3cc30305d3a82b78142aaa149d54e804b2a5841dd150c84637d03212ed3f392",
+  "schema": "comfy.runtime-readiness/1"
+}

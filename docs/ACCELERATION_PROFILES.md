@@ -134,6 +134,21 @@ Exact executable smoke graphs are retained under
 `workflows/smoke/2026-09-02/` and the runtime evidence is in
 `runtime/smokes/2026-09-02-h3-runtime.json`.
 
+## Controlled 1344×768 characterization
+
+The first fixed-input visual ladder ran on 2026-09-02 with a fresh runtime
+manifest, the same input, prompt, seed, 73-frame geometry, scheduler, sampler,
+and codec path. Quality 20 took 133.186 seconds; Turbo 8 took 56.658 seconds
+(2.35× faster); PDD 8 took 54.629 seconds (2.44× faster).
+
+Turbo and PDD remain unpromoted. Their SSIM against quality 20 was 0.669033 and
+0.641949 respectively, while their pairwise SSIM was 0.579774. These values
+show that acceleration changes the generative trajectory; they do not rank
+aesthetic quality. Exact graphs, prompt ids, hashes, structural-control results,
+and the pending human-review gate are recorded in
+`docs/LIVE_CHARACTERIZATION_2026-09-02.md` and
+`runtime/characterizations/2026-09-02-h3-visual-ladder.json`.
+
 ## Evaluation protocol
 
 Every comparison holds constant:
