@@ -1,0 +1,11 @@
+{
+  "schema": "inside-valdivia.remote-install-journal/1",
+  "component": "ComfyUI-KJNodes",
+  "source_url": "https://github.com/kijai/ComfyUI-KJNodes",
+  "source_visibility": "public",
+  "default_branch": "main",
+  "expected_commit": "e8e88f7c88e3f6205b122f5de87e69a09fbce5ac",
+  "recovery_channel": "external-operator",
+  "state": "planned-public",
+  "notes": "One first-install request only. Reconcile Manager inventory after any timeout; never auto-retry."
+}
