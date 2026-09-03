@@ -20,6 +20,23 @@ checked operation@variant plan
 
 `executes` never implies `visually-accepted`.
 
+## Research loop
+
+This roadmap is fed by, but remains distinct from, the continuous research
+program in [`H3_RESEARCH_PROGRAM.md`](H3_RESEARCH_PROGRAM.md). Before each GPU
+batch, reconcile upstream H3/ComfyUI sources and the live schema. Convert a new
+observation into a research question, then into the cheapest one-variable
+experiment capable of falsifying it. Screen once, replicate only retained
+signals, and transfer only repeat-supported signals to a second source or an
+adjacent conditioning mechanism.
+
+Research claims advance explicitly through source or community evidence,
+project hypothesis, technical execution, repeat support, or rejection. A new
+nodepack, successful queue receipt or attractive one-off result does not enter
+the production roadmap by itself. `research/catalog.json` owns open questions
+and radar cadence; `prompting/catalog.json` owns exact textual stimuli;
+`experiments/`, runtime receipts and visual assessments own execution evidence.
+
 ## 0. Reconcile the laboratory
 
 Probe runtime, queue, node inventory, Manager revisions, model filenames, and
@@ -144,6 +161,11 @@ Apply the operation profile in `acceptance/catalog.json`. Generative operations
 need two technically successful inspected runs; deterministic assembly and
 rollback round trips need one. No variant is promoted without all technical
 checks and an explicit visual verdict.
+
+After each batch, update the linked research track before authoring the next
+batch. Preserve rejected mechanisms and inconclusive runs as evidence, but do
+not keep them in active production graphs. Choose the next run by information
+gain rather than output volume.
 
 ## 4. Prove rolling execution
 

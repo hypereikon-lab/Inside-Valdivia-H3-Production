@@ -6,16 +6,16 @@ This is the authority for present capability claims.
 
 ```text
 CAUCE
-  commit   b3559f564304f8793bfba4db15782dfb5cc25add
+  commit   c83cb162e39b6594c371b445af70388d9db892b4
   version  6.1.0
   nodes    28
   operations / topology dossiers / graph archetypes  13 / 35 / 32
   local release tests  60 passing, zero skips
 
 Runtime Control
-  commit   6751b8fd90b02ef871bc046f228b83b004871d3a
-  version  0.6.0
-  local tests  25 passing
+  commit   1fa85c86db2143679552ff72b841f3a214f783f2
+  version  0.8.0
+  local tests  32 passing
 
 Workspace Control
   commit   65d6612d1cbeae3e35c664873a2aa1088ac3e7d2
@@ -27,27 +27,34 @@ Repository Control
   version  1.0.1
   local tests  5 passing
 
+Model Control
+  commit   2b4b3a79c796b53a4504536b971b3f632ed762bb
+  version  1.1.1
+  local tests  8 passing
+
 Production data
   exact component commit/tree/version/metadata locks
   exact CAUCE operation and graph-archetype locks
   35 offline binding/materialization profiles over 32 graph archetypes
   1 retained paired UI/API graph validated against the captured live schema
-  17 controlled experiment definitions
+  25 controlled experiment definitions
+  7 exact prompt comparison matrices
+  12 evidence-graded research tracks and 7 radar sources
   2 schema-validated, explicitly gated H3 LoRA research recipes
   1 offline rolling-chain plan
   4 runtime requirements profiles
   13 acceptance profiles covering all 35 variants
-  25 executed live project invocations, 26 API graphs and immutable run receipts
+  28 tracked project invocations (27 executed), 29 API graphs and 64 immutable run receipts
   3 explicit rejected visual assessment records
-  1 eight-phase live materialization gate
+  1 ten-phase live materialization gate
   1 fail-closed storage policy
-  local tests  28 passing
+  local tests  30 passing
 ```
 
 All 60 CAUCE tests pass under the bundled local Python runtime with NumPy. A
-reduced interpreter without NumPy is not release evidence. Across the four
+reduced interpreter without NumPy is not release evidence. Across the five
 control repositories plus this production repository, the complete offline
-suites currently contain 128 passing
+suites currently contain 145 passing
 checks.
 
 The local source repositories are complete, public, pushed, and
@@ -174,6 +181,14 @@ specificity; Ref2VA role binding; AddGuide gap intent; and prompt/control
 authority. They are planned, not executed evidence. No automatic captioner or
 LLM rewriter is a runtime dependency, and media remains opaque. See
 [`H3_PROMPTING.md`](H3_PROMPTING.md) and `prompting/catalog.json`.
+
+Research has a separate machine-readable queue in `research/catalog.json`.
+Its twelve tracks distinguish official source facts, community reports,
+project hypotheses, successful execution, repeat-supported behavior and
+rejected mechanisms. Seven radar sources are checked before each live batch,
+daily or weekly according to their volatility. A newly observed repository or
+paper may create a question; it does not authorize installation or establish a
+capability. See [`H3_RESEARCH_PROGRAM.md`](H3_RESEARCH_PROGRAM.md).
 
 ## Materialization assets
 

@@ -18,6 +18,7 @@ from tools.validate import (
     validate_operation_history_lock,
     validate_operation_lock,
     validate_prompting_catalog,
+    validate_research_catalog,
     validate_repository,
     validate_rolling_catalog,
     validate_rolling_plan,
@@ -148,6 +149,20 @@ class RepositoryValidationTests(unittest.TestCase):
         self.assertTrue(all(matrix["target"]["fps"] == 24 for matrix in prompting["matrices"]))
         self.assertTrue(all("prompt" not in matrix["fixed"] for matrix in prompting["matrices"]))
         self.assertTrue(all(len(matrix["variants"]) >= 2 for matrix in prompting["matrices"]))
+
+    def test_research_catalog_separates_claims_and_links_known_experiments(self):
+        experiment_catalog = load_json(ROOT / "experiments" / "catalog.json")
+        experiment_ids = {experiment["id"] for experiment in experiment_catalog["experiments"]}
+        research_path = ROOT / "research" / "catalog.json"
+        research = load_json(research_path)
+        self.assertEqual(
+            validate_research_catalog(research, research_path, experiment_ids),
+            [],
+        )
+        self.assertEqual(research["truth_levels"][0], "source-fact")
+        self.assertEqual(research["truth_levels"][-1], "project-rejected")
+        self.assertTrue(any(track["state"] == "active" for track in research["tracks"]))
+        self.assertTrue(any(source["cadence"] == "before-batch" for source in research["radar"]))
 
     def test_training_recipes_are_explicitly_gated(self):
         catalog_path = ROOT / "training" / "catalog.json"

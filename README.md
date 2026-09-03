@@ -39,9 +39,10 @@ this repository
   exact operation/archetype/component locks, 35 offline binding profiles,
   1 schema-validated paired draft, project data,
   runtime readiness profiles, acceptance criteria, storage policy,
-  experiments, 7 exact prompt-only comparison matrices,
+  25 experiments, 7 exact prompt-only comparison matrices,
+  12 evidence-graded research tracks and a 7-source update radar,
   rolling dependency/checkpoint plans,
-  27 tracked live invocations, 64 immutable run receipts,
+  28 tracked project invocations (27 executed), 64 immutable run receipts,
   plus one timed-reference run retained with exact prompt evidence
 ```
 
@@ -115,6 +116,7 @@ next required compatibility target.
 - [Native H3/Seedance movement-control research](docs/MOVEMENT_CONTROL_RESEARCH.md)
 - [H3 intent routing and latent operator space](docs/H3_INTENT_ROUTING.md)
 - [H3 prompting as an experimental control surface](docs/H3_PROMPTING.md)
+- [Continuous H3 research program](docs/H3_RESEARCH_PROGRAM.md)
 - [Temporal and spatial video enhancement](docs/VIDEO_ENHANCEMENT.md)
 - [Operations](docs/OPERATIONS.md)
 - [Materialization](docs/MATERIALIZATION.md)

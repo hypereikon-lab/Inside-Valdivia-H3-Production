@@ -14,6 +14,7 @@ OPERATION_ID = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 GIT_SHA = re.compile(r"^[0-9a-f]{40}$")
 SEMVER = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
+ISO_DATE = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
 EVIDENCE = {
     "planned",
     "schema-validated",
@@ -717,6 +718,120 @@ def validate_prompting_catalog(
                     errors.append(f"{path}: matrix {matrix_id!r} structured prompt must disable generated soundscape")
                 if "non_diegetic_music: N/A" not in prompt and "non_diegetic_music:\nN/A" not in prompt:
                     errors.append(f"{path}: matrix {matrix_id!r} structured prompt must disable generated music")
+    return errors
+
+
+def validate_research_catalog(
+    value: Any,
+    path: Path,
+    experiment_ids: set[str],
+) -> list[str]:
+    """Validate the research queue and its explicit evidence boundaries."""
+
+    if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.h3-research-catalog/1":
+        return [f"{path}: invalid H3 research catalog"]
+    errors: list[str] = []
+    if set(value) != {"schema", "as_of", "truth_levels", "tracks", "radar"}:
+        errors.append(f"{path}: research catalog fields do not match the schema")
+    if not isinstance(value.get("as_of"), str) or not ISO_DATE.fullmatch(value["as_of"]):
+        errors.append(f"{path}: research as_of must be an ISO date")
+    truth_levels = [
+        "source-fact",
+        "community-report",
+        "project-hypothesis",
+        "project-executes",
+        "project-repeat-supported",
+        "project-rejected",
+    ]
+    if value.get("truth_levels") != truth_levels:
+        errors.append(f"{path}: research truth levels must preserve their declared order")
+    truth_set = set(truth_levels)
+
+    tracks = value.get("tracks")
+    if not isinstance(tracks, list) or not tracks:
+        return errors + [f"{path}: research tracks must be non-empty"]
+    track_ids: set[str] = set()
+    required_track = {
+        "id", "priority", "question", "state", "evidence", "experiment_ids", "next_actions"
+    }
+    for track in tracks:
+        if not isinstance(track, dict) or set(track) != required_track:
+            errors.append(f"{path}: malformed research track {track!r}")
+            continue
+        track_id = track.get("id")
+        if not isinstance(track_id, str) or not track_id:
+            errors.append(f"{path}: research track id is required")
+            continue
+        if track_id in track_ids:
+            errors.append(f"{path}: duplicate research track {track_id!r}")
+        track_ids.add(track_id)
+        if track.get("priority") not in {1, 2, 3}:
+            errors.append(f"{path}: track {track_id!r} has invalid priority")
+        if track.get("state") not in {"active", "queued", "deferred", "closed"}:
+            errors.append(f"{path}: track {track_id!r} has invalid state")
+        if not isinstance(track.get("question"), str) or not track["question"]:
+            errors.append(f"{path}: track {track_id!r} needs a research question")
+        actions = track.get("next_actions")
+        if not isinstance(actions, list) or not actions or not all(
+            isinstance(action, str) and action for action in actions
+        ):
+            errors.append(f"{path}: track {track_id!r} needs explicit next actions")
+        linked = track.get("experiment_ids")
+        if not isinstance(linked, list):
+            errors.append(f"{path}: track {track_id!r} experiment_ids must be a list")
+        else:
+            for experiment_id in linked:
+                if experiment_id not in experiment_ids:
+                    errors.append(
+                        f"{path}: track {track_id!r} references unknown experiment {experiment_id!r}"
+                    )
+        evidence = track.get("evidence")
+        if not isinstance(evidence, list):
+            errors.append(f"{path}: track {track_id!r} evidence must be a list")
+        else:
+            for item in evidence:
+                if not isinstance(item, dict) or not {"level", "claim"} <= set(item):
+                    errors.append(f"{path}: track {track_id!r} has malformed evidence")
+                    continue
+                if set(item) - {"level", "claim", "source"}:
+                    errors.append(f"{path}: track {track_id!r} evidence has unknown fields")
+                if item.get("level") not in truth_set:
+                    errors.append(f"{path}: track {track_id!r} has invalid evidence level")
+                if not isinstance(item.get("claim"), str) or not item["claim"]:
+                    errors.append(f"{path}: track {track_id!r} evidence needs a claim")
+                if "source" in item and (
+                    not isinstance(item["source"], str) or not item["source"]
+                ):
+                    errors.append(f"{path}: track {track_id!r} evidence source is invalid")
+
+    radar = value.get("radar")
+    if not isinstance(radar, list) or not radar:
+        return errors + [f"{path}: research radar must be non-empty"]
+    radar_ids: set[str] = set()
+    required_radar = {"id", "class", "url", "watch", "cadence", "last_observed"}
+    for source in radar:
+        if not isinstance(source, dict) or set(source) != required_radar:
+            errors.append(f"{path}: malformed radar source {source!r}")
+            continue
+        source_id = source.get("id")
+        if not isinstance(source_id, str) or not source_id:
+            errors.append(f"{path}: radar source id is required")
+            continue
+        if source_id in radar_ids:
+            errors.append(f"{path}: duplicate radar source {source_id!r}")
+        radar_ids.add(source_id)
+        if source.get("class") not in {"official", "upstream", "community", "research"}:
+            errors.append(f"{path}: radar source {source_id!r} has invalid class")
+        if source.get("cadence") not in {"before-batch", "daily", "weekly"}:
+            errors.append(f"{path}: radar source {source_id!r} has invalid cadence")
+        if not isinstance(source.get("url"), str) or not source["url"].startswith("https://"):
+            errors.append(f"{path}: radar source {source_id!r} needs an HTTPS URL")
+        if not isinstance(source.get("watch"), str) or not source["watch"]:
+            errors.append(f"{path}: radar source {source_id!r} needs a watch rule")
+        if not isinstance(source.get("last_observed"), str) or not ISO_DATE.fullmatch(
+            source["last_observed"]
+        ):
+            errors.append(f"{path}: radar source {source_id!r} needs an ISO observation date")
     return errors
 
 
@@ -2415,17 +2530,24 @@ def validate_repository(root: Path = ROOT) -> list[str]:
             experiment_catalog, catalog_path, registry, historical_registry
         )
     )
+    experiment_ids = {
+        experiment["id"]
+        for experiment in experiment_catalog.get("experiments", [])
+        if isinstance(experiment, dict) and isinstance(experiment.get("id"), str)
+    }
     prompting_path = root / "prompting" / "catalog.json"
     errors.extend(
         validate_prompting_catalog(
             load_json(prompting_path),
             prompting_path,
             registry,
-            {
-                experiment["id"]
-                for experiment in experiment_catalog.get("experiments", [])
-                if isinstance(experiment, dict) and isinstance(experiment.get("id"), str)
-            },
+            experiment_ids,
+        )
+    )
+    research_path = root / "research" / "catalog.json"
+    errors.extend(
+        validate_research_catalog(
+            load_json(research_path), research_path, experiment_ids
         )
     )
     training_path = root / "training" / "catalog.json"
@@ -2544,8 +2666,8 @@ def main() -> int:
     print(
         "validated: operation/archetype/compatibility locks, project invocations, "
         "materialization plans, runtime gates, acceptance evidence, storage, rolling "
-        "plans, media, experiments, H3 prompting matrices, training recipes, fixtures, "
-        "and schemas"
+        "plans, media, experiments, H3 prompting matrices, research tracks, training "
+        "recipes, fixtures, and schemas"
     )
     return 0
 

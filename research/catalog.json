@@ -1,0 +1,256 @@
+{
+  "schema": "inside-valdivia.h3-research-catalog/1",
+  "as_of": "2026-09-03",
+  "truth_levels": [
+    "source-fact",
+    "community-report",
+    "project-hypothesis",
+    "project-executes",
+    "project-repeat-supported",
+    "project-rejected"
+  ],
+  "tracks": [
+    {
+      "id": "prompt-sensitivity",
+      "priority": 1,
+      "question": "How strongly does exact prompt text change fixed-seed H3 output in each conditioning family?",
+      "state": "active",
+      "evidence": [
+        {
+          "level": "source-fact",
+          "claim": "Official ComfyUI passes prompt text and ordered images or reference items into the H3 Qwen tokenizer.",
+          "source": "https://github.com/Comfy-Org/ComfyUI/blob/02aa70781a8c07c59fd5408fcd50f76a8afcdfa3/comfy_extras/nodes_minimax_h3.py"
+        }
+      ],
+      "experiment_ids": ["h3-fl2va-prompt-form", "h3-i2va-path-specificity", "h3-ref2va-prompt-form"],
+      "next_actions": ["Run the Stage-1 FL2VA prompt-form screen with one fixed seed.", "Confirm that exact prompt bytes differ in receipts and that outputs are not identical."]
+    },
+    {
+      "id": "fl2va-motion-geometry",
+      "priority": 1,
+      "question": "Can FL2VA language reliably distinguish focal-length change, camera translation and recursive spatial traversal?",
+      "state": "active",
+      "evidence": [
+        {
+          "level": "source-fact",
+          "claim": "The official guide defines zoom and push as physically different camera operations.",
+          "source": "https://github.com/MiniMax-AI/MiniMax-H3/blob/d21241f0a4b3acbb34c97dae47fa417b7065e438/.agents/skills/h3-prompt-writing/references/base-en.txt"
+        },
+        {
+          "level": "community-report",
+          "claim": "Recent case studies repeatedly attribute better transitions to continuous physical path descriptions rather than static destination descriptions.",
+          "source": "https://github.com/LoveRain1997/h3-prompt-journal"
+        }
+      ],
+      "experiment_ids": ["h3-fl2va-camera-semantics"],
+      "next_actions": ["Measure parallax and apparent scale trajectories for all three fixed-seed variants.", "Repeat only the two geometrically distinguishable variants across three seeds."]
+    },
+    {
+      "id": "fl2va-time-law",
+      "priority": 1,
+      "question": "Can natural-language timing shape velocity and terminal landing rather than only broad event order?",
+      "state": "active",
+      "evidence": [
+        {
+          "level": "source-fact",
+          "claim": "The public prompt guide requires requested duration and exact shot timing to agree.",
+          "source": "https://github.com/MiniMax-AI/MiniMax-H3/tree/d21241f0a4b3acbb34c97dae47fa417b7065e438/.agents/skills/h3-prompt-writing"
+        }
+      ],
+      "experiment_ids": ["h3-fl2va-temporal-profile"],
+      "next_actions": ["Compare optical-flow velocity curves for uniform, accelerating and accelerate-then-land prompts.", "Inspect the final second separately for early landing, hold and reset behavior."]
+    },
+    {
+      "id": "endpoint-arrival",
+      "priority": 1,
+      "question": "Which language reaches the last frame with coherent incoming motion instead of landing early, dissolving or snapping?",
+      "state": "active",
+      "evidence": [],
+      "experiment_ids": ["h3-fl2va-prompt-form", "h3-fl2va-temporal-profile", "keyframe-mode"],
+      "next_actions": ["Score last-frame pixels and the preceding 24-frame motion window independently.", "Retain no wording from a single successful seed without repeat evidence."]
+    },
+    {
+      "id": "ref2va-reference-authority",
+      "priority": 1,
+      "question": "How do Ref2VA labels, roles and retention markers divide authority over appearance, motion and whole-video structure?",
+      "state": "queued",
+      "evidence": [
+        {
+          "level": "source-fact",
+          "claim": "The official Ref2VA guide specifies six ordered sections and distinct roles for Subject, Picture and Video labels.",
+          "source": "https://github.com/MiniMax-AI/MiniMax-H3/blob/d21241f0a4b3acbb34c97dae47fa417b7065e438/.agents/skills/h3-prompt-writing/references/ref-en.txt"
+        }
+      ],
+      "experiment_ids": ["h3-ref2va-prompt-form", "reference-clip-duration", "reference-image-size"],
+      "next_actions": ["Compare flat and six-section prompts with one fixed motion-reference video.", "Only after that, isolate retention marker strength and reference count."]
+    },
+    {
+      "id": "guide-language-interaction",
+      "priority": 1,
+      "question": "Does text determine what H3 synthesizes between target-time AddGuide states once placement is fixed?",
+      "state": "queued",
+      "evidence": [
+        {
+          "level": "project-executes",
+          "claim": "Dense target-time AddGuide expansion has executed locally at 2x and 3x with positive operator review.",
+          "source": "docs/LIVE_BATCH_2026-08-31.md"
+        },
+        {
+          "level": "project-rejected",
+          "claim": "Qwen-only timed references were rejected as a replacement for target-aligned AddGuide states.",
+          "source": "docs/VIDEO_ENHANCEMENT.md"
+        }
+      ],
+      "experiment_ids": ["h3-addguide-prompt-relation", "h3-dense-guide-temporal-expansion"],
+      "next_actions": ["Re-use one accepted guide ladder and vary only the prompt relation.", "Evaluate distinct intermediate motion, freezes, echoes and anchor fidelity."]
+    },
+    {
+      "id": "text-control-authority",
+      "priority": 2,
+      "question": "When prompt and Fun Control agree or conflict, which signal controls motion and structure?",
+      "state": "queued",
+      "evidence": [
+        {
+          "level": "project-executes",
+          "claim": "Canny and depth Fun Control graphs execute locally, while visual promotion remains pending.",
+          "source": "docs/CURRENT_STATE.md"
+        }
+      ],
+      "experiment_ids": ["h3-fun-control-prompt-relation"],
+      "next_actions": ["Choose one visually useful control carrier before testing language authority.", "Keep carrier, strength and interval fixed across neutral, congruent and conflicting prompts."]
+    },
+    {
+      "id": "acceleration-prompt-robustness",
+      "priority": 2,
+      "question": "Do retained prompt effects survive Turbo or PDD acceleration and quantized H3 variants?",
+      "state": "queued",
+      "evidence": [
+        {
+          "level": "project-executes",
+          "claim": "The fixed-input quality-20, Turbo and PDD execution profiles are technically characterized.",
+          "source": "docs/ACCELERATION_PROFILES.md"
+        }
+      ],
+      "experiment_ids": [],
+      "next_actions": ["Screen cheaply on one fixed acceleration profile.", "Confirm the two best prompt variants on quality-20 before promotion.", "Declare any profile-specific behavior explicitly."]
+    },
+    {
+      "id": "prompt-detail-budget",
+      "priority": 2,
+      "question": "When does additional causal detail improve control, and when does it introduce competing motion or timing instructions?",
+      "state": "queued",
+      "evidence": [
+        {
+          "level": "source-fact",
+          "claim": "The official Ref2VA guide recommends highly detailed generation descriptions, while official ComfyUI templates also demonstrate much shorter direct prompts.",
+          "source": "https://github.com/Comfy-Org/workflow_templates/tree/b0bcdb274878ea3c5cf46fed3819faa05b920707/templates"
+        }
+      ],
+      "experiment_ids": ["h3-fl2va-prompt-form", "h3-i2va-path-specificity", "h3-ref2va-prompt-form"],
+      "next_actions": ["Compare information structure rather than raw character count.", "Count independent requested motions and temporal clauses per prompt."]
+    },
+    {
+      "id": "last-frame-only-causality",
+      "priority": 2,
+      "question": "How does L2VA infer a plausible past, and which FL2VA arrival techniques transfer without assuming time reversibility?",
+      "state": "deferred",
+      "evidence": [
+        {
+          "level": "source-fact",
+          "claim": "The public guide treats L2VA as plausible preceding state, explicit transition path, gradual convergence and last-frame landing.",
+          "source": "https://github.com/MiniMax-AI/MiniMax-H3/blob/d21241f0a4b3acbb34c97dae47fa417b7065e438/.agents/skills/h3-prompt-writing/references/base-en.txt"
+        }
+      ],
+      "experiment_ids": ["keyframe-mode"],
+      "next_actions": ["Declare a dedicated L2VA matrix after Stage-1 FL2VA vocabulary has repeat evidence."]
+    },
+    {
+      "id": "learned-prompt-embeddings",
+      "priority": 3,
+      "question": "Do official learned prompt embeddings alter style without degrading motion path or endpoint fidelity?",
+      "state": "deferred",
+      "evidence": [
+        {
+          "level": "source-fact",
+          "claim": "ComfyUI supports embedding syntax for MiniMax H3 and its official template references downloadable style embeddings.",
+          "source": "https://github.com/Comfy-Org/ComfyUI/pull/15697"
+        }
+      ],
+      "experiment_ids": [],
+      "next_actions": ["Test one embedding only after a plain-text FL2VA motion baseline is repeat-supported."]
+    },
+    {
+      "id": "automatic-prompt-rewriting",
+      "priority": 3,
+      "question": "Can an external prompt rewriter improve repeatable H3 control beyond direct human-authored structured prompts?",
+      "state": "deferred",
+      "evidence": [
+        {
+          "level": "community-report",
+          "claim": "Several new nodepacks offer local or API-backed H3 prompt expansion, auditing and repair, but none is project evidence.",
+          "source": "docs/RESEARCH_SOURCES.md"
+        }
+      ],
+      "experiment_ids": [],
+      "next_actions": ["Do not install a rewriter until the direct prompt response surface is characterized.", "Later compare exact rewriter output against its unexpanded brief with fixed media and seeds."]
+    }
+  ],
+  "radar": [
+    {
+      "id": "minimax-h3-official",
+      "class": "official",
+      "url": "https://github.com/MiniMax-AI/MiniMax-H3",
+      "watch": "Prompt guide commits, model cards, reproducible requests, issues with maintainer confirmation and new released capabilities.",
+      "cadence": "before-batch",
+      "last_observed": "2026-09-03"
+    },
+    {
+      "id": "comfyui-h3-core",
+      "class": "upstream",
+      "url": "https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_minimax_h3.py",
+      "watch": "Conditioning contracts, reference ordering, AddGuide, masks, Fun Control, memory fixes and prompt-token behavior.",
+      "cadence": "before-batch",
+      "last_observed": "2026-09-03"
+    },
+    {
+      "id": "comfyui-h3-templates",
+      "class": "upstream",
+      "url": "https://github.com/Comfy-Org/workflow_templates/tree/main/templates",
+      "watch": "Canonical graph topology, prompt examples, supported models, acceleration profiles and prompt embeddings.",
+      "cadence": "before-batch",
+      "last_observed": "2026-09-03"
+    },
+    {
+      "id": "minimax-h3-integrations",
+      "class": "community",
+      "url": "https://github.com/MiniMax-AI/awesome-minimax-h3-integration",
+      "watch": "New integrations and nodepacks; inspect mechanism and code before considering installation.",
+      "cadence": "daily",
+      "last_observed": "2026-09-03"
+    },
+    {
+      "id": "github-h3-prompting",
+      "class": "community",
+      "url": "https://github.com/search?q=minimax+h3+prompt&type=repositories&s=updated&o=desc",
+      "watch": "New prompt case studies, validators and rewriters; retain claims as hypotheses unless controlled evidence is available.",
+      "cadence": "daily",
+      "last_observed": "2026-09-03"
+    },
+    {
+      "id": "github-h3-control",
+      "class": "community",
+      "url": "https://github.com/search?q=minimax+h3+control&type=repositories&s=updated&o=desc",
+      "watch": "New native conditioning, control, continuation and editing mechanisms; reject arbitrary sampler hacks without mechanism evidence.",
+      "cadence": "daily",
+      "last_observed": "2026-09-03"
+    },
+    {
+      "id": "video-generation-research",
+      "class": "research",
+      "url": "https://arxiv.org/search/?query=video+generation+control+editing&searchtype=all&order=-announced_date_first",
+      "watch": "Architecture-compatible conditioning, reference binding, temporal completion and evaluation methods; do not assume direct H3 portability.",
+      "cadence": "weekly",
+      "last_observed": "2026-09-03"
+    }
+  ]
+}
