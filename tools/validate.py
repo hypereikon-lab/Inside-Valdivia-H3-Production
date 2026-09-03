@@ -564,6 +564,162 @@ def validate_experiment_catalog(
     return errors
 
 
+def validate_prompting_catalog(
+    value: Any,
+    path: Path,
+    registry: dict[str, dict[str, Any]],
+    experiment_ids: set[str],
+) -> list[str]:
+    """Validate exact prompt-only comparisons without interpreting media."""
+
+    if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.h3-prompting-catalog/1":
+        return [f"{path}: invalid H3 prompting catalog"]
+    errors: list[str] = []
+    expected_top = {"schema", "source", "policy", "matrices"}
+    if set(value) != expected_top:
+        errors.append(f"{path}: prompting catalog fields do not match the schema")
+
+    source = value.get("source")
+    if not isinstance(source, dict):
+        errors.append(f"{path}: prompting source must be an object")
+    else:
+        if not isinstance(source.get("repository"), str) or not source["repository"]:
+            errors.append(f"{path}: prompting source repository is required")
+        if not isinstance(source.get("commit"), str) or not GIT_SHA.fullmatch(source["commit"]):
+            errors.append(f"{path}: prompting source commit must be a full Git SHA")
+        files = source.get("files")
+        if not isinstance(files, list) or not files:
+            errors.append(f"{path}: prompting source files must be non-empty")
+        else:
+            source_paths: set[str] = set()
+            for source_file in files:
+                if not isinstance(source_file, dict) or set(source_file) != {"path", "sha256"}:
+                    errors.append(f"{path}: malformed prompting source file {source_file!r}")
+                    continue
+                source_path = source_file.get("path")
+                digest = source_file.get("sha256")
+                if not isinstance(source_path, str) or not source_path:
+                    errors.append(f"{path}: prompting source path is required")
+                elif source_path in source_paths:
+                    errors.append(f"{path}: duplicate prompting source path {source_path!r}")
+                else:
+                    source_paths.add(source_path)
+                if not isinstance(digest, str) or not SHA256.fullmatch(digest):
+                    errors.append(f"{path}: prompting source SHA must be lowercase SHA-256")
+
+    expected_policy = {
+        "language": "English",
+        "media_semantics": "opaque-human-authored-intent",
+        "generated_audio": "disabled",
+        "comparison_unit": "one-prompt-variable",
+    }
+    if value.get("policy") != expected_policy:
+        errors.append(f"{path}: prompting policy must preserve the project scope")
+
+    matrices = value.get("matrices")
+    if not isinstance(matrices, list) or not matrices:
+        return errors + [f"{path}: prompting matrices must be non-empty"]
+    matrix_ids: set[str] = set()
+    used_experiments: set[str] = set()
+    required_matrix = {
+        "id", "experiment_id", "stage", "mode", "operation", "target",
+        "fixed", "variants", "measures", "status",
+    }
+    modes = {"I2VA", "FL2VA", "Ref2VA", "AddGuide", "FunControl"}
+    statuses = {"planned", "executes", "visually-accepted", "rejected"}
+    for matrix in matrices:
+        if not isinstance(matrix, dict) or set(matrix) != required_matrix:
+            errors.append(f"{path}: malformed prompting matrix {matrix!r}")
+            continue
+        matrix_id = matrix.get("id")
+        if not isinstance(matrix_id, str) or not matrix_id:
+            errors.append(f"{path}: prompting matrix id is required")
+            continue
+        if matrix_id in matrix_ids:
+            errors.append(f"{path}: duplicate prompting matrix {matrix_id!r}")
+        matrix_ids.add(matrix_id)
+
+        experiment_id = matrix.get("experiment_id")
+        if experiment_id not in experiment_ids:
+            errors.append(f"{path}: matrix {matrix_id!r} references unknown experiment {experiment_id!r}")
+        if experiment_id in used_experiments:
+            errors.append(f"{path}: experiment {experiment_id!r} is used by multiple prompt matrices")
+        used_experiments.add(experiment_id)
+        if matrix.get("mode") not in modes:
+            errors.append(f"{path}: matrix {matrix_id!r} has invalid mode")
+        if matrix.get("stage") not in {1, 2, 3}:
+            errors.append(f"{path}: matrix {matrix_id!r} has invalid stage")
+        if matrix.get("status") not in statuses:
+            errors.append(f"{path}: matrix {matrix_id!r} has invalid status")
+
+        operation = matrix.get("operation")
+        if not isinstance(operation, dict) or set(operation) != {"id", "version"}:
+            errors.append(f"{path}: matrix {matrix_id!r} has malformed operation")
+        else:
+            errors.extend(
+                _validate_operation_reference(
+                    {"operation": operation.get("id"), "operation_version": operation.get("version")},
+                    path,
+                    registry,
+                    require_hash=False,
+                )
+            )
+
+        target = matrix.get("target")
+        if not isinstance(target, dict) or set(target) != {"fps", "frames", "duration_seconds"}:
+            errors.append(f"{path}: matrix {matrix_id!r} has malformed target")
+        else:
+            frames = target.get("frames")
+            fps = target.get("fps")
+            duration = target.get("duration_seconds")
+            if fps != 24 or not is_h3_frame_count(frames):
+                errors.append(f"{path}: matrix {matrix_id!r} must use the 24 fps H3 frame grid")
+            elif not isinstance(duration, (int, float)) or round(frames / fps, 2) != duration:
+                errors.append(f"{path}: matrix {matrix_id!r} duration must equal frames/fps to two decimals")
+
+        fixed = matrix.get("fixed")
+        if not isinstance(fixed, list) or not fixed or not all(isinstance(item, str) and item for item in fixed):
+            errors.append(f"{path}: matrix {matrix_id!r} needs non-empty fixed variables")
+        if "prompt" in (fixed or []):
+            errors.append(f"{path}: matrix {matrix_id!r} cannot fix the prompt in a prompt comparison")
+        measures = matrix.get("measures")
+        if not isinstance(measures, list) or not measures:
+            errors.append(f"{path}: matrix {matrix_id!r} needs measures")
+
+        variants = matrix.get("variants")
+        if not isinstance(variants, list) or len(variants) < 2:
+            errors.append(f"{path}: matrix {matrix_id!r} needs at least two variants")
+            continue
+        variant_ids: set[str] = set()
+        prompts: set[str] = set()
+        for variant in variants:
+            if not isinstance(variant, dict) or set(variant) != {"id", "hypothesis", "prompt"}:
+                errors.append(f"{path}: matrix {matrix_id!r} has malformed variant")
+                continue
+            variant_id = variant.get("id")
+            prompt = variant.get("prompt")
+            if not isinstance(variant_id, str) or not variant_id:
+                errors.append(f"{path}: matrix {matrix_id!r} has an empty variant id")
+            elif variant_id in variant_ids:
+                errors.append(f"{path}: matrix {matrix_id!r} duplicates variant {variant_id!r}")
+            else:
+                variant_ids.add(variant_id)
+            if not isinstance(variant.get("hypothesis"), str) or not variant["hypothesis"]:
+                errors.append(f"{path}: matrix {matrix_id!r} variant {variant_id!r} needs a hypothesis")
+            if not isinstance(prompt, str) or not prompt.strip():
+                errors.append(f"{path}: matrix {matrix_id!r} variant {variant_id!r} needs an exact prompt")
+            elif prompt in prompts:
+                errors.append(f"{path}: matrix {matrix_id!r} contains duplicate prompts")
+            else:
+                prompts.add(prompt)
+            if isinstance(prompt, str) and "integrated_multimodal_description:" in prompt:
+                if "overall_soundscape: N/A" not in prompt and "overall_soundscape:\nN/A" not in prompt:
+                    errors.append(f"{path}: matrix {matrix_id!r} structured prompt must disable generated soundscape")
+                if "non_diegetic_music: N/A" not in prompt and "non_diegetic_music:\nN/A" not in prompt:
+                    errors.append(f"{path}: matrix {matrix_id!r} structured prompt must disable generated music")
+    return errors
+
+
 def validate_training_catalog(value: Any, path: Path, root: Path) -> list[str]:
     if not isinstance(value, dict) or value.get("schema") != "inside-valdivia.h3-training-catalog/1":
         return [f"{path}: invalid H3 training catalog"]
@@ -2253,9 +2409,23 @@ def validate_repository(root: Path = ROOT) -> list[str]:
     for path in sorted((root / "segments").glob("*.json")):
         errors.extend(validate_segment(load_json(path), path, invocation_ids))
     catalog_path = root / "experiments" / "catalog.json"
+    experiment_catalog = load_json(catalog_path)
     errors.extend(
         validate_experiment_catalog(
-            load_json(catalog_path), catalog_path, registry, historical_registry
+            experiment_catalog, catalog_path, registry, historical_registry
+        )
+    )
+    prompting_path = root / "prompting" / "catalog.json"
+    errors.extend(
+        validate_prompting_catalog(
+            load_json(prompting_path),
+            prompting_path,
+            registry,
+            {
+                experiment["id"]
+                for experiment in experiment_catalog.get("experiments", [])
+                if isinstance(experiment, dict) and isinstance(experiment.get("id"), str)
+            },
         )
     )
     training_path = root / "training" / "catalog.json"
@@ -2374,7 +2544,8 @@ def main() -> int:
     print(
         "validated: operation/archetype/compatibility locks, project invocations, "
         "materialization plans, runtime gates, acceptance evidence, storage, rolling "
-        "plans, media, experiments, H3 training recipes, fixtures, and schemas"
+        "plans, media, experiments, H3 prompting matrices, training recipes, fixtures, "
+        "and schemas"
     )
     return 0
 

@@ -99,6 +99,14 @@ Then characterize H3-native enhancement over retained native state:
 6. only after separate acceptance, compare guided temporal→spatial with the reverse
    operation order.
 
+Before optimizing Fun Control, run the exact prompt matrices in
+`prompting/catalog.json`. Stage 1 characterizes FL2VA prompt form, camera
+semantics and temporal profile. Stage 2 extends only the retained language to
+I2VA, Ref2VA and AddGuide. Stage 3 measures neutral, congruent and conflicting
+text against one already-useful fixed control carrier. See
+[`H3_PROMPTING.md`](H3_PROMPTING.md). No prompt rewriter is added until direct
+H3-Base response has repeat evidence.
+
 The remaining variants are retained and materialized after their underlying
 mechanism earns baseline evidence. Thirty-one offline plans plus the first
 schema-validated paired draft now exist; this
@@ -118,7 +126,7 @@ timeline origins and independent native video/audio masks.
 
 ## 3. Characterize behavior
 
-Run the sixteen declared controlled comparisons one variable at a time. Prioritize
+Run the twenty-five declared controlled comparisons one variable at a time. Prioritize
 endpoint behavior, reference-video correspondence, AddGuide placement,
 keyframe versus native-mask overlap, mask boundary/fade behavior, and
 future-guide interaction, then masked-edit edge profiles, exact outpaint

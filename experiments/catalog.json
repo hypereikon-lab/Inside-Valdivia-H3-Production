@@ -165,6 +165,69 @@
       "variable": { "carrier_transform": ["direct Canny baseline", "Hydra pass-through", "Hydra time-varying scale and rotation"] },
       "measure": ["carrier PSNR and SSIM", "generated-video PSNR and SSIM", "structural response", "projection preservation", "artifacts", "runtime_seconds"],
       "status": "executes"
+    },
+    {
+      "id": "h3-fl2va-prompt-form",
+      "operations": [{ "id": "generate.keyframed", "version": 2 }],
+      "question": "For the same first/last pair, does the public H3 FL2VA path structure outperform the known terse learned phrase?",
+      "fixed": ["first frame", "last frame", "model", "resolution", "target_frames", "seed", "sampler", "scheduler", "steps"],
+      "variable": { "prompt_form": ["terse learned phrase", "concise official path", "timed official path"] },
+      "measure": ["prompt sensitivity at fixed seed", "endpoint fidelity", "continuous-path coherence", "early landing or terminal hold", "cuts, dissolves, or resets"],
+      "status": "planned"
+    },
+    {
+      "id": "h3-fl2va-camera-semantics",
+      "operations": [{ "id": "generate.keyframed", "version": 2 }],
+      "question": "Does H3 distinguish optical zoom, physical camera translation, and a recursive spatial traverse under otherwise identical FL2VA text?",
+      "fixed": ["first frame", "last frame", "public FL2VA structure", "all wording except the motion clause", "model", "resolution", "target_frames", "seed", "sampler", "scheduler", "steps"],
+      "variable": { "motion_clause": ["optical zoom", "physical push", "recursive traverse"] },
+      "measure": ["apparent focal-length change", "camera-translation parallax", "occlusion continuity", "motion magnitude", "endpoint fidelity"],
+      "status": "planned"
+    },
+    {
+      "id": "h3-fl2va-temporal-profile",
+      "operations": [{ "id": "generate.keyframed", "version": 2 }],
+      "question": "Can prompt language control the velocity profile of one fixed FL2VA camera path?",
+      "fixed": ["first frame", "last frame", "physical push motion", "public FL2VA structure", "model", "resolution", "target_frames", "seed", "sampler", "scheduler", "steps"],
+      "variable": { "temporal_profile": ["uniform", "accelerating", "accelerate then land"] },
+      "measure": ["optical-flow velocity trace", "jerk discontinuity", "early landing", "terminal hold duration", "endpoint fidelity"],
+      "status": "planned"
+    },
+    {
+      "id": "h3-i2va-path-specificity",
+      "operations": [{ "id": "generate.keyframed", "version": 2 }],
+      "question": "How much path specificity can I2VA absorb before extra timing language stops improving the same forward motion?",
+      "fixed": ["first frame", "motion intent", "model", "resolution", "target_frames", "seed", "sampler", "scheduler", "steps"],
+      "variable": { "path_specificity": ["single clause", "causal path", "timed path"] },
+      "measure": ["direction adherence", "motion magnitude", "acceleration response", "spatial coherence", "unrequested cuts or resets"],
+      "status": "planned"
+    },
+    {
+      "id": "h3-ref2va-prompt-form",
+      "operations": [{ "id": "generate.from_references", "version": 4 }],
+      "question": "Does the public six-section Ref2VA grammar bind whole-video camera motion more reliably than flat label-aware prose?",
+      "fixed": ["one reference video", "reference order", "requested camera-motion transfer", "model", "resolution", "target_frames", "seed", "sampler", "scheduler", "steps"],
+      "variable": { "prompt_form": ["flat reference instruction", "official six-section"] },
+      "measure": ["reference-motion correspondence", "visible-content leakage", "camera-path continuity", "prompt sensitivity at fixed seed", "runtime_seconds"],
+      "status": "planned"
+    },
+    {
+      "id": "h3-addguide-prompt-relation",
+      "operations": [{ "id": "generate.with_guides", "version": 3 }],
+      "question": "For one fixed guide ladder, does explicit gap-generation and retiming language change the motion synthesized between exact target-time guides?",
+      "fixed": ["ordered guide states", "guide target indices", "model", "resolution", "target_frames", "seed", "sampler", "scheduler", "steps"],
+      "variable": { "prompt_relation": ["neutral continuity", "intermediate motion only", "explicit duration expansion"] },
+      "measure": ["guide reconstruction fidelity", "distinct intermediate motion", "freeze or echo rate", "motion cadence", "trajectory continuity"],
+      "status": "planned"
+    },
+    {
+      "id": "h3-fun-control-prompt-relation",
+      "operations": [{ "id": "generate.with_control", "version": 1 }],
+      "question": "At fixed structural control, how does neutral, congruent, or conflicting text divide control authority between Qwen conditioning and Fun Control?",
+      "fixed": ["first frame", "control carrier", "control strength", "control interval", "model", "resolution", "target_frames", "seed", "sampler", "scheduler", "steps"],
+      "variable": { "prompt_relation": ["text neutral", "text congruent", "text conflicting"] },
+      "measure": ["control correspondence", "text adherence", "motion magnitude", "structural distortion", "dominance under conflict"],
+      "status": "planned"
     }
   ]
 }

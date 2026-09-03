@@ -1,11 +1,20 @@
 # Controlled H3 experiments
 
-`experiments/catalog.json` contains sixteen controlled, one-variable comparisons:
+`experiments/catalog.json` contains twenty-five controlled, one-variable comparisons:
 endpoint mode, reference-image sizing, reference duration, guide length, guide
 placement, continuation prompt relation, native mask boundary, overlap
 transport, future guide, masked-edit edge profile, outpaint placement, native
 refinement strength, native H3 temporal densification, native H3 spatial
 regeneration, enhancement order, and dense-guide H3 temporal expansion.
+It also includes the timed-reference and Hydra structural-carrier evidence plus
+seven prompt-only matrices covering FL2VA form, camera semantics and temporal
+profile; I2VA path specificity; Ref2VA role grammar; AddGuide prompt relation;
+and text-versus-Fun-Control authority.
+
+The exact prompt bytes, upstream guide pin and staged execution order for those
+seven matrices live in `prompting/catalog.json`. They do not assert that a
+prompt is effective merely because it follows the public syntax. See
+[`H3_PROMPTING.md`](H3_PROMPTING.md).
 
 Dense-guide expansion asserts the exact `(N - 1) * factor + 1` delivery count,
 legal H3 target padding, factor-spaced official AddGuide indices, and an

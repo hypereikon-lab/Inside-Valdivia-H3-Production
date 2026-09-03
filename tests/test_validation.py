@@ -17,6 +17,7 @@ from tools.validate import (
     validate_media_catalog,
     validate_operation_history_lock,
     validate_operation_lock,
+    validate_prompting_catalog,
     validate_repository,
     validate_rolling_catalog,
     validate_rolling_plan,
@@ -128,6 +129,25 @@ class RepositoryValidationTests(unittest.TestCase):
                 self.assertLessEqual(
                     operation["version"], registry[operation["id"]]["version"]
                 )
+
+    def test_prompting_catalog_is_pinned_and_one_variable(self):
+        lock_path = ROOT / "operations.lock.json"
+        _, registry = validate_operation_lock(load_json(lock_path), lock_path)
+        experiment_catalog = load_json(ROOT / "experiments" / "catalog.json")
+        prompting_path = ROOT / "prompting" / "catalog.json"
+        prompting = load_json(prompting_path)
+        self.assertEqual(
+            validate_prompting_catalog(
+                prompting,
+                prompting_path,
+                registry,
+                {experiment["id"] for experiment in experiment_catalog["experiments"]},
+            ),
+            [],
+        )
+        self.assertTrue(all(matrix["target"]["fps"] == 24 for matrix in prompting["matrices"]))
+        self.assertTrue(all("prompt" not in matrix["fixed"] for matrix in prompting["matrices"]))
+        self.assertTrue(all(len(matrix["variants"]) >= 2 for matrix in prompting["matrices"]))
 
     def test_training_recipes_are_explicitly_gated(self):
         catalog_path = ROOT / "training" / "catalog.json"

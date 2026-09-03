@@ -4,6 +4,9 @@ Implementation contracts were checked against primary code and merged upstream
 changes, not inferred from workflow screenshots:
 
 - [MiniMax H3 official repository](https://github.com/MiniMax-AI/MiniMax-H3)
+- [Official H3 prompt-writing skill](https://github.com/MiniMax-AI/MiniMax-H3/tree/main/.agents/skills/h3-prompt-writing)
+- [Official H3 base-mode prompt guide](https://github.com/MiniMax-AI/MiniMax-H3/blob/main/.agents/skills/h3-prompt-writing/references/base-en.txt)
+- [Official H3 Ref2VA prompt guide](https://github.com/MiniMax-AI/MiniMax-H3/blob/main/.agents/skills/h3-prompt-writing/references/ref-en.txt)
 - [Official ComfyUI H3 nodes](https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_minimax_h3.py)
 - [Official ComfyUI video load/create/save nodes](https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_video.py)
 - [ComfyUI PR #15439: MiniMax H3 AddGuide](https://github.com/Comfy-Org/ComfyUI/pull/15439)
@@ -56,6 +59,9 @@ changes, not inferred from workflow screenshots:
 - [ComfyUI ControlNet Auxiliary Preprocessors](https://github.com/Fannovel16/comfyui_controlnet_aux)
 - [VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite)
 - [rgthree-comfy](https://github.com/rgthree/rgthree-comfy)
+- [H3 prompt journal](https://github.com/LoveRain1997/h3-prompt-journal)
+- [Community H3 Guide nodepack](https://github.com/ethanfel/ComfyUI-MiniMax-H3-Guide)
+- [Community H3 Prompt Writer](https://github.com/duckyshell/ComfyUI-MiniMaxH3-Prompt-Writer)
 
 Inspected community implementations are design references, never runtime
 dependencies or behavioral proof:
@@ -83,10 +89,11 @@ their mechanism is reproduced transparently and live evidence is retained.
 
 Learned latent upscalers remain research references, not dependencies of the
 current 28-node CAUCE surface. H3 Fun ControlNet and reference/keyframe-plus-
-control support are merged upstream through #15975 and #16020, but the captured
-laboratory runtime predates those changes. They remain runtime-gated rather
-than claimed as installed production capabilities; the open mask-correctness
-gates also require live characterization.
+control support were merged upstream through #15975 and #16020 and have since
+executed in the laboratory. Canny and depth control, a 34-run control matrix,
+and two Hydra-carrier handoff tests are retained as technical evidence; none is
+yet a visually promoted production capability. Open mask-correctness questions
+still require per-workflow characterization.
 
 The official source was rechecked on 2026-08-31. The released H3 surface exposes
 `MiniMaxH3ImageToVideo`, `MiniMaxH3ReferenceToVideo`, `MiniMaxH3AddGuide`, and
@@ -119,3 +126,8 @@ external-pack adoption classes, KJNodes whitelist, official auxiliary weights,
 installation protocol and developer watch list. See
 [H3 acceleration profiles](ACCELERATION_PROFILES.md) for family-matched
 Turbo/PDD execution modes.
+
+See [H3 prompting as an experimental control surface](H3_PROMPTING.md) for the
+pinned public grammar, exact one-variable prompt matrices, evaluation protocol,
+and the boundary between official syntax, community hypotheses and project
+evidence.

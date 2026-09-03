@@ -39,7 +39,8 @@ this repository
   exact operation/archetype/component locks, 35 offline binding profiles,
   1 schema-validated paired draft, project data,
   runtime readiness profiles, acceptance criteria, storage policy,
-  experiments, rolling dependency/checkpoint plans,
+  experiments, 7 exact prompt-only comparison matrices,
+  rolling dependency/checkpoint plans,
   27 tracked live invocations, 64 immutable run receipts,
   plus one timed-reference run retained with exact prompt evidence
 ```
@@ -113,6 +114,7 @@ next required compatibility target.
 - [2026-09-02 live H3 runtime smoke batch](runtime/smokes/2026-09-02-h3-runtime.json)
 - [Native H3/Seedance movement-control research](docs/MOVEMENT_CONTROL_RESEARCH.md)
 - [H3 intent routing and latent operator space](docs/H3_INTENT_ROUTING.md)
+- [H3 prompting as an experimental control surface](docs/H3_PROMPTING.md)
 - [Temporal and spatial video enhancement](docs/VIDEO_ENHANCEMENT.md)
 - [Operations](docs/OPERATIONS.md)
 - [Materialization](docs/MATERIALIZATION.md)

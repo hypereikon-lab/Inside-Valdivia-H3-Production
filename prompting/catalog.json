@@ -1,0 +1,221 @@
+{
+  "schema": "inside-valdivia.h3-prompting-catalog/1",
+  "source": {
+    "repository": "https://github.com/MiniMax-AI/MiniMax-H3",
+    "commit": "d21241f0a4b3acbb34c97dae47fa417b7065e438",
+    "observed_at": "2026-09-03",
+    "files": [
+      {
+        "path": ".agents/skills/h3-prompt-writing/SKILL.md",
+        "sha256": "a48f9db1231cebe6b141985a0932e2ee83e3d29574387a7b1fddd4c3173759ed"
+      },
+      {
+        "path": ".agents/skills/h3-prompt-writing/references/base-en.txt",
+        "sha256": "2cfebc096a6e08370f288d468d90b60f7f9bcb938f94bf090816e910e48e75fc"
+      },
+      {
+        "path": ".agents/skills/h3-prompt-writing/references/ref-en.txt",
+        "sha256": "1e574f356716ad55612247ffb7bbccbcdb484ad96599d63c7dca1af186b1fab7"
+      }
+    ]
+  },
+  "policy": {
+    "language": "English",
+    "media_semantics": "opaque-human-authored-intent",
+    "generated_audio": "disabled",
+    "comparison_unit": "one-prompt-variable"
+  },
+  "matrices": [
+    {
+      "id": "fl2va-prompt-form",
+      "experiment_id": "h3-fl2va-prompt-form",
+      "stage": 1,
+      "mode": "FL2VA",
+      "operation": { "id": "generate.keyframed", "version": 2 },
+      "target": { "fps": 24, "frames": 124, "duration_seconds": 5.17 },
+      "fixed": ["first frame", "last frame", "model", "resolution", "seed", "sampler", "scheduler", "steps"],
+      "variants": [
+        {
+          "id": "terse-learned-phrase",
+          "hypothesis": "The terse phrase is a useful empirical baseline because it may activate a learned transition concept despite omitting the public H3 structure.",
+          "prompt": "infinite fast zoom transition into"
+        },
+        {
+          "id": "concise-official-path",
+          "hypothesis": "The public FL2VA alignment and path grammar improves temporal use of both endpoints without overconstraining the five-second shot.",
+          "prompt": "How the reference pictures align with the target video — Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; Picture 2 (from Shot 1) aligns with the 5.17-second mark of the target video.\n\nintegrated_multimodal_description: [Shot 1] The shot begins in the viewpoint and composition established by Picture 1. In one uninterrupted shot, a continuous fast forward transition advances through the visible space. Parallax, scale, and occlusion evolve coherently at every intermediate moment without a reset. The trajectory progressively narrows the spatial difference and reaches the viewpoint, geometry, and composition established by Picture 2 only at the end of the shot.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A"
+        },
+        {
+          "id": "timed-official-path",
+          "hypothesis": "Three observable temporal phases give the language model a stronger motion path than either a slogan or an untimed paragraph.",
+          "prompt": "How the reference pictures align with the target video — Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; Picture 2 (from Shot 1) aligns with the 5.17-second mark of the target video.\n\nintegrated_multimodal_description: [Shot 1] The shot begins in the exact viewpoint and composition established by Picture 1. From 0.00 to 1.50 seconds, one uninterrupted fast forward movement establishes a stable direction through the visible space. From 1.50 to 3.80 seconds, the movement continues without cuts as parallax, scale, occlusion, and newly revealed regions change continuously along the same trajectory. From 3.80 to 5.17 seconds, the rate eases only enough to converge precisely, with the remaining geometric and compositional differences progressively disappearing until the shot reaches Picture 2 at the final moment.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A"
+        }
+      ],
+      "measures": ["prompt sensitivity at fixed seed", "first-frame fidelity", "last-frame fidelity", "continuous-path coherence", "early landing or terminal hold", "cuts, dissolves, or resets"],
+      "status": "planned"
+    },
+    {
+      "id": "fl2va-camera-semantics",
+      "experiment_id": "h3-fl2va-camera-semantics",
+      "stage": 1,
+      "mode": "FL2VA",
+      "operation": { "id": "generate.keyframed", "version": 2 },
+      "target": { "fps": 24, "frames": 124, "duration_seconds": 5.17 },
+      "fixed": ["first frame", "last frame", "public FL2VA structure", "all wording except the motion clause", "model", "resolution", "seed", "sampler", "scheduler", "steps"],
+      "variants": [
+        {
+          "id": "optical-zoom",
+          "hypothesis": "Explicit focal-length language yields scale change with less translation and parallax.",
+          "prompt": "How the reference pictures align with the target video — Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; Picture 2 (from Shot 1) aligns with the 5.17-second mark of the target video.\n\nintegrated_multimodal_description: [Shot 1] The shot begins in the viewpoint and composition established by Picture 1. The camera body remains stationary while the lens zooms in with large amplitude at fast speed. The focal-length change continuously enlarges the visible composition without camera translation, a cut, or a reset, and converges to the framing and composition established by Picture 2 only at the final moment.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A"
+        },
+        {
+          "id": "physical-push",
+          "hypothesis": "Explicit camera translation yields parallax and occlusion changes distinct from an optical zoom.",
+          "prompt": "How the reference pictures align with the target video — Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; Picture 2 (from Shot 1) aligns with the 5.17-second mark of the target video.\n\nintegrated_multimodal_description: [Shot 1] The shot begins in the viewpoint and composition established by Picture 1. The camera physically pushes forward with large amplitude at fast speed while its focal length remains stable. Translation through the visible space creates continuous parallax, occlusion, and depth change without a cut or reset, and converges to the viewpoint and composition established by Picture 2 only at the final moment.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A"
+        },
+        {
+          "id": "recursive-traverse",
+          "hypothesis": "A learned infinite-transition phrase plus physical continuity language may produce a nested spatial traverse rather than a literal lens zoom.",
+          "prompt": "How the reference pictures align with the target video — Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; Picture 2 (from Shot 1) aligns with the 5.17-second mark of the target video.\n\nintegrated_multimodal_description: [Shot 1] The shot begins in the viewpoint and composition established by Picture 1. An infinite fast zoom transition travels forward into the visible space as one physically continuous trajectory: foreground regions pass the camera, deeper regions expand into view, and each revealed layer becomes the space of the next moment. The motion never cuts, dissolves, teleports, or resets and reaches the viewpoint and composition established by Picture 2 only at the final moment.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A"
+        }
+      ],
+      "measures": ["apparent focal-length change", "camera-translation parallax", "occlusion continuity", "motion magnitude", "endpoint fidelity"],
+      "status": "planned"
+    },
+    {
+      "id": "fl2va-temporal-profile",
+      "experiment_id": "h3-fl2va-temporal-profile",
+      "stage": 1,
+      "mode": "FL2VA",
+      "operation": { "id": "generate.keyframed", "version": 2 },
+      "target": { "fps": 24, "frames": 124, "duration_seconds": 5.17 },
+      "fixed": ["first frame", "last frame", "physical push motion", "public FL2VA structure", "model", "resolution", "seed", "sampler", "scheduler", "steps"],
+      "variants": [
+        {
+          "id": "uniform",
+          "hypothesis": "An explicit uniform rate produces the smoothest velocity trace but may weaken the final landing.",
+          "prompt": "How the reference pictures align with the target video — Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; Picture 2 (from Shot 1) aligns with the 5.17-second mark of the target video.\n\nintegrated_multimodal_description: [Shot 1] The shot begins in the viewpoint and composition established by Picture 1. The camera physically pushes forward at one constant speed along one uninterrupted trajectory for the entire shot. Parallax and occlusion evolve continuously at a uniform rate, and the camera reaches the viewpoint and composition established by Picture 2 exactly at 5.17 seconds.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A"
+        },
+        {
+          "id": "accelerating",
+          "hypothesis": "A monotonic acceleration instruction produces a measurable increase in motion magnitude across the shot.",
+          "prompt": "How the reference pictures align with the target video — Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; Picture 2 (from Shot 1) aligns with the 5.17-second mark of the target video.\n\nintegrated_multimodal_description: [Shot 1] The shot begins in the viewpoint and composition established by Picture 1. The camera physically pushes forward in one uninterrupted trajectory, beginning slowly and accelerating continuously without any deceleration. Parallax, occlusion, and the rate of newly revealed space increase throughout the shot, and the fastest movement reaches the viewpoint and composition established by Picture 2 exactly at 5.17 seconds.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A"
+        },
+        {
+          "id": "accelerate-then-land",
+          "hypothesis": "Acceleration followed by a short deceleration window improves both dynamic motion and terminal anchor fidelity.",
+          "prompt": "How the reference pictures align with the target video — Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; Picture 2 (from Shot 1) aligns with the 5.17-second mark of the target video.\n\nintegrated_multimodal_description: [Shot 1] The shot begins in the viewpoint and composition established by Picture 1. From 0.00 to 3.80 seconds, the camera physically pushes forward along one uninterrupted trajectory and accelerates continuously, increasing parallax, occlusion, and spatial revelation. From 3.80 to 5.17 seconds, it decelerates smoothly without stopping early while the remaining geometric differences progressively close, reaching the viewpoint and composition established by Picture 2 only at the final moment.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A"
+        }
+      ],
+      "measures": ["optical-flow velocity trace", "jerk discontinuity", "early landing", "terminal hold duration", "endpoint fidelity"],
+      "status": "planned"
+    },
+    {
+      "id": "i2va-path-specificity",
+      "experiment_id": "h3-i2va-path-specificity",
+      "stage": 2,
+      "mode": "I2VA",
+      "operation": { "id": "generate.keyframed", "version": 2 },
+      "target": { "fps": 24, "frames": 124, "duration_seconds": 5.17 },
+      "fixed": ["first frame", "motion intent", "model", "resolution", "seed", "sampler", "scheduler", "steps"],
+      "variants": [
+        {
+          "id": "single-clause",
+          "hypothesis": "A single dominant motion clause leaves H3 maximum freedom while preserving the requested direction.",
+          "prompt": "For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.\n\nintegrated_multimodal_description: [Shot 1] Begin exactly from <Picture 1>. The camera physically pushes forward at fast speed in one continuous shot.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A"
+        },
+        {
+          "id": "causal-path",
+          "hypothesis": "Adding observable consequences to the same motion improves spatial coherence without prescribing scene semantics.",
+          "prompt": "For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.\n\nintegrated_multimodal_description: [Shot 1] Begin exactly from <Picture 1>. The camera physically pushes forward at fast speed in one continuous shot. Foreground regions pass the camera, deeper regions expand into view, and parallax and occlusion evolve coherently along the same trajectory without a cut or reset.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A"
+        },
+        {
+          "id": "timed-path",
+          "hypothesis": "A three-phase timeline yields more controllable acceleration than untimed causal prose.",
+          "prompt": "For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.\n\nintegrated_multimodal_description: [Shot 1] Begin exactly from <Picture 1>. From 0.00 to 1.20 seconds, the camera starts a stable forward push. From 1.20 to 4.20 seconds, it accelerates along the same continuous trajectory while foreground regions pass the camera and deeper regions expand into view. From 4.20 to 5.17 seconds, it maintains direction and settles into a coherent new viewpoint without cutting, reversing, or resetting.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A"
+        }
+      ],
+      "measures": ["direction adherence", "motion magnitude", "acceleration response", "spatial coherence", "unrequested cuts or resets"],
+      "status": "planned"
+    },
+    {
+      "id": "ref2va-prompt-form",
+      "experiment_id": "h3-ref2va-prompt-form",
+      "stage": 2,
+      "mode": "Ref2VA",
+      "operation": { "id": "generate.from_references", "version": 4 },
+      "target": { "fps": 24, "frames": 124, "duration_seconds": 5.17 },
+      "fixed": ["one reference video", "reference order", "requested camera-motion transfer", "model", "resolution", "seed", "sampler", "scheduler", "steps"],
+      "variants": [
+        {
+          "id": "flat-reference-instruction",
+          "hypothesis": "A short label-aware instruction establishes the unstructured local-H3 baseline.",
+          "prompt": "Use <Video 1> as the reference for camera movement and temporal structure. Generate a new continuous shot that follows the same camera trajectory, pacing, and direction without copying the source video's visible content. No generated audio."
+        },
+        {
+          "id": "official-six-section",
+          "hypothesis": "The public Ref2VA role and retention structure binds a whole-video motion reference more reliably than flat prose.",
+          "prompt": "subject_definitions:\n<Video 1> is the reference for the target video's complete camera trajectory, direction, pacing, and temporal structure.\n\nsummary:\n[reference generation] The target is a new single-shot video whose camera motion and temporal structure are guided by <Video 1>, while its visible content comes from the target generation rather than the reference clip.\n\nretention_analysis:\n<Video 1> (camera movement and temporal structure): fully_preserved - preserve the direction, pacing, continuous trajectory, and relative timing of the reference camera motion without copying its visible subjects or scene.\n\ndetailed_description:\nThe target video is one uninterrupted shot. [Shot 1] The generated view follows the complete camera movement of <Video 1> from beginning to end. The direction, acceleration, deceleration, parallax progression, and timing of the reference trajectory remain coordinated throughout, while the target's own visible content and geometry remain internally coherent. The motion does not cut, reset, reverse, or become a static hold before the final moment.\n\noverall_soundscape:\nN/A\n\nnon_diegetic_music:\nN/A"
+        }
+      ],
+      "measures": ["reference-motion correspondence", "visible-content leakage", "camera-path continuity", "prompt sensitivity at fixed seed", "runtime"],
+      "status": "planned"
+    },
+    {
+      "id": "addguide-prompt-relation",
+      "experiment_id": "h3-addguide-prompt-relation",
+      "stage": 2,
+      "mode": "AddGuide",
+      "operation": { "id": "generate.with_guides", "version": 3 },
+      "target": { "fps": 24, "frames": 124, "duration_seconds": 5.17 },
+      "fixed": ["ordered guide states", "guide target indices", "model", "resolution", "seed", "sampler", "scheduler", "steps"],
+      "variants": [
+        {
+          "id": "neutral-continuity",
+          "hypothesis": "A neutral continuity prompt reveals what the guide states enforce without an explicit retiming instruction.",
+          "prompt": "integrated_multimodal_description: [Shot 1] Generate one continuous shot through the supplied temporally ordered guide states. Preserve coherent motion direction and spatial continuity between them without cuts or resets.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A"
+        },
+        {
+          "id": "intermediate-motion-only",
+          "hypothesis": "Explicitly assigning the gaps to newly generated motion improves interpolation between guide states.",
+          "prompt": "integrated_multimodal_description: [Shot 1] Treat every supplied guide as an exact state at its assigned target time. Generate coherent new intermediate motion only inside the temporal gaps, preserving the ordered trajectory, direction, geometry, and causal continuity of the guide sequence. The shot remains continuous without cuts, resets, duplicated gestures, or early holds.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A"
+        },
+        {
+          "id": "explicit-duration-expansion",
+          "hypothesis": "Naming the retiming objective helps H3 interpret sparse guide placement as duration expansion rather than ordinary interpolation.",
+          "prompt": "integrated_multimodal_description: [Shot 1] Expand the supplied guide sequence into a longer slow-motion trajectory while preserving each guide at its assigned target time. Generate distinct, physically coherent intermediate states between guides so that motion advances continuously at the expanded duration instead of freezing, echoing, or repeating source states. Maintain one camera path and one uninterrupted shot.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A"
+        }
+      ],
+      "measures": ["guide reconstruction fidelity", "distinct intermediate motion", "freeze or echo rate", "motion cadence", "trajectory continuity"],
+      "status": "planned"
+    },
+    {
+      "id": "fun-control-prompt-relation",
+      "experiment_id": "h3-fun-control-prompt-relation",
+      "stage": 3,
+      "mode": "FunControl",
+      "operation": { "id": "generate.with_control", "version": 1 },
+      "target": { "fps": 24, "frames": 124, "duration_seconds": 5.17 },
+      "fixed": ["first frame", "control carrier", "control strength", "control interval", "model", "resolution", "seed", "sampler", "scheduler", "steps"],
+      "variants": [
+        {
+          "id": "text-neutral",
+          "hypothesis": "A neutral text condition exposes the structural control contribution with minimal linguistic competition.",
+          "prompt": "integrated_multimodal_description: [Shot 1] Generate one coherent continuous shot while preserving the supplied opening state.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A"
+        },
+        {
+          "id": "text-congruent",
+          "hypothesis": "Language that agrees with the carrier strengthens the same camera path and structural evolution.",
+          "prompt": "integrated_multimodal_description: [Shot 1] Generate one coherent continuous shot whose camera path, structural movement, and timing follow the supplied control trajectory from beginning to end. The text and control express the same uninterrupted movement without cuts or resets.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A"
+        },
+        {
+          "id": "text-conflicting",
+          "hypothesis": "A deliberately static prompt measures whether text or structural control dominates under an explicit conflict.",
+          "prompt": "integrated_multimodal_description: [Shot 1] The camera and visible structure remain completely static for the entire shot, with no translation, rotation, scale change, deformation, or movement.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A"
+        }
+      ],
+      "measures": ["control correspondence", "text adherence", "motion magnitude", "structural distortion", "dominance under conflict"],
+      "status": "planned"
+    }
+  ]
+}

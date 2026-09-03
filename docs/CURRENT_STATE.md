@@ -168,6 +168,13 @@ are explicitly rejected as slow-motion paths. No generative variant has yet
 met its minimum repeat count and visual promotion rule, so none is called
 production-ready.
 
+Prompting now has a separate, pinned empirical layer. Seven exact prompt-only
+matrices cover FL2VA path form, camera semantics and velocity; I2VA path
+specificity; Ref2VA role binding; AddGuide gap intent; and prompt/control
+authority. They are planned, not executed evidence. No automatic captioner or
+LLM rewriter is a runtime dependency, and media remains opaque. See
+[`H3_PROMPTING.md`](H3_PROMPTING.md) and `prompting/catalog.json`.
+
 ## Materialization assets
 
 The 35 materialization plans cover the entire CAUCE topology catalog and map
@@ -201,12 +208,14 @@ the first live batch complete:
    recovery path without changing the GPU stack;
 2. repeat native continuation and two-source completion with a second seed and
    perform full-motion human review;
-3. run fixed-source denoise ladders for refinement and spatial regeneration;
-4. replace the rejected isolated still anchor with a legal guide clip;
-5. redesign source preservation before repeating the rejected temporal 2× run;
-6. persist rollback prefix and suffix independently, then repeat its deterministic
+3. screen the three Stage-1 FL2VA prompt matrices before varying structural
+   control or adding prompt-rewriter dependencies;
+4. run fixed-source denoise ladders for refinement and spatial regeneration;
+5. replace the rejected isolated still anchor with a legal guide clip;
+6. redesign source preservation before repeating the rejected temporal 2× run;
+7. persist rollback prefix and suffix independently, then repeat its deterministic
    round-trip acceptance check;
-7. pair accepted API graphs with their UI graphs and compile only those accepted,
+8. pair accepted API graphs with their UI graphs and compile only those accepted,
    explicitly prebound graphs into a Runtime Control serial plan.
 
 Every graph must persist a resolvable video artifact through the current core
