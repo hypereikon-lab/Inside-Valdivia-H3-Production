@@ -1,0 +1,176 @@
+{
+  "id": "h3-fun-control-20260902",
+  "schema": "comfy.run-batch/1",
+  "steps": [
+    {
+      "graph": "graphs/canny-strength-025.api.json",
+      "id": "canny-strength-025",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/canny-strength-05.api.json",
+      "id": "canny-strength-05",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/canny-strength-075.api.json",
+      "id": "canny-strength-075",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/canny-strength-125.api.json",
+      "id": "canny-strength-125",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/canny-strength-15.api.json",
+      "id": "canny-strength-15",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/canny-stage-early.api.json",
+      "id": "canny-stage-early",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/canny-stage-earlymid.api.json",
+      "id": "canny-stage-earlymid",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/canny-stage-late.api.json",
+      "id": "canny-stage-late",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/canny-stage-middle.api.json",
+      "id": "canny-stage-middle",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/canny-dense.api.json",
+      "id": "canny-dense",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/canny-sparse.api.json",
+      "id": "canny-sparse",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/depth-strength-05.api.json",
+      "id": "depth-strength-05",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/depth-strength-075.api.json",
+      "id": "depth-strength-075",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/canny-envelope-midpulse.api.json",
+      "id": "canny-envelope-midpulse",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/canny-envelope-rampin.api.json",
+      "id": "canny-envelope-rampin",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/hybrid-depth-to-canny.api.json",
+      "id": "hybrid-depth-to-canny",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/hybrid-canny-to-depth.api.json",
+      "id": "hybrid-canny-to-depth",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/ref-a-canny-05.api.json",
+      "id": "ref-a-canny-05",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/ref-a-canny-075.api.json",
+      "id": "ref-a-canny-075",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/ref-a-canny-10.api.json",
+      "id": "ref-a-canny-10",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/ref-a-depth-075.api.json",
+      "id": "ref-a-depth-075",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/ref-ab-canny-075.api.json",
+      "id": "ref-ab-canny-075",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/ref-a-max-canny-075.api.json",
+      "id": "ref-a-max-canny-075",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/fl-firstlast-canny-075.api.json",
+      "id": "fl-firstlast-canny-075",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/fl-externalfirst-canny-075.api.json",
+      "id": "fl-externalfirst-canny-075",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/fl-firstlast-depth-075.api.json",
+      "id": "fl-firstlast-depth-075",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/fl-guide-source-canny-075.api.json",
+      "id": "fl-guide-source-canny-075",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/fl-guide-refa-canny-075.api.json",
+      "id": "fl-guide-refa-canny-075",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/ref-a-guide-b-canny-075.api.json",
+      "id": "ref-a-guide-b-canny-075",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/inpaint-temporal.api.json",
+      "id": "inpaint-temporal",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/inpaint-temporal-canny-075.api.json",
+      "id": "inpaint-temporal-canny-075",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/inpaint-spatial.api.json",
+      "id": "inpaint-spatial",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/inpaint-spatial-canny-075.api.json",
+      "id": "inpaint-spatial-canny-075",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "graph": "graphs/ref-a-inpaint-temporal-canny-075.api.json",
+      "id": "ref-a-inpaint-temporal-canny-075",
+      "operation_ref": "operation-ref.json"
+    }
+  ]
+}

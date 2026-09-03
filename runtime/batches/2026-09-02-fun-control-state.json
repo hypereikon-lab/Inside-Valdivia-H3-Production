@@ -1,0 +1,280 @@
+{
+  "plan_hash": "c965f101d24c08b55f963f2e4196f4c0b757080d39383f03fe36f73c504d11f5",
+  "plan_id": "h3-fun-control-20260902",
+  "schema": "comfy.run-batch-state/1",
+  "state_hash": "f46808eb94d595911dac1c1d9a2eac8f916c595c75565104ecf2b1b8fd91ef03",
+  "steps": [
+    {
+      "error": null,
+      "id": "canny-strength-025",
+      "prompt_id": "7ebf35c1-2849-4fea-9275-f0dad85f7f4f",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/canny-strength-025-7ebf35c1-2849-4fea-9275-f0dad85f7f4f.json",
+      "receipt_hash": "1b46444e6d8af4df7ae8f1b73f1d13f837770f691a52244e48df0d0aff606854",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "canny-strength-05",
+      "prompt_id": "24e716b4-5e86-44fc-b997-de9598978a75",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/canny-strength-05-24e716b4-5e86-44fc-b997-de9598978a75.json",
+      "receipt_hash": "168d9f75548ac2fd479958ad538a2988d6723c971bc7d9b332d0da08a7a625b2",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "canny-strength-075",
+      "prompt_id": "6b125e65-1ff0-48d7-bcad-f080ac36008a",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/canny-strength-075-6b125e65-1ff0-48d7-bcad-f080ac36008a.json",
+      "receipt_hash": "7aa573999c9bc26f8569fad4659dfa8a1923c1ac0344f09f6ccd16ca4a865b9a",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "canny-strength-125",
+      "prompt_id": "b0412fd3-8b4e-4dd7-a714-9d49cdfeac01",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/canny-strength-125-b0412fd3-8b4e-4dd7-a714-9d49cdfeac01.json",
+      "receipt_hash": "21fe8ba59006c4ad6609a84772c3eb324ed4b52c8d7ce397ede39ce7fc15bb64",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "canny-strength-15",
+      "prompt_id": "7e519f41-fc5a-4ba2-a871-0d922a683218",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/canny-strength-15-7e519f41-fc5a-4ba2-a871-0d922a683218.json",
+      "receipt_hash": "86ebaddaf4b713e2e0d11c34337325e2ec9d57954bf2277bfb9269e764f1afd3",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "canny-stage-early",
+      "prompt_id": "df7871c1-d806-43d4-a9d2-a0f8fdfa76fd",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/canny-stage-early-df7871c1-d806-43d4-a9d2-a0f8fdfa76fd.json",
+      "receipt_hash": "6854a8b9c9764ed66a84536aad1bf97055895fd1171678ed01c0a71a69b69f2f",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "canny-stage-earlymid",
+      "prompt_id": "abee3dab-07fb-490b-a673-c5b8b265b41f",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/canny-stage-earlymid-abee3dab-07fb-490b-a673-c5b8b265b41f.json",
+      "receipt_hash": "409d7bae8c060640fad94dbf4f64a552fbc6ce08dd9524aa8862bfda2ab7571d",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "canny-stage-late",
+      "prompt_id": "4c5d065f-214c-41b4-bf19-91a2144b45a4",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/canny-stage-late-4c5d065f-214c-41b4-bf19-91a2144b45a4.json",
+      "receipt_hash": "bb0367d69756efb123b8a12ae2e26d88f4562b367f330c6660ca89cc376b04a3",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "canny-stage-middle",
+      "prompt_id": "2f9a64d9-0d4f-4e4f-8722-10c8096c0113",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/canny-stage-middle-2f9a64d9-0d4f-4e4f-8722-10c8096c0113.json",
+      "receipt_hash": "8b7927ad8137be96a57a6ac2c4d27818f99db4e19d7b059ecee8d2d6e388b155",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "canny-dense",
+      "prompt_id": "10882ad6-a381-484f-8401-09634f9421b2",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/canny-dense-10882ad6-a381-484f-8401-09634f9421b2.json",
+      "receipt_hash": "7a3cc6a58c078a3f563fdc1d612b71caf53e291c449c478e09343cd0a2cd58fc",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "canny-sparse",
+      "prompt_id": "30102f51-73db-405f-bd33-64920c573153",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/canny-sparse-30102f51-73db-405f-bd33-64920c573153.json",
+      "receipt_hash": "9a83ae131150528ddce33975aea4ca0ccf24a2bf4cf845fe892a7f20603b1113",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "depth-strength-05",
+      "prompt_id": "e6e252eb-8028-40bb-be9a-d352f973f3ed",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/depth-strength-05-e6e252eb-8028-40bb-be9a-d352f973f3ed.json",
+      "receipt_hash": "29f9f382997ac2954c15039ec296d0c6d18cc210d124e26c7e9375788c32ca1f",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "depth-strength-075",
+      "prompt_id": "ce3ae574-34d6-4346-9a3f-1658089d9eed",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/depth-strength-075-ce3ae574-34d6-4346-9a3f-1658089d9eed.json",
+      "receipt_hash": "6674196a81db3eec6bc45b346b8354dd7e31cff14864f6e94028f348f176cf53",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "canny-envelope-midpulse",
+      "prompt_id": "6504986a-e41b-4426-ae3f-5246d87db655",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/canny-envelope-midpulse-6504986a-e41b-4426-ae3f-5246d87db655.json",
+      "receipt_hash": "c822dffec8b06184063f92b25c5942e5137c13a7b0d63bf07830963935570a8d",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "canny-envelope-rampin",
+      "prompt_id": "a7d71276-9284-450a-a49f-30e166a67336",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/canny-envelope-rampin-a7d71276-9284-450a-a49f-30e166a67336.json",
+      "receipt_hash": "03488d830b2f01cf623c2d86977057220eb5a0e837178657086c63743953ce7f",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "hybrid-depth-to-canny",
+      "prompt_id": "74677e2a-9932-4d4e-b629-bf6b17927caa",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/hybrid-depth-to-canny-74677e2a-9932-4d4e-b629-bf6b17927caa.json",
+      "receipt_hash": "b4bede22c3a4d77930b503f3ee5f5dcac5a7dc6fa440b2094f897a983a233380",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "hybrid-canny-to-depth",
+      "prompt_id": "1729ed6c-5b7a-441c-a6af-2b210d741e62",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/hybrid-canny-to-depth-1729ed6c-5b7a-441c-a6af-2b210d741e62.json",
+      "receipt_hash": "a7e8020b5687c4d6d773b0f8b4665548807ff6fdec87c4f9767a6beb630a1e6a",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "ref-a-canny-05",
+      "prompt_id": "6c263977-6078-471e-b756-93e5d7334450",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/ref-a-canny-05-6c263977-6078-471e-b756-93e5d7334450.json",
+      "receipt_hash": "b521a4c1e45da0ccaca5ad7a16634b08e7991f0c46d23ff7cd18d628f91ffb2f",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "ref-a-canny-075",
+      "prompt_id": "7a920f86-9555-4492-94ce-6ae5bc950819",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/ref-a-canny-075-7a920f86-9555-4492-94ce-6ae5bc950819.json",
+      "receipt_hash": "d8effa22ee5d5cc8737f859e7ed631763ba25fb2599a229701e9a0e736c6acf3",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "ref-a-canny-10",
+      "prompt_id": "e6c1d6d4-fc91-4a6d-a9d4-f433c96ddb55",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/ref-a-canny-10-e6c1d6d4-fc91-4a6d-a9d4-f433c96ddb55.json",
+      "receipt_hash": "ab60a8fb2fdc41ac2a232a40c17c7ab8da7d57117cf55efdc4efbf2dbd840d50",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "ref-a-depth-075",
+      "prompt_id": "a63a7973-b4e4-4de2-9a9c-e5088967e251",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/ref-a-depth-075-a63a7973-b4e4-4de2-9a9c-e5088967e251.json",
+      "receipt_hash": "78d2dbf84407244a0efc4c47a06752e531e768909612aa550fab664aed8dbf6e",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "ref-ab-canny-075",
+      "prompt_id": "a4921edf-c836-4013-98db-7d2d6aca1c70",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/ref-ab-canny-075-a4921edf-c836-4013-98db-7d2d6aca1c70.json",
+      "receipt_hash": "4e0b1db33e88345bd4050546ac88fcf1c243903aee8891657bf965139abaa890",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "ref-a-max-canny-075",
+      "prompt_id": "bdcc7f2c-7226-4997-81f1-1f0a5ebf9410",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/ref-a-max-canny-075-bdcc7f2c-7226-4997-81f1-1f0a5ebf9410.json",
+      "receipt_hash": "c5406855792718c2938a7085889c131cadc09379ee4607ac3009227f04bcaa48",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "fl-firstlast-canny-075",
+      "prompt_id": "9c715f1e-63d7-47a8-8c25-51a5bedb1120",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/fl-firstlast-canny-075-9c715f1e-63d7-47a8-8c25-51a5bedb1120.json",
+      "receipt_hash": "d77b76edce27c09252943ad603673fd26f5284b243460bb9b8b7d4eaa27d9483",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "fl-externalfirst-canny-075",
+      "prompt_id": "ccf0bbcc-15e4-4d1e-92ba-7a900b23ee89",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/fl-externalfirst-canny-075-ccf0bbcc-15e4-4d1e-92ba-7a900b23ee89.json",
+      "receipt_hash": "d973f8ede3e5df3d5f3f78cb5bd92b6cf59d1a1ec18dfa33dc734999618c4d2c",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "fl-firstlast-depth-075",
+      "prompt_id": "660c9904-aafb-47b5-8133-90a8e547b452",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/fl-firstlast-depth-075-660c9904-aafb-47b5-8133-90a8e547b452.json",
+      "receipt_hash": "7e458edec18a97dba8941cba2443f49dce7ce1ffade36b2c7cdea8772e5c3f8c",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "fl-guide-source-canny-075",
+      "prompt_id": "19d77273-3491-43b2-a3ea-44ac095a4299",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/fl-guide-source-canny-075-19d77273-3491-43b2-a3ea-44ac095a4299.json",
+      "receipt_hash": "42fc0577ef450f3f28e695e43535b8b6c212a3169f2b955d52770c77fc43a2c2",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "fl-guide-refa-canny-075",
+      "prompt_id": "d520b588-5882-493f-9d0c-5831596c122a",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/fl-guide-refa-canny-075-d520b588-5882-493f-9d0c-5831596c122a.json",
+      "receipt_hash": "492d8356bfd3d0169437e8a5755860904f553a2cb10d0977c33d261b2e30f9af",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "ref-a-guide-b-canny-075",
+      "prompt_id": "78bf7ce7-a94d-4b65-b7ca-5751c14ee7ca",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/ref-a-guide-b-canny-075-78bf7ce7-a94d-4b65-b7ca-5751c14ee7ca.json",
+      "receipt_hash": "fe4f78497cdead9ab266263e081285dd1e3be659fb8fc5cd1ff15bd31be97fe7",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "inpaint-temporal",
+      "prompt_id": "b36b1796-c6f7-4392-bea8-35b7e36a7665",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/inpaint-temporal-b36b1796-c6f7-4392-bea8-35b7e36a7665.json",
+      "receipt_hash": "c2b7ac6fc1facd60808424f6257b271aa3e809b09cfdd0237bd925ea60838801",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "inpaint-temporal-canny-075",
+      "prompt_id": "4a9a16c1-c8f0-4d23-908b-d2fb97b35546",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/inpaint-temporal-canny-075-4a9a16c1-c8f0-4d23-908b-d2fb97b35546.json",
+      "receipt_hash": "1e32128abd3f9f3d98d3b6f9c5b4660eeee3e3a1c5be605165cb3a479a8768c3",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "inpaint-spatial",
+      "prompt_id": "4114cf26-f12c-4692-9b79-da56b49d3246",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/inpaint-spatial-4114cf26-f12c-4692-9b79-da56b49d3246.json",
+      "receipt_hash": "37700209d06e9bb930ca2a062b13adac2fcd055631c8589cc6423765893b2cba",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "inpaint-spatial-canny-075",
+      "prompt_id": "167396e0-2b75-4308-a5fc-341b28d0122d",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/inpaint-spatial-canny-075-167396e0-2b75-4308-a5fc-341b28d0122d.json",
+      "receipt_hash": "8052985c7e6ee06766d7f9c177093f874583db01a96cb1c019ce75f2ca9468b0",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "ref-a-inpaint-temporal-canny-075",
+      "prompt_id": "8cb9c665-e596-4309-9e3a-66596faf35d9",
+      "receipt": "runtime/receipts/2026-09-02/fun-control-matrix/ref-a-inpaint-temporal-canny-075-8cb9c665-e596-4309-9e3a-66596faf35d9.json",
+      "receipt_hash": "332a952a62ef22cd13db2e084f24a3c6a503d8aa6a757445316cbc0e0cef84a7",
+      "status": "completed"
+    }
+  ]
+}

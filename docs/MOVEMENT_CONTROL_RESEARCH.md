@@ -264,10 +264,12 @@ input fixed. Compare optical-flow direction and boundary jerk around the guide.
 AddGuide and Qwen-only Timed References can point to the same time while
 affecting different channels.
 
-Test: same image, time, prompt and seed. Compare ordinary untimed reference,
-timed semantic reference, target-aligned AddGuide and timed semantic plus
-AddGuide. The last condition tests complementarity instead of assuming
-duplication.
+The replacement test failed by spatially composing the semantic references
+instead of treating them as target states. A subsequent midpoint-offset
+Timed-Reference-plus-AddGuide trial restored a single-frame composition but was
+also rejected by operator review as a useful slow-motion result. No hybrid
+workflow is retained. Future work must reformulate the conditioning question,
+not merely increase or interleave reference counts.
 
 ### 3.5 Reference bandwidth as factorization
 
@@ -640,10 +642,12 @@ name.
 
 1. Do not install an all-in-one director, timeline UI or prompt compiler.
 2. Do not restore direct latent warps or feedback/advection experiments.
-3. Do not download H3 Fun ControlNet into the constrained laboratory runtime
-   until one ComfyUI route is pinned and separately audited.
-4. Keep Timed References as an optional, lightweight comparison mechanism; its
-   semantics are explicitly Qwen-only.
+3. Retain only the pinned pruned INT8 Fun Control patch already load-tested in
+   the laboratory. Direct Canny and depth execute; Hydra pass-through is exact,
+   while transformed carriers remain review-gated experiments.
+4. Keep Timed References as an optional semantic mechanism; its semantics are
+   explicitly Qwen-only. The matched sparse 2x replacement test is rejected:
+   correct target timestamps did not become target-aligned visual states.
 5. Treat Tone Compensate as an optional decoded delivery correction, never as
    evidence of movement continuity.
 6. Keep CAUCE responsible for transparent H3 state/mask algebra only. It should

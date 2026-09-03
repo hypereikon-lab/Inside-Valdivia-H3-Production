@@ -1,0 +1,49 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "2026-09-03-28-hydra-canny-passthrough-quality20",
+  "operation": "generate.with_control",
+  "operation_version": 1,
+  "operation_contract_hash": "54420901a719ea708848ff24c8c61c0268fa578cfc14c498064aba49687a69fd",
+  "inputs": {
+    "source_video": {
+      "uri": "comfy-input://Gen-4_5.gen-4_5 (5).mp4",
+      "sha256": "d7300236e2a395c3c91eb59e05fcc2a0895956b53cb170316ae7480564da16a3"
+    }
+  },
+  "parameters": {
+    "variant": "hydra-canny-passthrough-quality20",
+    "source_range": [0, 73],
+    "control_preprocessor": "Canny",
+    "canny_low_threshold": 0.2,
+    "canny_high_threshold": 0.5,
+    "hydra_code": "src(s0).out(o0); render(o0)",
+    "hydra_repository_commit": "f96bc23f42466a1c9e137c10c7d860e9d9d7923f",
+    "width": 768,
+    "height": 768,
+    "target_frames": 73,
+    "fps": 24,
+    "control_strength": 1.0,
+    "control_start_percent": 0.0,
+    "control_end_percent": 1.0,
+    "steps": 20,
+    "sampler": "res_multistep",
+    "scheduler": "simple",
+    "seed": 20260902,
+    "runtime_seconds": 87.381,
+    "carrier_psnr": "infinity",
+    "carrier_ssim": 1.0,
+    "generated_vs_direct_baseline_psnr": "infinity",
+    "generated_vs_direct_baseline_ssim": 1.0,
+    "prompt_id": "57ad4cf2-7858-44dd-9f1f-2433da750224"
+  },
+  "status": "executes",
+  "outputs": {
+    "direct_control": "comfy-output://experiments/2026-09-03/hydra-fun-control/hydra-canny-passthrough-quality20/canny_direct_00001_.mp4",
+    "transformed_control": "comfy-output://experiments/2026-09-03/hydra-fun-control/hydra-canny-passthrough-quality20/canny_after_hydra_00001_.mp4",
+    "video": "comfy-output://experiments/2026-09-03/hydra-fun-control/hydra-canny-passthrough-quality20/generated_00001_.mp4"
+  },
+  "run_receipts": [
+    "runtime/receipts/2026-09-03/hydra-fun-control/hydra-canny-passthrough-quality20-57ad4cf2-7858-44dd-9f1f-2433da750224.json"
+  ],
+  "notes": "The Hydra raster handoff is exactly transparent for this fixed graph: direct and post-Hydra Canny videos are equivalent by decoded PSNR/SSIM, and fixed-seed H3 output exactly matches the retained direct-Canny baseline. This is a technical composability result, not a visual promotion."
+}

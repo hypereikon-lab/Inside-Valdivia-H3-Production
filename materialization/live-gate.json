@@ -2,7 +2,7 @@
   "schema": "inside-valdivia.live-materialization-gate/1",
   "source_locks": {
     "cauce_commit": "c83cb162e39b6594c371b445af70388d9db892b4",
-    "runtime_commit": "6751b8fd90b02ef871bc046f228b83b004871d3a",
+    "runtime_commit": "1fa85c86db2143679552ff72b841f3a214f783f2",
     "workspace_commit": "65d6612d1cbeae3e35c664873a2aa1088ac3e7d2",
     "repository_control_commit": "49d50644173c62d74b799099fee2a2eddbfdf642",
     "model_control_commit": "2b4b3a79c796b53a4504536b971b3f632ed762bb"

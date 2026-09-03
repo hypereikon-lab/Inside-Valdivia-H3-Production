@@ -1,0 +1,39 @@
+{
+  "schema": "inside-valdivia.hydra-fun-control-matrix/1",
+  "status": "executes-pending-human-review",
+  "held_constant": {
+    "source_video": "Gen-4_5.gen-4_5 (5).mp4",
+    "source_window": [
+      0,
+      73
+    ],
+    "dimensions": [
+      768,
+      768
+    ],
+    "fps": 24,
+    "seed": 20260902,
+    "prompt": "One continuous accelerating camera flight through a dense southern temperate rainforest, rotating smoothly around the vertical axis while moving forward. Preserve the circular domemaster projection, black exterior, forest structure, spatial rhythm, and camera path. One uninterrupted shot, no cuts, no text, silent.",
+    "model": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+    "control_patch": "minimax_h3_fun_controlnet_union_pruned_int8_convrot.safetensors",
+    "control_kind": "Canny(0.2, 0.5)",
+    "sampler": "res_multistep",
+    "scheduler": "simple",
+    "steps": 20
+  },
+  "prior_baseline": "workflows/evaluations/2026-09-02/fun-control-canny-quality20.api.json",
+  "runtime_manifest_hash": "43a0568eecf4966c751d8209b4533eda05eb2cd998ddfdd2b88b4e0166c1a843",
+  "hydra_repository_commit": "f96bc23f42466a1c9e137c10c7d860e9d9d7923f",
+  "variants": [
+    {
+      "id": "hydra-canny-passthrough-quality20",
+      "question": "Does the Hydra IMAGE handoff preserve the ordinary Canny carrier closely enough to be operationally transparent?",
+      "hydra_code": "src(s0).out(o0); render(o0)"
+    },
+    {
+      "id": "hydra-canny-affine-quality20",
+      "question": "Does H3 Fun Control follow a deliberately warped Canny trajectory when the warp is authored before native control encoding?",
+      "hydra_code": "src(s0)\n  .scale(({ time }) => 1.0 + 0.08 * Math.sin(time * 2.0), 1, 1)\n  .rotate(({ time }) => 0.08 * Math.sin(time * 1.5))\n  .out(o0)\n\nrender(o0)"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "2026-09-01-27-gen45-temporal-expand-2x-s08-timedrefs",
+  "operation": "generate.from_references",
+  "operation_version": 4,
+  "operation_contract_hash": "117a99a5622049000c31d15e34b9bd55e8f1ea164a5d9f9935e72548197a9176",
+  "inputs": {
+    "source_video": {
+      "uri": "comfy-input://Gen-4_5.gen-4_5 (5).mp4",
+      "sha256": "d7300236e2a395c3c91eb59e05fcc2a0895956b53cb170316ae7480564da16a3"
+    }
+  },
+  "parameters": {
+    "variant": "qwen-timed-reference-temporal-expansion",
+    "factor": 2,
+    "source_start_frame": 0,
+    "source_frames": 60,
+    "source_stride_frames": 8,
+    "source_reference_offsets": [0, 8, 16, 24, 32, 40, 48, 56, 59],
+    "target_reference_frames": [0, 16, 32, 48, 64, 80, 96, 112, 118],
+    "target_reference_seconds": [0.0, 0.666667, 1.333333, 2.0, 2.666667, 3.333333, 4.0, 4.666667, 4.916667],
+    "reference_count": 9,
+    "reference_image_size": 256,
+    "target_frames": 124,
+    "delivery_frames": 119,
+    "delivery_fps": 24,
+    "width": 672,
+    "height": 672,
+    "steps": 20,
+    "sampler": "res_multistep",
+    "scheduler": "simple",
+    "seed": 310944,
+    "runtime_seconds": 120.763,
+    "anchor_psnr_db": 2.579951,
+    "anchor_ssim": 0.053921,
+    "addguide_baseline_runtime_seconds": 118.598,
+    "addguide_baseline_anchor_psnr_db": 25.994644,
+    "addguide_baseline_anchor_ssim": 0.694858,
+    "prompt_id": "1fbe507e-3ef5-481a-a406-203907805a3b"
+  },
+  "status": "rejected",
+  "outputs": {
+    "video": "comfy-output://video/2026-09-01/gen45_slowmo2x_timedrefs_w01_f000_s08_00001_.mp4"
+  },
+  "notes": "The graph executes with exact delivery geometry, but Qwen-only timed references do not preserve target-aligned source states. The result composes three repeated circular views in a horizontal band; it is rejected as a replacement for AddGuide temporal expansion."
+}

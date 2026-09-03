@@ -1,0 +1,16 @@
+{
+  "schema": "comfy.run-batch/1",
+  "id": "inside-valdivia-hydra-fun-control-20260903",
+  "steps": [
+    {
+      "id": "hydra-canny-passthrough-quality20",
+      "graph": "graphs/hydra-canny-passthrough-quality20.api.json",
+      "operation_ref": "operation-ref.json"
+    },
+    {
+      "id": "hydra-canny-affine-quality20",
+      "graph": "graphs/hydra-canny-affine-quality20.api.json",
+      "operation_ref": "operation-ref.json"
+    }
+  ]
+}

@@ -1,0 +1,301 @@
+{
+  "1": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "device": "default",
+      "type": "minimax"
+    }
+  },
+  "10": {
+    "class_type": "ImageFromBatch",
+    "inputs": {
+      "batch_index": 0,
+      "image": [
+        "9",
+        0
+      ],
+      "length": 1
+    }
+  },
+  "11": {
+    "class_type": "ImageFromBatch",
+    "inputs": {
+      "batch_index": 36,
+      "image": [
+        "9",
+        0
+      ],
+      "length": 1
+    }
+  },
+  "12": {
+    "class_type": "ImageFromBatch",
+    "inputs": {
+      "batch_index": 72,
+      "image": [
+        "9",
+        0
+      ],
+      "length": 1
+    }
+  },
+  "13": {
+    "class_type": "Canny",
+    "inputs": {
+      "high_threshold": 0.5,
+      "image": [
+        "9",
+        0
+      ],
+      "low_threshold": 0.2
+    }
+  },
+  "14": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "inside-valdivia-frame-a.png"
+    }
+  },
+  "15": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "inside-valdivia-frame-b.png"
+    }
+  },
+  "16": {
+    "class_type": "MiniMaxH3ReferenceToVideo",
+    "inputs": {
+      "audio_vae": [
+        "3",
+        0
+      ],
+      "clip": [
+        "1",
+        0
+      ],
+      "height": 768,
+      "length": 73,
+      "prompt": "Use <Picture 1> and <Picture 2> as visual appearance and spatial-identity references while following the camera movement and geometry carried by the control video. Maintain one coherent continuous southern temperate rainforest and circular domemaster projection. One uninterrupted shot, no cuts, no text, silent.",
+      "ref_image_size": "match",
+      "ref_images.ref_image_0": [
+        "14",
+        0
+      ],
+      "ref_images.ref_image_1": [
+        "15",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "width": 768
+    }
+  },
+  "17": {
+    "class_type": "MiniMaxH3FunControlNetApply",
+    "inputs": {
+      "control_video": [
+        "13",
+        0
+      ],
+      "end_percent": 1.0,
+      "model": [
+        "4",
+        0
+      ],
+      "model_patch": [
+        "5",
+        0
+      ],
+      "start_percent": 0.0,
+      "strength": 0.75,
+      "vae": [
+        "2",
+        0
+      ]
+    }
+  },
+  "18": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 20260902
+    }
+  },
+  "19": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "conditioning": [
+        "16",
+        0
+      ],
+      "model": [
+        "17",
+        0
+      ]
+    }
+  },
+  "2": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "20": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "denoise": 1.0,
+      "model": [
+        "17",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 20
+    }
+  },
+  "21": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "res_multistep"
+    }
+  },
+  "22": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "guider": [
+        "19",
+        0
+      ],
+      "latent_image": [
+        "16",
+        1
+      ],
+      "noise": [
+        "18",
+        0
+      ],
+      "sampler": [
+        "21",
+        0
+      ],
+      "sigmas": [
+        "20",
+        0
+      ]
+    }
+  },
+  "23": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "22",
+        1
+      ],
+      "vae": [
+        "2",
+        0
+      ]
+    }
+  },
+  "24": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "fps": 24,
+      "images": [
+        "23",
+        0
+      ]
+    }
+  },
+  "25": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "filename_prefix": "experiments/2026-09-02/fun-control/ref-ab-canny-075/generated",
+      "format": "auto",
+      "video": [
+        "24",
+        0
+      ]
+    }
+  },
+  "26": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "fps": 24,
+      "images": [
+        "13",
+        0
+      ]
+    }
+  },
+  "27": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "filename_prefix": "experiments/2026-09-02/fun-control/ref-ab-canny-075/control",
+      "format": "auto",
+      "video": [
+        "26",
+        0
+      ]
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_audio_vae_fp32.safetensors"
+    }
+  },
+  "4": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "5": {
+    "class_type": "ModelPatchLoader",
+    "inputs": {
+      "name": "minimax_h3_fun_controlnet_union_pruned_int8_convrot.safetensors"
+    }
+  },
+  "6": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "Gen-4_5.gen-4_5 (5).mp4"
+    }
+  },
+  "7": {
+    "class_type": "VideoTemporalCrop",
+    "inputs": {
+      "length": 73,
+      "start_frame": 0,
+      "video": [
+        "6",
+        0
+      ]
+    }
+  },
+  "8": {
+    "class_type": "GetVideoComponents",
+    "inputs": {
+      "video": [
+        "7",
+        0
+      ]
+    }
+  },
+  "9": {
+    "class_type": "ImageScale",
+    "inputs": {
+      "crop": "center",
+      "height": 768,
+      "image": [
+        "8",
+        0
+      ],
+      "upscale_method": "lanczos",
+      "width": 768
+    }
+  }
+}

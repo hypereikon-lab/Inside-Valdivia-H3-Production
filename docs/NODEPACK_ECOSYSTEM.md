@@ -13,6 +13,7 @@ The recommended system is not a large collection of custom nodes. It is:
 official ComfyUI + official H3 implementation
   -> CAUCE exact native-state and mask algebra
   -> selected official perception/control weights
+  -> optional ComfyUI-Hydra deterministic IMAGE-sequence transforms
   -> a small whitelist of generic KJNodes utilities
   -> project graphs, receipts and acceptance evidence
 ```
@@ -59,6 +60,7 @@ column distinguishes schema presence from the now verified local artifact.
 | human pose | `RTDETR_detect`, `SDPoseKeypointExtractor`, `SDPoseDrawKeypoints` | RT-DETR + SDPose FP16 | no |
 | structural control/inpaint | `ModelPatchLoader`, `MiniMaxH3FunControlNetApply` | pruned INT8 Fun Control | no |
 | video load/save/slicing | core video nodes, `Video Slice`, `VideoTrim`, `VideoCrop` | none | no |
+| procedural or transformed control carriers | `HydraRenderSequence` | none | optional public data nodepack |
 
 `VideoTrim` and `VideoCrop` are present in the live core. Their ordinary media
 semantics remain separate from CAUCE exact native-state range operations.
@@ -95,6 +97,14 @@ state algebra.
 - previews and diagnostics that do not alter accepted output;
 - measured memory workarounds for an actual runtime limit.
 
+ComfyUI-Hydra is one such optional data extension. Browser-side Hydra code is
+compiled to a signed portable WGSL/GLSL plan; the portable Comfy process renders
+that plan to an ordinary `IMAGE` batch through GL/ANGLE. It may create a
+procedural sequence or transform linked `IMAGE` inputs. It does not load H3,
+alter native H3 state, patch the sampler, define an operation ontology, or own
+remote execution. The live commit used by the causal test is
+`f96bc23f42466a1c9e137c10c7d860e9d9d7923f`.
+
 They must not silently become a second sampler, model manager, timeline,
 prompt language, persistence layer or project ontology. Canonical API graphs
 use explicit links and ordinary Comfy datatypes.
@@ -127,6 +137,7 @@ use explicit links and ordinary Comfy datatypes.
 | lower peak H3 memory | FFN or attention chunking | KJ H3 experimental patches | conditional, never default |
 | faster sampling | Turbo or PDD LoRA matched to trunk and FL2VA/Ref2VA family | ordinary live core LoRA path | named iteration profile, no nodepack |
 | remote authoring ergonomics | previews, selection, graph navigation | core first; KJ UI helpers; VHS/rgthree only after measured need | defer broad UI packs |
+| deterministic procedural carrier authoring | Hydra code compiled to an ordinary `IMAGE` batch | optional `ComfyUI-Hydra` | accept only with exact pass-through and fixed-seed causal comparisons |
 
 ## Module A: KJNodes, bounded adoption
 
@@ -608,14 +619,17 @@ matching digest and at least one bounded technical load/execute smoke. The
 first full-width Fun Control attempt failed compatibility validation and was
 removed before the corrected artifact was installed.
 
-### Next wave: visual characterization
+### Next wave: remaining visual characterization
 
-1. run `quality-20`, Turbo, and PDD with identical production inputs;
-2. test Fun Control no-control/Canny/depth ladders at fixed seed;
-3. test SAM3 propagation on a short real video, then mask cleanup/projection;
-4. test RT-DETR/SDPose on actual human material;
-5. test reference plus structural control separately;
-6. promote nothing from technical smoke without a human visual verdict.
+Completed: the fixed-input `quality-20`/Turbo/PDD ladder, direct Canny/depth
+Fun-Control comparisons, and an exact Hydra pass-through plus one causal affine
+carrier. Remaining:
+
+1. perform full-motion operator review of Canny, depth and Hydra affine output;
+2. test SAM3 propagation on a short real video, then mask cleanup/projection;
+3. test RT-DETR/SDPose on actual human material;
+4. test reference plus structural control separately;
+5. promote nothing from technical execution without a human visual verdict.
 
 ### Wave 5: production-specific modalities
 

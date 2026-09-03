@@ -147,6 +147,24 @@
       "variable": { "factor_and_guide_count": ["2x:60", "3x:40", "4x:30"] },
       "measure": ["exact duration and frame count", "source-anchor fidelity", "inter-anchor cadence", "appearance drift", "motion coherence", "runtime_seconds", "peak RAM and VRAM"],
       "status": "executes"
+    },
+    {
+      "id": "h3-timed-reference-temporal-expansion",
+      "operations": [{ "id": "generate.from_references", "version": 4 }],
+      "question": "Can Qwen-only timed image references replace target-aligned AddGuide states in sparse 2x temporal expansion?",
+      "fixed": ["decoded source offsets", "target times", "factor=2", "source stride=8", "resolution", "prompt intent", "seed", "sampler", "scheduler", "steps", "delivery frames and fps"],
+      "variable": { "conditioning_route": ["target-aligned AddGuide", "Qwen-only timed image references"] },
+      "measure": ["exact duration and frame count", "source-anchor PSNR and SSIM", "layout integrity", "motion coherence", "runtime_seconds"],
+      "status": "rejected"
+    },
+    {
+      "id": "h3-hydra-structural-carrier",
+      "operations": [{ "id": "generate.with_control", "version": 1 }],
+      "question": "Can a deterministic Hydra IMAGE-sequence transform sit transparently before official H3 Fun Control and produce a causal structural change when explicitly animated?",
+      "fixed": ["source video range", "Canny thresholds", "first frame", "prompt", "H3 trunk", "Fun Control patch", "resolution", "target_frames", "seed", "sampler", "scheduler", "steps", "control strength and diffusion interval"],
+      "variable": { "carrier_transform": ["direct Canny baseline", "Hydra pass-through", "Hydra time-varying scale and rotation"] },
+      "measure": ["carrier PSNR and SSIM", "generated-video PSNR and SSIM", "structural response", "projection preservation", "artifacts", "runtime_seconds"],
+      "status": "executes"
     }
   ]
 }

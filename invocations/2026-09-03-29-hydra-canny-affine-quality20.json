@@ -1,0 +1,49 @@
+{
+  "schema": "inside-valdivia.operation-invocation/1",
+  "id": "2026-09-03-29-hydra-canny-affine-quality20",
+  "operation": "generate.with_control",
+  "operation_version": 1,
+  "operation_contract_hash": "54420901a719ea708848ff24c8c61c0268fa578cfc14c498064aba49687a69fd",
+  "inputs": {
+    "source_video": {
+      "uri": "comfy-input://Gen-4_5.gen-4_5 (5).mp4",
+      "sha256": "d7300236e2a395c3c91eb59e05fcc2a0895956b53cb170316ae7480564da16a3"
+    }
+  },
+  "parameters": {
+    "variant": "hydra-canny-affine-quality20",
+    "source_range": [0, 73],
+    "control_preprocessor": "Canny",
+    "canny_low_threshold": 0.2,
+    "canny_high_threshold": 0.5,
+    "hydra_code": "src(s0)\n  .scale(({ time }) => 1.0 + 0.08 * Math.sin(time * 2.0), 1, 1)\n  .rotate(({ time }) => 0.08 * Math.sin(time * 1.5))\n  .out(o0)\n\nrender(o0)",
+    "hydra_repository_commit": "f96bc23f42466a1c9e137c10c7d860e9d9d7923f",
+    "width": 768,
+    "height": 768,
+    "target_frames": 73,
+    "fps": 24,
+    "control_strength": 1.0,
+    "control_start_percent": 0.0,
+    "control_end_percent": 1.0,
+    "steps": 20,
+    "sampler": "res_multistep",
+    "scheduler": "simple",
+    "seed": 20260902,
+    "runtime_seconds": 66.948,
+    "carrier_psnr": 13.491519,
+    "carrier_ssim": 0.654497,
+    "generated_vs_direct_baseline_psnr": 21.058351,
+    "generated_vs_direct_baseline_ssim": 0.625558,
+    "prompt_id": "06f4da4d-c57e-473a-9db9-e9059945e21e"
+  },
+  "status": "executes",
+  "outputs": {
+    "direct_control": "comfy-output://experiments/2026-09-03/hydra-fun-control/hydra-canny-affine-quality20/canny_direct_00001_.mp4",
+    "transformed_control": "comfy-output://experiments/2026-09-03/hydra-fun-control/hydra-canny-affine-quality20/canny_after_hydra_00001_.mp4",
+    "video": "comfy-output://experiments/2026-09-03/hydra-fun-control/hydra-canny-affine-quality20/generated_00001_.mp4"
+  },
+  "run_receipts": [
+    "runtime/receipts/2026-09-03/hydra-fun-control/hydra-canny-affine-quality20-06f4da4d-c57e-473a-9db9-e9059945e21e.json"
+  ],
+  "notes": "The animated Hydra carrier causes a material fixed-seed H3 output change while preserving the overall domemaster structure in sampled frames. That proves causal control-path influence only; full-motion operator review is still required before any transform or amplitude is accepted."
+}

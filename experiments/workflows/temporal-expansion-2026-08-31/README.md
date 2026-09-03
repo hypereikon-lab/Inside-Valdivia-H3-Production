@@ -129,3 +129,28 @@ The practical distinction is causal: token dilation supplies a transformed
 initial state that H3 may reinterpret, while dense AddGuide supplies explicit
 target-time observations. For guided slow motion, only the latter remains on
 the supported path.
+
+## Rejected Qwen timed-reference replacement
+
+The sparse 2x / stride-8 window was repeated with the same decoded source
+frames, target times, seed, sampler, steps, 672×672 geometry and 119-frame
+delivery, replacing the nine official AddGuides with nine
+`MiniMaxH3AddTimedImageReference` nodes. This necessarily uses Ref2VA because
+the community nodes patch its Qwen tokenizer path. The references are
+semantic-only: they are not H3 VAE states at the requested target indices.
+
+The graph executed in 120.763 seconds, effectively the same as the 118.598
+second AddGuide baseline. It failed the intended operation. Instead of
+reconstructing one full-frame state at each target time, the model composed
+three repeated circular views in a horizontal band on a pale canvas. Across
+the nine nominal anchor times, same-size source correspondence measured only
+2.58 dB PSNR / 0.054 SSIM, versus 25.99 dB / 0.695 for AddGuide. These metrics
+only characterize anchor preservation, but the order-of-magnitude collapse is
+also visually unambiguous.
+
+Timed semantic references therefore are not a drop-in implementation of sparse
+guided temporal expansion. They remain suitable for testing when an appearance,
+object or event should become semantically relevant near a time. AddGuide is
+the retained primitive when a decoded frame must act as a target-aligned visual
+state. Any future timed-reference-plus-AddGuide study belongs in research and
+must begin from a new hypothesis rather than a retained production workflow.

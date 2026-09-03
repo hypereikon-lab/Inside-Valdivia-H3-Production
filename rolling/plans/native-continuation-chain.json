@@ -6,7 +6,7 @@
   "source_locks": {
     "cauce_commit": "c83cb162e39b6594c371b445af70388d9db892b4",
     "runtime_repository": "https://github.com/hypereikon-lab/ComfyUI-Runtime-Control",
-    "runtime_commit": "6751b8fd90b02ef871bc046f228b83b004871d3a"
+    "runtime_commit": "1fa85c86db2143679552ff72b841f3a214f783f2"
   },
   "execution": {
     "runtime_schema": "comfy.run-series/1",

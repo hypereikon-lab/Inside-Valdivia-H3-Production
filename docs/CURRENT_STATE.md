@@ -130,11 +130,13 @@ are resumed rather than duplicated, and every completed step receives an
 immutable receipt. It intentionally neither interprets H3 nor binds one step's
 outputs into the next graph.
 
-Runtime Control 0.5 also evaluates project requirements against one full
-content-addressed manifest. A manifest can come from direct HTTP access or from
-bounded endpoint JSON captured inside an authenticated browser; browser cookies
-are never extracted. First installs now persist a mutation journal before the
-Manager request and require reconciliation after an unknown transport outcome.
+Runtime Control 0.8 also evaluates project requirements and shared-host
+availability against content-addressed live observations, executes independent
+experiment matrices as durable serial GPU batches, and preserves exact prompt
+ids, receipts, and output-only downloads across transport loss. Direct HTTP
+uses the Cloudflare service token without extracting browser cookies. First
+installs persist a mutation journal before the Manager request and require
+reconciliation after an unknown transport outcome.
 Workspace Control 0.4 adds browser-local dry-run plans for exact open/close
 targets, whole-set close validation, and provenance-rich paired exports. Its
 diagnostic must pass before tab or graph automation begins.
@@ -144,8 +146,9 @@ diagnostic must pass before tab or graph automation begins.
 | Operation | Current implementation evidence | Live/visual evidence |
 | --- | --- | --- |
 | `generate.keyframed` | official H3 contract + checked variants | first-frame, last-frame and first/last execute at 1344×768 × 124; one run each, not promoted |
-| `generate.from_references` | official H3 contract + checked variants | ordered two-image `match` binding executes; one run, not promoted |
+| `generate.from_references` | official H3 contract + checked variants | ordered two-image `match` binding executes; one run, not promoted; a Qwen-only timed-reference replacement for sparse 2x expansion executes but is rejected after layout and anchor-preservation collapse |
 | `generate.with_guides` | official H3/AddGuide contract + checked variants | single interior still is rejected; dense 2x/3x target-time guide ladders execute with positive operator review; direct-MP4 4x executes; sparse stride-8 2x/4x execute and await operator review, while stride-16 4x is rejected after visual collapse between anchors |
+| `generate.with_control` | official H3 Fun Control contract; core Canny/DA3 carriers; optional Hydra `IMAGE` transform | Canny and depth execute; Hydra pass-through is exactly equivalent to direct Canny; one animated affine carrier changes the fixed-seed H3 result and awaits full-motion review |
 | `continue.native_av` | CAUCE layout/span/mask paths unit-validated | masked-overlap executes to 243 frames with exact decoded prefix preservation; promising, not promoted |
 | `complete.native_av` | placement/mask/replacement layer unit-validated | two-source connection executes with preserved left/right contexts; measurable boundary rise remains |
 | `edit.masked_video` | static/animated mask projection and composition unit-validated | static mask primitive executes live; H3 result unassessed |
@@ -157,9 +160,12 @@ diagnostic must pass before tab or graph automation begins.
 | `regenerate.spatial` | latent resize and H3-VAE visual-stream graft unit-validated; three offline topologies | 1792×1024 latent second pass fits the 5090 and executes; 0.35 gains detail but drifts too far for a baseline |
 
 `implemented`, `materialized`, `executes`, and `visually accepted` are separate
-states. Twenty-six retained exact API graphs now have prompt-id receipts and saved artifacts;
-the native temporal-dilation path is explicitly rejected. No generative variant has yet met its
-minimum repeat count and visual promotion rule, so none is called
+states. Sixty-four immutable run receipts plus the exact prompt record for the
+timed-reference comparison retain the current live execution evidence. This
+includes the 34-run Fun-Control matrix and the two Hydra/Fun-Control causal
+tests. Native temporal dilation and the Qwen-only timed-reference replacement
+are explicitly rejected as slow-motion paths. No generative variant has yet
+met its minimum repeat count and visual promotion rule, so none is called
 production-ready.
 
 ## Materialization assets

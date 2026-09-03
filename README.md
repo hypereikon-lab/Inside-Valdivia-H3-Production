@@ -21,8 +21,13 @@ ComfyUI-Cauce
   13 typed operation contracts
   35 checked topology dossiers grouped into 32 graph archetypes
 
+ComfyUI-Hydra
+  optional deterministic Hydra code -> IMAGE sequence source/transform
+  composes before ordinary control or mask inputs; owns no H3 semantics
+
 ComfyUI-Runtime-Control
-  HTTP/runtime validation, prompt execution, receipts, durable serial resume
+  HTTP/runtime validation, availability observations, durable series/batches,
+  prompt execution, receipts, and exact-id resume
 
 ComfyUI-Workspace-Control
   paired UI/API export and guarded browser-workspace operations
@@ -35,7 +40,8 @@ this repository
   1 schema-validated paired draft, project data,
   runtime readiness profiles, acceptance criteria, storage policy,
   experiments, rolling dependency/checkpoint plans,
-  24 tracked live invocations, 26 executed API graphs and immutable receipts
+  27 tracked live invocations, 64 immutable run receipts,
+  plus one timed-reference run retained with exact prompt evidence
 ```
 
 ## Locked operations
@@ -73,10 +79,12 @@ executable only after one live ComfyUI graph is exported in paired UI/API form,
 validated against the same `/object_info` capture, and bound to concrete data.
 The first `generate.keyframed@text-only` pair satisfies the UI/API export and
 schema-validation boundary; it remains an unqueued control. Separately, the
-2026-08-31 characterization batch plus its sparse-anchor extension retained twenty-six exact executed API graphs
-and their evidence, including a dense official-AddGuide temporal-expansion
-ladder at 2x/3x/4x and stride-8/16 boundary tests. Those graphs are not presented as paired UI workflows, and
-no generative variant is formally promoted.
+live characterization batches retain 64 immutable run receipts plus one
+timed-reference comparison retained by exact prompt id. Their evidence includes
+dense official-AddGuide temporal expansion, fixed-input acceleration, 34
+Fun-Control variants, and the first Hydra carrier handoff tests. Those graphs
+are not presented as paired UI workflows, and no generative variant is formally
+promoted.
 
 The rolling plan in [`rolling/catalog.json`](rolling/catalog.json) records a
 strict serial native-state chain, immutable checkpoints, and branch rules. It

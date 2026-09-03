@@ -9,6 +9,7 @@ upscaler model is part of the locked production surface.
 | Function | Topology | Initial state | Evidence |
 | --- | --- | --- | --- |
 | guided duration expansion | `generate.with_guides@dense-anchor-temporal-expansion` or `@sparse-anchor-temporal-expansion` | retained decoded source frames become official target-time AddGuides | dense 2x and 3x execute with positive operator review; sparse stride-8 2x/4x execute and await review; stride-16 4x is rejected |
+| timed semantic comparison | `generate.from_references@qwen-timed-reference-temporal-expansion` | retained frames are shown to Qwen at target timestamps, without target-aligned H3 VAE state | rejected as an AddGuide replacement: repeated-view layout collapse and near-zero anchor correspondence |
 | native token dilation | `densify.temporal@token-inpaint` | packed H3 visual tokens dilated onto a longer time lattice | rejected across same-duration and duration-expansion tests |
 | fast spatial candidate | `regenerate.spatial@latent-second-pass` | bicubic resized native H3 visual latent | shape/masks unit-validated; visuals pending |
 | VAE-manifold candidate | `regenerate.spatial@pixel-vae-second-pass` | decoded resize re-encoded by H3 VAE | visual graft unit-validated; visuals pending |
@@ -30,6 +31,11 @@ source:    S0  S1  S2  S3 ...
 3x target: S0  __  __  S1  __  __  S2 ...
 4x target: S0  __  __  __  S1  __  __  __ ...
 ```
+
+Qwen-only timed references address semantic relevance, not this state
+placement. In the matched 2x / stride-8 comparison, nine timed images produced
+the correct 119-frame container but not the required visual trajectory. They
+must not be substituted for the AddGuide ladder.
 
 The delivery clock always remains 24 fps. The live five-second ladder is:
 

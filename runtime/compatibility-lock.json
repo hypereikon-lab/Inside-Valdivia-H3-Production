@@ -1,6 +1,6 @@
 {
   "schema": "inside-valdivia.compatibility-lock/1",
-  "captured_at": "2026-09-02T00:56:24-04:00",
+  "captured_at": "2026-09-01T21:19:57-04:00",
   "components": {
     "cauce": {
       "repository": "https://github.com/hypereikon-lab/ComfyUI-Cauce",
@@ -13,10 +13,10 @@
     },
     "runtime_control": {
       "repository": "https://github.com/hypereikon-lab/ComfyUI-Runtime-Control",
-      "version": "0.6.0",
-      "commit": "6751b8fd90b02ef871bc046f228b83b004871d3a",
-      "tree": "55d1681d9613724c31960b7cab3dc1f3541aa618",
-      "metadata_sha256": "960c3e77cdfcbf05e8eda40ed43cc6be9200c2b0cffe693c800ba420344f7dd6",
+      "version": "0.8.0",
+      "commit": "1fa85c86db2143679552ff72b841f3a214f783f2",
+      "tree": "4ad20b0ca4d75835b94ffb896601ca3fbd986ea0",
+      "metadata_sha256": "7addc2f063f5b26519a3f8ab085d80b7aa4ace2919ff1abfaa37e7a0ea4c0d74",
       "distribution": "source-package",
       "registry_node_id": null
     },

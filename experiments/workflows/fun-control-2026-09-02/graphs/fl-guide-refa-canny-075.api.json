@@ -1,0 +1,302 @@
+{
+  "1": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "device": "default",
+      "type": "minimax"
+    }
+  },
+  "10": {
+    "class_type": "ImageFromBatch",
+    "inputs": {
+      "batch_index": 36,
+      "image": [
+        "8",
+        0
+      ],
+      "length": 1
+    }
+  },
+  "11": {
+    "class_type": "ImageFromBatch",
+    "inputs": {
+      "batch_index": 72,
+      "image": [
+        "8",
+        0
+      ],
+      "length": 1
+    }
+  },
+  "12": {
+    "class_type": "Canny",
+    "inputs": {
+      "high_threshold": 0.5,
+      "image": [
+        "8",
+        0
+      ],
+      "low_threshold": 0.2
+    }
+  },
+  "13": {
+    "class_type": "MiniMaxH3ImageToVideo",
+    "inputs": {
+      "clip": [
+        "1",
+        0
+      ],
+      "first_frame": [
+        "9",
+        0
+      ],
+      "height": 768,
+      "length": 73,
+      "prompt": "One continuous accelerating camera flight through a dense southern temperate rainforest, rotating smoothly around the vertical axis while moving forward. Preserve the circular domemaster projection, black exterior, forest structure, spatial rhythm, and camera path. One uninterrupted shot, no cuts, no text, silent.",
+      "vae": [
+        "2",
+        0
+      ],
+      "width": 768
+    }
+  },
+  "14": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "inside-valdivia-frame-a.png"
+    }
+  },
+  "15": {
+    "class_type": "MiniMaxH3AddGuide",
+    "inputs": {
+      "frame_idx": 36,
+      "image": [
+        "14",
+        0
+      ],
+      "latent": [
+        "13",
+        1
+      ],
+      "positive": [
+        "13",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ]
+    }
+  },
+  "16": {
+    "class_type": "MiniMaxH3FunControlNetApply",
+    "inputs": {
+      "control_video": [
+        "12",
+        0
+      ],
+      "end_percent": 1.0,
+      "model": [
+        "3",
+        0
+      ],
+      "model_patch": [
+        "4",
+        0
+      ],
+      "start_percent": 0.0,
+      "strength": 0.75,
+      "vae": [
+        "2",
+        0
+      ]
+    }
+  },
+  "17": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 20260902
+    }
+  },
+  "18": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "conditioning": [
+        "15",
+        0
+      ],
+      "model": [
+        "16",
+        0
+      ]
+    }
+  },
+  "19": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "denoise": 1.0,
+      "model": [
+        "16",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 20
+    }
+  },
+  "2": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "20": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "res_multistep"
+    }
+  },
+  "21": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "guider": [
+        "18",
+        0
+      ],
+      "latent_image": [
+        "13",
+        1
+      ],
+      "noise": [
+        "17",
+        0
+      ],
+      "sampler": [
+        "20",
+        0
+      ],
+      "sigmas": [
+        "19",
+        0
+      ]
+    }
+  },
+  "22": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "21",
+        1
+      ],
+      "vae": [
+        "2",
+        0
+      ]
+    }
+  },
+  "23": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "fps": 24,
+      "images": [
+        "22",
+        0
+      ]
+    }
+  },
+  "24": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "filename_prefix": "experiments/2026-09-02/fun-control/fl-guide-refa-canny-075/generated",
+      "format": "auto",
+      "video": [
+        "23",
+        0
+      ]
+    }
+  },
+  "25": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "fps": 24,
+      "images": [
+        "12",
+        0
+      ]
+    }
+  },
+  "26": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "filename_prefix": "experiments/2026-09-02/fun-control/fl-guide-refa-canny-075/control",
+      "format": "auto",
+      "video": [
+        "25",
+        0
+      ]
+    }
+  },
+  "3": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "4": {
+    "class_type": "ModelPatchLoader",
+    "inputs": {
+      "name": "minimax_h3_fun_controlnet_union_pruned_int8_convrot.safetensors"
+    }
+  },
+  "5": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "Gen-4_5.gen-4_5 (5).mp4"
+    }
+  },
+  "6": {
+    "class_type": "VideoTemporalCrop",
+    "inputs": {
+      "length": 73,
+      "start_frame": 0,
+      "video": [
+        "5",
+        0
+      ]
+    }
+  },
+  "7": {
+    "class_type": "GetVideoComponents",
+    "inputs": {
+      "video": [
+        "6",
+        0
+      ]
+    }
+  },
+  "8": {
+    "class_type": "ImageScale",
+    "inputs": {
+      "crop": "center",
+      "height": 768,
+      "image": [
+        "7",
+        0
+      ],
+      "upscale_method": "lanczos",
+      "width": 768
+    }
+  },
+  "9": {
+    "class_type": "ImageFromBatch",
+    "inputs": {
+      "batch_index": 0,
+      "image": [
+        "8",
+        0
+      ],
+      "length": 1
+    }
+  }
+}

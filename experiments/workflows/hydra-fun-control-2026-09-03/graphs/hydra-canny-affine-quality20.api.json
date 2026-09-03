@@ -1,0 +1,291 @@
+{
+  "1": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "default"
+    }
+  },
+  "2": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+    }
+  },
+  "3": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "4": {
+    "class_type": "ModelPatchLoader",
+    "inputs": {
+      "name": "minimax_h3_fun_controlnet_union_pruned_int8_convrot.safetensors"
+    }
+  },
+  "5": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "Gen-4_5.gen-4_5 (5).mp4"
+    }
+  },
+  "6": {
+    "class_type": "VideoTemporalCrop",
+    "inputs": {
+      "video": [
+        "5",
+        0
+      ],
+      "start_frame": 0,
+      "length": 73
+    }
+  },
+  "7": {
+    "class_type": "GetVideoComponents",
+    "inputs": {
+      "video": [
+        "6",
+        0
+      ]
+    }
+  },
+  "8": {
+    "class_type": "ImageScale",
+    "inputs": {
+      "image": [
+        "7",
+        0
+      ],
+      "upscale_method": "lanczos",
+      "width": 768,
+      "height": 768,
+      "crop": "center"
+    }
+  },
+  "9": {
+    "class_type": "ImageFromBatch",
+    "inputs": {
+      "image": [
+        "8",
+        0
+      ],
+      "batch_index": 0,
+      "length": 1
+    }
+  },
+  "10": {
+    "class_type": "Canny",
+    "inputs": {
+      "image": [
+        "8",
+        0
+      ],
+      "low_threshold": 0.2,
+      "high_threshold": 0.5
+    }
+  },
+  "11": {
+    "class_type": "HydraRenderSequence",
+    "inputs": {
+      "code": "src(s0)\n  .scale(({ time }) => 1.0 + 0.08 * Math.sin(time * 2.0), 1, 1)\n  .rotate(({ time }) => 0.08 * Math.sin(time * 1.5))\n  .out(o0)\n\nrender(o0)",
+      "width": 768,
+      "height": 768,
+      "frame_count": 73,
+      "fps": 24,
+      "start_time": 0,
+      "bpm": 60,
+      "seed": 20260902,
+      "compiled_plan": "{\"schema\":\"hydra.portable-render-plan/2\",\"compiler\":{\"name\":\"hydra-synth\",\"version\":\"2.0.0-alpha.1\",\"catalogHash\":\"421048e5d55bbf3af12609ae4abf498592337b6e747ff1d1fcfe0bf10587ae02\",\"targets\":[\"wgsl\",\"glsl-es-300\"]},\"source\":{\"code\":\"src(s0)\\n  .scale(({ time }) => 1.0 + 0.08 * Math.sin(time * 2.0), 1, 1)\\n  .rotate(({ time }) => 0.08 * Math.sin(time * 1.5))\\n  .out(o0)\\n\\nrender(o0)\",\"sha256\":\"904ac407f844e6c7f01e40366c2a00d15b4c7e5ffd479ee90495dcf1d977b4ed\"},\"clock\":{\"width\":768,\"height\":768,\"frameCount\":73,\"fps\":24,\"startTime\":0,\"bpm\":60,\"seed\":20260902},\"selectedOutput\":0,\"outputs\":[{\"index\":0,\"passes\":[{\"signature\":\"src(texture)>scale(uniform,number,number)>rotate(uniform)|u2|us2|t1|rs1|fs|ha9fb88e2\",\"wgsl\":\"struct item {\\n  time: f32,\\n  bpm: f32,\\n  width: f32,\\n  height: f32,\\n}\\n\\n@group(0) @binding(0) var<uniform> globals: item;\\n\\n@group(0) @binding(3) var hydraTexture0: texture_2d<f32>;\\n\\nstruct item_1 {\\n  values: array<vec4f, 64>,\\n}\\n\\n@group(0) @binding(1) var<uniform> dynamicUniforms: item_1;\\n\\nfn hydraDynamicUniform(index: u32) -> f32 {\\n  let vecIndex = index / 4u;\\n  let lane = index % 4u;\\n  let packed = dynamicUniforms.values[vecIndex];\\n  if (lane == 0u) { return packed.x; }\\n  if (lane == 1u) { return packed.y; }\\n  if (lane == 2u) { return packed.z; }\\n  return packed.w;\\n}\\n\\n\\n@group(0) @binding(2) var hydraSampler: sampler;\\n\\nfn hydraSampleTextureWrapped(tex: texture_2d<f32>, uv: vec2f) -> vec4f {\\n  return textureSampleLevel(tex, hydraSampler, fract(uv), 0.0);\\n}\\n\\n\\nfn hydraSampleTexture(tex: texture_2d<f32>, uv: vec2f) -> vec4f {\\n  return hydraSampleTextureWrapped(tex, uv);\\n}\\n\\n\\nfn src(_st: vec2f, tex: texture_2d<f32>) -> vec4f {\\n\\n  return hydraSampleTexture(tex, fract(_st));\\n\\n}\\n\\n\\nfn scale(_st: vec2f, amount: f32, xMult: f32, yMult: f32, offsetX: f32, offsetY: f32) -> vec2f {\\n\\n  var xy = _st - vec2f(offsetX, offsetY);\\n  let safeScale = vec2f(\\n    max(abs(amount * xMult), 0.0001),\\n    max(abs(amount * yMult), 0.0001)\\n  );\\n  xy *= vec2f(1.0) / safeScale;\\n  xy += vec2f(offsetX, offsetY);\\n  return xy;\\n\\n}\\n\\n\\nfn rotate(_st: vec2f, angle: f32, speed: f32) -> vec2f {\\n\\n  let xy = _st - vec2f(0.5);\\n  let ang = angle + speed * globals.time;\\n  let cs = cos(ang);\\n  let sn = sin(ang);\\n  let rotated = vec2f(cs * xy.x - sn * xy.y, sn * xy.x + cs * xy.y);\\n  return rotated + vec2f(0.5);\\n\\n}\\n\\n\\n@fragment fn main(@builtin(position) position: vec4f) -> @location(0)  vec4f {\\n  let safeWidth = max(globals.width, 1.0);\\n  let safeHeight = max(globals.height, 1.0);\\n  var st = vec2f(position.x / safeWidth, position.y / safeHeight);\\n  var c = vec4f(0.0);\\n  \\nst = rotate(st, hydraDynamicUniform(0u), 0.0);\\n\\nst = scale(st, hydraDynamicUniform(1u), 1.0, 1.0, 0.5, 0.5);\\n\\nc = src(st, hydraTexture0);\\n  return c;\\n}\",\"glsl\":\"#version 300 es\\n\\nprecision highp float;\\nprecision highp int;\\n\\nstruct item {\\n    float time;\\n    float bpm;\\n    float width;\\n    float height;\\n};\\nstruct item_1_ {\\n    vec4 values[64];\\n};\\nlayout(std140) uniform item_block_0Fragment { item _group_0_binding_0_fs; };\\n\\nuniform highp sampler2D _group_0_binding_3_fs;\\n\\nlayout(std140) uniform item_1_block_1Fragment { item_1_ _group_0_binding_1_fs; };\\n\\nlayout(location = 0) out vec4 _fs2p_location0;\\n\\nfloat hydraDynamicUniform(uint index) {\\n    uint vecIndex = (index / 4u);\\n    uint lane = (index % 4u);\\n    vec4 packed_ = _group_0_binding_1_fs.values[vecIndex];\\n    if ((lane == 0u)) {\\n        return packed_.x;\\n    }\\n    if ((lane == 1u)) {\\n        return packed_.y;\\n    }\\n    if ((lane == 2u)) {\\n        return packed_.z;\\n    }\\n    return packed_.w;\\n}\\n\\nvec4 hydraSampleTextureWrapped(highp sampler2D tex, vec2 uv) {\\n    vec4 _e5 = textureLod(tex, vec2(fract(uv)), 0.0);\\n    return _e5;\\n}\\n\\nvec4 hydraSampleTexture(highp sampler2D tex_1, vec2 uv_1) {\\n    vec4 _e2 = hydraSampleTextureWrapped(tex_1, uv_1);\\n    return _e2;\\n}\\n\\nvec4 src(vec2 _st, highp sampler2D tex_2) {\\n    vec4 _e3 = hydraSampleTexture(tex_2, fract(_st));\\n    return _e3;\\n}\\n\\nvec2 scale(vec2 _st_1, float amount, float xMult, float yMult, float offsetX, float offsetY) {\\n    vec2 xy = vec2(0.0);\\n    xy = (_st_1 - vec2(offsetX, offsetY));\\n    vec2 safeScale = vec2(max(abs((amount * xMult)), 0.0001), max(abs((amount * yMult)), 0.0001));\\n    vec2 _e21 = xy;\\n    xy = (_e21 * (vec2(1.0) / safeScale));\\n    vec2 _e24 = xy;\\n    xy = (_e24 + vec2(offsetX, offsetY));\\n    vec2 _e26 = xy;\\n    return _e26;\\n}\\n\\nvec2 rotate(vec2 _st_2, float angle, float speed) {\\n    vec2 xy_1 = (_st_2 - vec2(0.5));\\n    float _e8 = _group_0_binding_0_fs.time;\\n    float ang = (angle + (speed * _e8));\\n    float cs = cos(ang);\\n    float sn = sin(ang);\\n    vec2 rotated = vec2(((cs * xy_1.x) - (sn * xy_1.y)), ((sn * xy_1.x) + (cs * xy_1.y)));\\n    return (rotated + vec2(0.5));\\n}\\n\\nvoid main() {\\n    vec4 position = gl_FragCoord;\\n    vec2 st = vec2(0.0);\\n    vec4 c = vec4(0.0);\\n    float _e3 = _group_0_binding_0_fs.width;\\n    float safeWidth = max(_e3, 1.0);\\n    float _e8 = _group_0_binding_0_fs.height;\\n    float safeHeight = max(_e8, 1.0);\\n    st = vec2((position.x / safeWidth), (position.y / safeHeight));\\n    vec2 _e20 = st;\\n    float _e22 = hydraDynamicUniform(0u);\\n    vec2 _e24 = rotate(_e20, _e22, 0.0);\\n    st = _e24;\\n    vec2 _e25 = st;\\n    float _e27 = hydraDynamicUniform(1u);\\n    vec2 _e32 = scale(_e25, _e27, 1.0, 1.0, 0.5, 0.5);\\n    st = _e32;\\n    vec2 _e33 = st;\\n    vec4 _e35 = src(_e33, _group_0_binding_3_fs);\\n    c = _e35;\\n    vec4 _e36 = c;\\n    _fs2p_location0 = _e36;\\n    return;\\n}\\n\\n\",\"resolutionScale\":1,\"uniformFrames\":[[0,1],[0.004996745427390416,1.0066589532960248],[0.009973978670818215,1.0132716906154733],[0.01491226374098159,1.0197923167403617],[0.019792316740361835,1.0261755757436921],[0.024595081166430468,1.03237716508489],[0.029301802326883807,1.0383540430883362],[0.03389410057631504,1.0440647276709576],[0.03835404308833624,1.049469584245579],[0.04266421388288161,1.0545311008018667],[0.046807781835236976,1.059214148255683],[0.05076856640122155,1.0634862242599155],[0.05453110080186673,1.0673176787846317],[0.058080692420857005,1.0706819199009363],[0.06140348017888217,1.0735555983403005],[0.06448648866085545,1.075918769548447],[0.06731767878463173,1.077755032109065],[0.0698859948133657,1.0790516415766365],[0.07218140752792762,1.0797995989283244],[0.07419495339078941,1.07999371302103],[0.0759187695484469,1.0796326366201412],[0.07734612453569442,1.0787188757499149],[0.07847144456185245,1.0772587723006],[0.07929033527630093,1.075262460013013],[0.07979959892832436,1.0727437941460545],[0.0799972468542599,1.0697202553153011],[0.07988250724318653,1.066212828170077],[0.07945582815083,1.0622458557510337],[0.07871887574991496,1.057846870539066],[0.07767452782379604,1.0530464033681468],[0.0763268625287755,1.0478777715283165],[0.0746811424689901,1.042376847529476],[0.07274379414605454,1.036581810130865],[0.07052238286371025,1.0305328793641866],[0.06802558318547616,1.0242720373894285],[0.06526314506066376,1.017842737120764],[0.062245855751033696,1.0112896006447893],[0.058985497706769516,1.004658109524209],[0.05549480255626175,0.9979942891363864],[0.05178740138937155,0.9913443892375914],[0.047877771528316515,0.9847545629699612],[0.043781179994037224,0.9782705465390059],[0.03951362388880714,0.9719373417848304],[0.03509176792789065,0.9657989038501668],[0.030532879364186534,0.9598978361129324],[0.02585476055997495,0.9542750945006125],[0.02107567946907367,0.9489697032386518],[0.01621429830086937,0.9440184840056824],[0.011289600644789377,0.9394558003753657],[0.006320817339791175,0.9353133193185318],[0.0013273513783478325,0.9316197914208928],[-0.0036712978618223756,0.9284008513417134],[-0.00865561076240867,0.9256788398983391],[-0.013606123688199545,0.923472649011394],[-0.018503504992161746,0.9217975905867922],[-0.023328630505108233,0.9206652902445784],[-0.028062658215169588,0.9200836066321657],[-0.03268710184544716,0.9200565768819697],[-0.037183903042528714,0.9205843885919878],[-0.0415355018939721,0.9216633785237883],[-0.0457249054993875,0.923286058026949],[-0.04973575432734984,0.9254411650134843],[-0.053552386099018884,0.9281137421215416],[-0.057159896949002933,0.9312852405258727],[-0.06054419962463426,0.9349336486745936],[-0.06369207849638926,0.9390336450587455],[-0.06659124116463898,0.9435567739543687],[-0.06923036646120656,0.9484716429173654],[-0.07159914865828668,0.9537441406604553],[-0.07368833771209218,0.9593376738000593],[-0.075489775384077,0.9652134208299938],[-0.07699642709868315,0.971330601559284],[-0.07820240941320776,0.9776467601440859]],\"textures\":[{\"variableName\":\"hydraTexture0\",\"source\":{\"kind\":\"input\",\"index\":0}}]}]}],\"integrity\":{\"algorithm\":\"sha256\",\"canonicalization\":\"hydra.typed-tree/1\",\"hash\":\"be16048caff27053fd3336df8f61536d5ad1558c44470534c2f4ea40b04b4618\"}}",
+      "s0": [
+        "10",
+        0
+      ]
+    }
+  },
+  "12": {
+    "class_type": "MiniMaxH3ImageToVideo",
+    "inputs": {
+      "clip": [
+        "1",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "prompt": "One continuous accelerating camera flight through a dense southern temperate rainforest, rotating smoothly around the vertical axis while moving forward. Preserve the circular domemaster projection, black exterior, forest structure, spatial rhythm, and camera path. One uninterrupted shot, no cuts, no text, silent.",
+      "width": 768,
+      "height": 768,
+      "length": 73,
+      "first_frame": [
+        "9",
+        0
+      ]
+    }
+  },
+  "13": {
+    "class_type": "MiniMaxH3FunControlNetApply",
+    "inputs": {
+      "model": [
+        "3",
+        0
+      ],
+      "model_patch": [
+        "4",
+        0
+      ],
+      "vae": [
+        "2",
+        0
+      ],
+      "strength": 1,
+      "start_percent": 0,
+      "end_percent": 1,
+      "control_video": [
+        "11",
+        0
+      ]
+    }
+  },
+  "14": {
+    "class_type": "RandomNoise",
+    "inputs": {
+      "noise_seed": 20260902
+    }
+  },
+  "15": {
+    "class_type": "BasicGuider",
+    "inputs": {
+      "model": [
+        "13",
+        0
+      ],
+      "conditioning": [
+        "12",
+        0
+      ]
+    }
+  },
+  "16": {
+    "class_type": "BasicScheduler",
+    "inputs": {
+      "model": [
+        "13",
+        0
+      ],
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1
+    }
+  },
+  "17": {
+    "class_type": "KSamplerSelect",
+    "inputs": {
+      "sampler_name": "res_multistep"
+    }
+  },
+  "18": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "noise": [
+        "14",
+        0
+      ],
+      "guider": [
+        "15",
+        0
+      ],
+      "sampler": [
+        "17",
+        0
+      ],
+      "sigmas": [
+        "16",
+        0
+      ],
+      "latent_image": [
+        "12",
+        1
+      ]
+    }
+  },
+  "19": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "18",
+        1
+      ],
+      "vae": [
+        "2",
+        0
+      ]
+    }
+  },
+  "20": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "19",
+        0
+      ],
+      "fps": 24
+    }
+  },
+  "21": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "20",
+        0
+      ],
+      "filename_prefix": "experiments/2026-09-03/hydra-fun-control/hydra-canny-affine-quality20/generated",
+      "format": "auto"
+    }
+  },
+  "22": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "10",
+        0
+      ],
+      "fps": 24
+    }
+  },
+  "23": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "22",
+        0
+      ],
+      "filename_prefix": "experiments/2026-09-03/hydra-fun-control/hydra-canny-affine-quality20/canny_direct",
+      "format": "auto"
+    }
+  },
+  "24": {
+    "class_type": "CreateVideo",
+    "inputs": {
+      "images": [
+        "11",
+        0
+      ],
+      "fps": 24
+    }
+  },
+  "25": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "video": [
+        "24",
+        0
+      ],
+      "filename_prefix": "experiments/2026-09-03/hydra-fun-control/hydra-canny-affine-quality20/canny_after_hydra",
+      "format": "auto"
+    }
+  }
+}

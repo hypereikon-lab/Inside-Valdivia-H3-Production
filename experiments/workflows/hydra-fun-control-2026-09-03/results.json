@@ -1,0 +1,36 @@
+{
+  "schema": "inside-valdivia.hydra-fun-control-results/1",
+  "status": "executes-pending-human-review",
+  "runtime_manifest_hash": "43a0568eecf4966c751d8209b4533eda05eb2cd998ddfdd2b88b4e0166c1a843",
+  "baseline_video": "fun-control-canny-quality20_00001_.mp4",
+  "results": [
+    {
+      "id": "hydra-canny-passthrough-quality20",
+      "prompt_id": "57ad4cf2-7858-44dd-9f1f-2433da750224",
+      "runtime_seconds": 87.381,
+      "carrier_vs_direct": {
+        "psnr": "infinity",
+        "ssim": 1.0
+      },
+      "generated_vs_baseline": {
+        "psnr": "infinity",
+        "ssim": 1.0
+      },
+      "evidence": "exact-pass-through"
+    },
+    {
+      "id": "hydra-canny-affine-quality20",
+      "prompt_id": "06f4da4d-c57e-473a-9db9-e9059945e21e",
+      "runtime_seconds": 66.948,
+      "carrier_vs_direct": {
+        "psnr": 13.491519,
+        "ssim": 0.654497
+      },
+      "generated_vs_baseline": {
+        "psnr": 21.058351,
+        "ssim": 0.625558
+      },
+      "evidence": "causal-change-pending-human-review"
+    }
+  ]
+}

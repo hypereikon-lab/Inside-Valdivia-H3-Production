@@ -1,0 +1,599 @@
+{
+  "acceptance": {
+    "production_promotion": false,
+    "verdict": "pending-human-review"
+  },
+  "batch_plan_hash": "c965f101d24c08b55f963f2e4196f4c0b757080d39383f03fe36f73c504d11f5",
+  "batch_state_hash": "f46808eb94d595911dac1c1d9a2eac8f916c595c75565104ecf2b1b8fd91ef03",
+  "completed": 34,
+  "failed": 0,
+  "records": [
+    {
+      "error": null,
+      "family": "strength",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "canny-strength-025",
+      "mean_adjacent_luma_delta": 11.524917,
+      "prompt_id": "7ebf35c1-2849-4fea-9275-f0dad85f7f4f",
+      "sha256": "cabc5e69377dd5e83dec51fc9b9f5007c62541321cd21b034c0cede938b134f8",
+      "ssim_vs_source": 0.569249,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "strength",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "canny-strength-05",
+      "mean_adjacent_luma_delta": 10.699776,
+      "prompt_id": "24e716b4-5e86-44fc-b997-de9598978a75",
+      "sha256": "62cef482ac77447799a1564ff4f7bb4ff9ee7b5c0b5885e3be74b0514e2f617d",
+      "ssim_vs_source": 0.589489,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "strength",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "canny-strength-075",
+      "mean_adjacent_luma_delta": 10.962487,
+      "prompt_id": "6b125e65-1ff0-48d7-bcad-f080ac36008a",
+      "sha256": "1ac86530fada70625a6a23c1dd50b46077a91e4b89f5e8cd531be63fb89225bb",
+      "ssim_vs_source": 0.614196,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "strength",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "canny-strength-125",
+      "mean_adjacent_luma_delta": 11.491522,
+      "prompt_id": "b0412fd3-8b4e-4dd7-a714-9d49cdfeac01",
+      "sha256": "82a2ef2ed7bb1b80568eed154428583c75bff6c746f5cc4a12908e0e5a668773",
+      "ssim_vs_source": 0.607785,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "strength",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "canny-strength-15",
+      "mean_adjacent_luma_delta": 11.060752,
+      "prompt_id": "7e519f41-fc5a-4ba2-a871-0d922a683218",
+      "sha256": "b6533fbb5d5c02f7c5da8a5ebfefc69bfa41355ff8dd0b249b0366ed2f480878",
+      "ssim_vs_source": 0.591734,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "diffusion-window",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "canny-stage-early",
+      "mean_adjacent_luma_delta": 9.978038,
+      "prompt_id": "df7871c1-d806-43d4-a9d2-a0f8fdfa76fd",
+      "sha256": "08d34108d91977d6ced636e4f9d41d9375344b135fc112183aa3faee53e1159f",
+      "ssim_vs_source": 0.600284,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "diffusion-window",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "canny-stage-earlymid",
+      "mean_adjacent_luma_delta": 11.414885,
+      "prompt_id": "abee3dab-07fb-490b-a673-c5b8b265b41f",
+      "sha256": "3d6a47fad60adf190c2bb79708430a5cbed9a6eaa95d75e940eb7c6d1ebda347",
+      "ssim_vs_source": 0.618442,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "diffusion-window",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "canny-stage-late",
+      "mean_adjacent_luma_delta": 10.690851,
+      "prompt_id": "4c5d065f-214c-41b4-bf19-91a2144b45a4",
+      "sha256": "e7d35f0c844f5eb6d511434b2f0b6e794888836a91c336c4afc59a4e64a3fb0e",
+      "ssim_vs_source": 0.614703,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "diffusion-window",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "canny-stage-middle",
+      "mean_adjacent_luma_delta": 11.774971,
+      "prompt_id": "2f9a64d9-0d4f-4e4f-8722-10c8096c0113",
+      "sha256": "07476c921480971101926a7a2cb185cc1e807b2be91118e45c92f4c092e3dadc",
+      "ssim_vs_source": 0.613813,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "carrier",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "canny-dense",
+      "mean_adjacent_luma_delta": 11.562907,
+      "prompt_id": "10882ad6-a381-484f-8401-09634f9421b2",
+      "sha256": "f9868fa7287ceea0c15463806d85e1ce545687159b13c636449b66c4910ed62a",
+      "ssim_vs_source": 0.592558,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "carrier",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "canny-sparse",
+      "mean_adjacent_luma_delta": 10.518963,
+      "prompt_id": "30102f51-73db-405f-bd33-64920c573153",
+      "sha256": "0296a81e200efd6d8edc004fb209fe296117aa4d36f8d7ad821fb908d463e7c8",
+      "ssim_vs_source": 0.625664,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "carrier",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "depth-strength-05",
+      "mean_adjacent_luma_delta": 11.010358,
+      "prompt_id": "e6e252eb-8028-40bb-be9a-d352f973f3ed",
+      "sha256": "3ccc4118973ce03dff553ca7108a99031cd320e65c1d3e3d168171cb470cb6dd",
+      "ssim_vs_source": 0.569987,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "carrier",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "depth-strength-075",
+      "mean_adjacent_luma_delta": 10.603839,
+      "prompt_id": "ce3ae574-34d6-4346-9a3f-1658089d9eed",
+      "sha256": "5b1989a61d4d288829f380854415d3dfbec6e6d738f1372ca346447e749cecdd",
+      "ssim_vs_source": 0.585646,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "temporal-envelope",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "canny-envelope-midpulse",
+      "mean_adjacent_luma_delta": 9.421052,
+      "prompt_id": "6504986a-e41b-4426-ae3f-5246d87db655",
+      "sha256": "c6beff6ed55f26d11b2c7ec4d3c7a9770e63d09fc24af9ae4db534745e0b7ad5",
+      "ssim_vs_source": 0.619282,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "temporal-envelope",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "canny-envelope-rampin",
+      "mean_adjacent_luma_delta": 10.080204,
+      "prompt_id": "a7d71276-9284-450a-a49f-30e166a67336",
+      "sha256": "5c2e10d2a18ed4b205ae3d333afb0fda75269527c880e45f4a3b7d640f1c47f5",
+      "ssim_vs_source": 0.629541,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "carrier-interpolation",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "hybrid-depth-to-canny",
+      "mean_adjacent_luma_delta": 10.389082,
+      "prompt_id": "74677e2a-9932-4d4e-b629-bf6b17927caa",
+      "sha256": "3209f96ce6f82e560a5c4929c62ab4d774faa8914f67284e097cc41a4920b91c",
+      "ssim_vs_source": 0.623224,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "carrier-interpolation",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "hybrid-canny-to-depth",
+      "mean_adjacent_luma_delta": 11.494306,
+      "prompt_id": "1729ed6c-5b7a-441c-a6af-2b210d741e62",
+      "sha256": "19b2c1911f768dcc0de91c269f44c336118f2696b0e674eb5edcf48e62d75340",
+      "ssim_vs_source": 0.60417,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "reference-control",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "ref-a-canny-05",
+      "mean_adjacent_luma_delta": 7.539844,
+      "prompt_id": "6c263977-6078-471e-b756-93e5d7334450",
+      "sha256": "7d58ebbe32a700235f016790c2e6766802fdaf046e37c606cb6ac0d84fb9e661",
+      "ssim_vs_source": 0.529772,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "reference-control",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "ref-a-canny-075",
+      "mean_adjacent_luma_delta": 7.457528,
+      "prompt_id": "7a920f86-9555-4492-94ce-6ae5bc950819",
+      "sha256": "3aa11723aea73986a192aa6f8f4d5b8a4a111e1708965179005dc00417e4fc2c",
+      "ssim_vs_source": 0.550647,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "reference-control",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "ref-a-canny-10",
+      "mean_adjacent_luma_delta": 8.639695,
+      "prompt_id": "e6c1d6d4-fc91-4a6d-a9d4-f433c96ddb55",
+      "sha256": "aa4c71f8bf8b9d14ffd0d7029d6fc534e9f37c33eba993f48e4ea152b129515d",
+      "ssim_vs_source": 0.551427,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "reference-control",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "ref-a-depth-075",
+      "mean_adjacent_luma_delta": 14.314771,
+      "prompt_id": "a63a7973-b4e4-4de2-9a9c-e5088967e251",
+      "sha256": "7da2a72dea812765cf125bdfdbffb9ad20d9784b4ea9ae8199f5d45065ec572f",
+      "ssim_vs_source": 0.434852,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "reference-control",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "ref-ab-canny-075",
+      "mean_adjacent_luma_delta": 8.815864,
+      "prompt_id": "a4921edf-c836-4013-98db-7d2d6aca1c70",
+      "sha256": "7645abc6259b0d549adf445a48c966d04c8317f0631cf3bb63dec00f443ebeef",
+      "ssim_vs_source": 0.542524,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "reference-fidelity",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "ref-a-max-canny-075",
+      "mean_adjacent_luma_delta": 7.730221,
+      "prompt_id": "bdcc7f2c-7226-4997-81f1-1f0a5ebf9410",
+      "sha256": "b01395d448b2564d39793f04b1e53f9d26a5bea409fcf0910f02dce2d5a02420",
+      "ssim_vs_source": 0.546208,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "endpoint-control",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "fl-firstlast-canny-075",
+      "mean_adjacent_luma_delta": 11.208086,
+      "prompt_id": "9c715f1e-63d7-47a8-8c25-51a5bedb1120",
+      "sha256": "3191c930dae16d03395d57b07ec84d8b539144b595e33e4bca00a260d67be665",
+      "ssim_vs_source": 0.657042,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "endpoint-control",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "fl-externalfirst-canny-075",
+      "mean_adjacent_luma_delta": 12.150223,
+      "prompt_id": "ccf0bbcc-15e4-4d1e-92ba-7a900b23ee89",
+      "sha256": "8df6a2f57d262f322227e254a5b0da63502ce5892ab68e080b4f1c24c34fc2ff",
+      "ssim_vs_source": 0.523361,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "endpoint-control",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "fl-firstlast-depth-075",
+      "mean_adjacent_luma_delta": 10.638649,
+      "prompt_id": "660c9904-aafb-47b5-8133-90a8e547b452",
+      "sha256": "db4c7a3033ad20fb7168cdc7e7545b0cb326365b5258d363c179bc5b12fd9282",
+      "ssim_vs_source": 0.614451,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "guide-control",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "fl-guide-source-canny-075",
+      "mean_adjacent_luma_delta": 11.173122,
+      "prompt_id": "19d77273-3491-43b2-a3ea-44ac095a4299",
+      "sha256": "16b5b2425efabea342d03c7d324d8c8abe9e5d6e3021e0a96575211cf0b9fbf6",
+      "ssim_vs_source": 0.678711,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "guide-control",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "fl-guide-refa-canny-075",
+      "mean_adjacent_luma_delta": 10.824472,
+      "prompt_id": "d520b588-5882-493f-9d0c-5831596c122a",
+      "sha256": "7f36b13f5a41e03a2ac88efb51249ec4d1a69c4f2304c2a3aebc3f06071597ad",
+      "ssim_vs_source": 0.620342,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "reference-guide-control",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "ref-a-guide-b-canny-075",
+      "mean_adjacent_luma_delta": 8.465144,
+      "prompt_id": "78bf7ce7-a94d-4b65-b7ca-5751c14ee7ca",
+      "sha256": "867ee56f20129408c88bc2e27a81ab96621ac62c7dbb805381895317e2d20fe3",
+      "ssim_vs_source": 0.549631,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "inpaint",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "inpaint-temporal",
+      "mean_adjacent_luma_delta": 10.370436,
+      "prompt_id": "b36b1796-c6f7-4392-bea8-35b7e36a7665",
+      "sha256": "cf7797f0d6552c0b50a21060bdf197cafb67645f502c776c9db136f4940a2840",
+      "ssim_vs_source": 0.658914,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "inpaint-control",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "inpaint-temporal-canny-075",
+      "mean_adjacent_luma_delta": 12.056518,
+      "prompt_id": "4a9a16c1-c8f0-4d23-908b-d2fb97b35546",
+      "sha256": "6f87e194cdd611381429f1b4ffe0872dd0d99ca7d31f8c00be43ad9d55982506",
+      "ssim_vs_source": 0.651086,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "inpaint",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "inpaint-spatial",
+      "mean_adjacent_luma_delta": 10.381999,
+      "prompt_id": "4114cf26-f12c-4692-9b79-da56b49d3246",
+      "sha256": "b4ddaa0a3910a74207ba03a95942f33d8a1b5c21513570b28efc993bf69a9d51",
+      "ssim_vs_source": 0.655697,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "inpaint-control",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "inpaint-spatial-canny-075",
+      "mean_adjacent_luma_delta": 11.438003,
+      "prompt_id": "167396e0-2b75-4308-a5fc-341b28d0122d",
+      "sha256": "8e9067cc11998985c882aa13263120eeb6d7933a4e2362537aa693915fd098eb",
+      "ssim_vs_source": 0.649013,
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "family": "reference-inpaint-control",
+      "geometry": {
+        "duration_seconds": 3.041667,
+        "fps": "24/1",
+        "frames": 73,
+        "height": 768,
+        "width": 768
+      },
+      "id": "ref-a-inpaint-temporal-canny-075",
+      "mean_adjacent_luma_delta": 9.724582,
+      "prompt_id": "8cb9c665-e596-4309-9e3a-66596faf35d9",
+      "sha256": "b83d226674d7cdfe6f29ef2c278925d9f78dba7fc2c1ea2728670b68d1d50e49",
+      "ssim_vs_source": 0.599147,
+      "status": "completed"
+    }
+  ],
+  "schema": "inside-valdivia.h3-fun-control-characterization/1",
+  "source_sha256": "d7300236e2a395c3c91eb59e05fcc2a0895956b53cb170316ae7480564da16a3",
+  "status": "executed-pending-human-review",
+  "technical_interpretation": [
+    "All independent graphs live-validated before the first submission.",
+    "All 34 exact prompt ids completed and produced 73-frame 768x768 artifacts.",
+    "Reference, endpoint, guide, temporal/spatial inpaint, and mixed control routes executed without a terminal job failure.",
+    "SSIM and adjacent-frame luma delta describe decoded outputs but do not establish aesthetic quality or production acceptance."
+  ]
+}

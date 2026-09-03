@@ -1,0 +1,24 @@
+{
+  "plan_hash": "bb17875e8be9a31d3f4ea0ae11d1cb15a6ef9ee2c7220d03c6989e906c714783",
+  "plan_id": "inside-valdivia-hydra-fun-control-20260903",
+  "schema": "comfy.run-batch-state/1",
+  "state_hash": "d2734d348cf6fd6a7a2347e6fc82333bc74c75ca27dfac8cbb1457e5c9d2e7a7",
+  "steps": [
+    {
+      "error": null,
+      "id": "hydra-canny-passthrough-quality20",
+      "prompt_id": "57ad4cf2-7858-44dd-9f1f-2433da750224",
+      "receipt": "runtime/receipts/2026-09-03/hydra-fun-control/hydra-canny-passthrough-quality20-57ad4cf2-7858-44dd-9f1f-2433da750224.json",
+      "receipt_hash": "eeed904cd0e57d5bd54de0a719025bb40f252ff5a8b7a208a724ff5756a3d573",
+      "status": "completed"
+    },
+    {
+      "error": null,
+      "id": "hydra-canny-affine-quality20",
+      "prompt_id": "06f4da4d-c57e-473a-9db9-e9059945e21e",
+      "receipt": "runtime/receipts/2026-09-03/hydra-fun-control/hydra-canny-affine-quality20-06f4da4d-c57e-473a-9db9-e9059945e21e.json",
+      "receipt_hash": "dc70d39a3d33d8a7d90bf42e6b0c1177bb8f307844fb20ededb4ba9958b21dfb",
+      "status": "completed"
+    }
+  ]
+}

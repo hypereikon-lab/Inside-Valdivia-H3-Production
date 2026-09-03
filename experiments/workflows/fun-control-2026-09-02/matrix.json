@@ -1,0 +1,348 @@
+{
+  "experiments": [
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "strength",
+      "id": "canny-strength-025",
+      "strength": 0.25
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "strength",
+      "id": "canny-strength-05",
+      "strength": 0.5
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "strength",
+      "id": "canny-strength-075",
+      "strength": 0.75
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "strength",
+      "id": "canny-strength-125",
+      "strength": 1.25
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "strength",
+      "id": "canny-strength-15",
+      "strength": 1.5
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "end_percent": 0.35,
+      "family": "diffusion-window",
+      "id": "canny-stage-early"
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "end_percent": 0.65,
+      "family": "diffusion-window",
+      "id": "canny-stage-earlymid"
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "diffusion-window",
+      "id": "canny-stage-late",
+      "start_percent": 0.35
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "end_percent": 0.8,
+      "family": "diffusion-window",
+      "id": "canny-stage-middle",
+      "start_percent": 0.2
+    },
+    {
+      "control": {
+        "high": 0.3,
+        "kind": "canny",
+        "low": 0.1
+      },
+      "family": "carrier",
+      "id": "canny-dense"
+    },
+    {
+      "control": {
+        "high": 0.7,
+        "kind": "canny",
+        "low": 0.3
+      },
+      "family": "carrier",
+      "id": "canny-sparse"
+    },
+    {
+      "control": {
+        "kind": "depth"
+      },
+      "family": "carrier",
+      "id": "depth-strength-05",
+      "strength": 0.5
+    },
+    {
+      "control": {
+        "kind": "depth"
+      },
+      "family": "carrier",
+      "id": "depth-strength-075",
+      "strength": 0.75
+    },
+    {
+      "control": {
+        "kind": "canny-envelope",
+        "points": "0:(0.0),\n18:(0.0),\n36:(1.0),\n54:(0.0),\n72:(0.0)"
+      },
+      "family": "temporal-envelope",
+      "id": "canny-envelope-midpulse"
+    },
+    {
+      "control": {
+        "kind": "canny-envelope",
+        "points": "0:(0.0),\n72:(1.0)"
+      },
+      "family": "temporal-envelope",
+      "id": "canny-envelope-rampin"
+    },
+    {
+      "control": {
+        "direction": "depth-to-canny",
+        "kind": "hybrid"
+      },
+      "family": "carrier-interpolation",
+      "id": "hybrid-depth-to-canny"
+    },
+    {
+      "control": {
+        "direction": "canny-to-depth",
+        "kind": "hybrid"
+      },
+      "family": "carrier-interpolation",
+      "id": "hybrid-canny-to-depth"
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "reference-control",
+      "generator": "ref2va",
+      "id": "ref-a-canny-05",
+      "references": [
+        "inside-valdivia-frame-a.png"
+      ],
+      "strength": 0.5
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "reference-control",
+      "generator": "ref2va",
+      "id": "ref-a-canny-075",
+      "references": [
+        "inside-valdivia-frame-a.png"
+      ],
+      "strength": 0.75
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "reference-control",
+      "generator": "ref2va",
+      "id": "ref-a-canny-10",
+      "references": [
+        "inside-valdivia-frame-a.png"
+      ],
+      "strength": 1.0
+    },
+    {
+      "control": {
+        "kind": "depth"
+      },
+      "family": "reference-control",
+      "generator": "ref2va",
+      "id": "ref-a-depth-075",
+      "references": [
+        "inside-valdivia-frame-a.png"
+      ],
+      "strength": 0.75
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "reference-control",
+      "generator": "ref2va",
+      "id": "ref-ab-canny-075",
+      "references": [
+        "inside-valdivia-frame-a.png",
+        "inside-valdivia-frame-b.png"
+      ],
+      "strength": 0.75
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "reference-fidelity",
+      "generator": "ref2va",
+      "id": "ref-a-max-canny-075",
+      "ref_image_size": "max",
+      "references": [
+        "inside-valdivia-frame-a.png"
+      ],
+      "strength": 0.75
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "endpoint-control",
+      "id": "fl-firstlast-canny-075",
+      "last": "source",
+      "strength": 0.75
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "endpoint-control",
+      "first": "reference-a",
+      "id": "fl-externalfirst-canny-075",
+      "strength": 0.75
+    },
+    {
+      "control": {
+        "kind": "depth"
+      },
+      "family": "endpoint-control",
+      "id": "fl-firstlast-depth-075",
+      "last": "source",
+      "strength": 0.75
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "guide-control",
+      "guide": {
+        "frame_idx": 36,
+        "image": "source-middle"
+      },
+      "id": "fl-guide-source-canny-075",
+      "strength": 0.75
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "guide-control",
+      "guide": {
+        "frame_idx": 36,
+        "image": "reference-a"
+      },
+      "id": "fl-guide-refa-canny-075",
+      "strength": 0.75
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "reference-guide-control",
+      "generator": "ref2va",
+      "guide": {
+        "frame_idx": 36,
+        "image": "reference-b"
+      },
+      "id": "ref-a-guide-b-canny-075",
+      "references": [
+        "inside-valdivia-frame-a.png"
+      ],
+      "strength": 0.75
+    },
+    {
+      "family": "inpaint",
+      "id": "inpaint-temporal",
+      "mask": "temporal-middle"
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "inpaint-control",
+      "id": "inpaint-temporal-canny-075",
+      "mask": "temporal-middle",
+      "strength": 0.75
+    },
+    {
+      "family": "inpaint",
+      "id": "inpaint-spatial",
+      "mask": "spatial-center"
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "inpaint-control",
+      "id": "inpaint-spatial-canny-075",
+      "mask": "spatial-center",
+      "strength": 0.75
+    },
+    {
+      "control": {
+        "kind": "canny"
+      },
+      "family": "reference-inpaint-control",
+      "generator": "ref2va",
+      "id": "ref-a-inpaint-temporal-canny-075",
+      "mask": "temporal-middle",
+      "references": [
+        "inside-valdivia-frame-a.png"
+      ],
+      "strength": 0.75
+    }
+  ],
+  "held_constant": {
+    "dimensions": [
+      768,
+      768
+    ],
+    "fps": 24,
+    "prompt": "One continuous accelerating camera flight through a dense southern temperate rainforest, rotating smoothly around the vertical axis while moving forward. Preserve the circular domemaster projection, black exterior, forest structure, spatial rhythm, and camera path. One uninterrupted shot, no cuts, no text, silent.",
+    "sampler": "res_multistep",
+    "scheduler": "simple",
+    "seed": 20260902,
+    "source_video": "Gen-4_5.gen-4_5 (5).mp4",
+    "source_window": [
+      0,
+      73
+    ],
+    "steps": 20
+  },
+  "previous_fixed_baselines": [
+    "workflows/evaluations/2026-09-02/fun-control-canny-quality20.api.json",
+    "workflows/evaluations/2026-09-02/fun-control-depth-quality20.api.json"
+  ],
+  "schema": "inside-valdivia.h3-fun-control-matrix/1",
+  "status": "executed-pending-human-review"
+}
